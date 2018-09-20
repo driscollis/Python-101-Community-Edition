@@ -1,0 +1,99 @@
+# Chapter 26 - The lambda
+
+The Python lambda statement is an anonymous or unbound function and a
+pretty limited function at that. Let's take a look at a few typical
+examples and see if we can find a use case for it. The typical examples
+that one normally sees for teaching the lambda are some sort of boring
+doubling function. Just to be contrary, our simple example will show how
+to find the square root. First we'll show a normal function and then the
+lambda equivalent:
+
+``` {.sourceCode .python}
+import math
+
+def sqroot(x):
+    """
+    Finds the square root of the number passed in
+    """
+    return math.sqrt(x)
+
+square_rt = lambda x: math.sqrt(x)
+```
+
+If you try each of these functions, you'll end up with a float. Here are
+a couple examples:
+
+``` {.sourceCode .python}
+>>> sqroot(49)
+7.0
+>>> square_rt(64)
+8.0
+```
+
+Pretty slick, right? But where would we actually use a lambda in real
+life? Maybe a calculator program? Well, that would work, but it's a
+pretty limited application for a builtin of Python! One of the major
+pieces of Python that lambda examples are applied to regularly are
+Tkinter callbacks. Tkinter is a toolkit for building GUIs that is
+included with Python.
+
+Tkinter + lambda
+----------------
+
+We'll start with Tkinter since it's included with the standard Python
+package. Here's a really simple script with three buttons, two of which
+are bound to their event handler using a lambda:
+
+``` {.sourceCode .python}
+import Tkinter as tk
+
+class App:
+    """"""
+
+    def __init__(self, parent):
+        """Constructor"""
+        frame = tk.Frame(parent)
+        frame.pack()
+
+        btn22 = tk.Button(frame, text="22", command=lambda: self.printNum(22))
+        btn22.pack(side=tk.LEFT)
+        btn44 = tk.Button(frame, text="44", command=lambda: self.printNum(44))
+        btn44.pack(side=tk.LEFT)
+
+        quitBtn = tk.Button(frame, text="QUIT", fg="red", command=frame.quit)
+        quitBtn.pack(side=tk.LEFT)
+
+
+    def printNum(self, num):
+        """"""
+        print("You pressed the %s button" % num)
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = App(root)
+    root.mainloop()
+```
+
+Notice the btn22 and btn44 variables. This is where the action is. We
+create a tk.Button instance here and bind to our printNum method in one
+fell swoop. The lambda is assigned to the button's command parameter.
+What this means is that we're creating a one-off function for the
+command, much like in the quit button where we call the frame's quit
+method. The difference here is that this particular lambda is a method
+that calls another method and passes the latter an integer. In the
+printNum method, we print to stdout which button was pressed by using
+the information that was passed to it from the lambda function. Did you
+follow all that? If so, we can continue; if not, re-read this paragraph
+as many times as necessary until the information sinks in or you go
+crazy, whichever comes first.
+
+Wrapping Up
+-----------
+
+The lambda statement is used in all kinds of other projects as well. If
+you Google a Python project name and lambda, you can find lots of live
+code out there. For example, if you search for "django lambda", you'll
+find out that django has a **modelformset** factory that utilizes
+lambdas. The Elixir plugin for SqlAlchemy also uses lambdas. Keep your
+eyes open and you'll be surprised how many times you'll stumble across
+this handy little function maker.

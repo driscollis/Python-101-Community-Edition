@@ -1,0 +1,236 @@
+# Chapter 14 - configparser
+
+Configuration files are used by both users and programmers. They are
+usually used for storing your application's settings or even your
+operating system's settings. Python's core library includes a module
+called configparser that you can use for creating and interacting with
+configuration files. We'll spend a few minutes learning how it works in
+this chapter.
+
+Creating a Config File
+----------------------
+
+Creating a config file with configparser is extremely simple. Let's
+create some code to demonstrate:
+
+``` {.sourceCode .python}
+import configparser
+
+def createConfig(path):
+    """
+    Create a config file
+    """
+    config = configparser.ConfigParser()
+    config.add_section("Settings")
+    config.set("Settings", "font", "Courier")
+    config.set("Settings", "font_size", "10")
+    config.set("Settings", "font_style", "Normal")
+    config.set("Settings", "font_info",
+               "You are using %(font)s at %(font_size)s pt")
+
+    with open(path, "w") as config_file:
+        config.write(config_file)
+
+
+if __name__ == "__main__":
+    path = "settings.ini"
+    createConfig(path)
+```
+
+The code above will create a config file with one section labelled
+Settings that will contain four options: font, font\_size, font\_style
+and font\_info. Also note that in Python 3 we only need to specify that
+we're writing the file in write-only mode, i.e. "w". Back in Python 2,
+we had to use "wb" to write in binary mode.
+
+How to Read, Update and Delete Options
+--------------------------------------
+
+Now we're ready to learn how to read the config file, update its options
+and even how to delete options. In this case, it's easier to learn by
+actually writing some code! Just add the following function to the code
+that you wrote above.
+
+``` {.sourceCode .python}
+import configparser
+import os
+
+def crudConfig(path):
+    """
+    Create, read, update, delete config
+    """
+    if not os.path.exists(path):
+        createConfig(path)
+
+    config = configparser.ConfigParser()
+    config.read(path)
+
+    # read some values from the config
+    font = config.get("Settings", "font")
+    font_size = config.get("Settings", "font_size")
+
+    # change a value in the config
+    config.set("Settings", "font_size", "12")
+
+    # delete a value from the config
+    config.remove_option("Settings", "font_style")
+
+    # write changes back to the config file
+    with open(path, "w") as config_file:
+        config.write(config_file)
+
+
+if __name__ == "__main__":
+    path = "settings.ini"
+    crudConfig(path)
+```
+
+This code first checks to see if the path for the config file exists. If
+it does not, then it uses the createConfig function we created earlier
+to create it. Next we create a ConfigParser object and pass it the
+config file path to read. To read an option in your config file, we call
+our ConfigParser object's **get** method, passing it the section name
+and the option name. This will return the option's value. If you want to
+change an option's value, then you use the **set** method, where you
+pass the section name, the option name and the new value. Finally, you
+can use the **remove\_option** method to remove an option.
+
+In our example code, we change the value of font\_size to **12** and we
+remove the font\_style option completely. Then we write the changes back
+out to disk.
+
+This isn’t really a good example though as you should never have a
+function that does everything like this one does. So let’s split it up
+into a series of functions instead:
+
+``` {.sourceCode .python}
+import configparser
+import os
+
+def create_config(path):
+    """
+    Create a config file
+    """
+    config = configparser.ConfigParser()
+    config.add_section("Settings")
+    config.set("Settings", "font", "Courier")
+    config.set("Settings", "font_size", "10")
+    config.set("Settings", "font_style", "Normal")
+    config.set("Settings", "font_info",
+               "You are using %(font)s at %(font_size)s pt")
+
+    with open(path, "w") as config_file:
+        config.write(config_file)
+
+
+def get_config(path):
+    """
+    Returns the config object
+    """
+    if not os.path.exists(path):
+        create_config(path)
+
+    config = configparser.ConfigParser()
+    config.read(path)
+    return config
+
+
+def get_setting(path, section, setting):
+    """
+    Print out a setting
+    """
+    config = get_config(path)
+    value = config.get(section, setting)
+    msg = "{section} {setting} is {value}".format(
+        section=section, setting=setting, value=value)
+    print(msg)
+    return value
+
+
+def update_setting(path, section, setting, value):
+    """
+    Update a setting
+    """
+    config = get_config(path)
+    config.set(section, setting, value)
+    with open(path, "w") as config_file:
+        config.write(config_file)
+
+
+def delete_setting(path, section, setting):
+    """
+    Delete a setting
+    """
+    config = get_config(path)
+    config.remove_option(section, setting)
+    with open(path, "w") as config_file:
+        config.write(config_file)
+
+
+
+if __name__ == "__main__":
+    path = "settings.ini"
+    font = get_setting(path, 'Settings', 'font')
+    font_size = get_setting(path, 'Settings', 'font_size')
+
+    update_setting(path, "Settings", "font_size", "12")
+
+    delete_setting(path, "Settings", "font_style")
+```
+
+This example is heavily refactored compared to the first one. I even
+went so far as to name the functions following PEP8. Each function
+should be self-explanatory and self-contained. Instead of putting all
+the logic into one function, we separate it out into multiple functions
+and then demonstrate their functionality within the bottom if statement.
+Now you can import the module and use it yourself.
+
+Please note that this example has the section hard-coded, so you will
+want to update this example further to make it completely generic.
+
+How to Use Interpolation
+------------------------
+
+The configparser module also allows **interpolation**, which means you
+can use some options to build another option. We actually do this with
+the font\_info option in that its value is based on the font and
+font\_size options. We can change an interpolated value using a Python
+dictionary. Let's take a moment to demonstrate both of these facts.
+
+``` {.sourceCode .python}
+import configparser
+import os
+
+def interpolationDemo(path):
+    if not os.path.exists(path):
+        createConfig(path)
+
+    config = configparser.ConfigParser()
+    config.read(path)
+
+    print(config.get("Settings", "font_info"))
+
+    print(config.get("Settings", "font_info",
+                     vars={"font": "Arial", "font_size": "100"}))
+
+
+if __name__ == "__main__":
+    path = "settings.ini"
+    interpolationDemo(path)
+```
+
+If you run this code, you should see output similar to the following:
+
+    You are using Courier at 12 pt
+    You are using Arial at 100 pt
+
+Wrapping Up
+-----------
+
+At this point, you should know enough about the **configparser's**
+capabilities that you can use it for your own projects. There's another
+project called **ConfigObj** that isn't a part of Python that you might
+also want to check out. **ConfigObj** is more flexible and has more
+features than **configparser**. But if you're in a pinch or your
+organization doesn't allow 3rd party packages, then **configparser**
+will probably fit the bill.

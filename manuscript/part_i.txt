@@ -1,0 +1,35 @@
+Part I - Learning the Basics
+============================
+
+In Part I, we will learn the basics of the Python programming language.
+This section of the book should get you ready to use all the building
+blocks of Python so that you will be ready to tackle the following
+sections confidently.
+
+Let's go over what we'll be covering:
+
+> -   IDLE
+> -   Strings
+> -   Lists, Dictionaries and Tuples
+> -   Conditional statements
+> -   Loops
+> -   Comprehensions
+> -   Exception Handling
+> -   File I/O
+> -   Importing modules and packages
+> -   Functions
+> -   Classes
+
+The first chapter in this section will familiarize you with Python's
+built-in development environment that is known as IDLE. The next couple
+of chapters will go over some of Python's types, such as strings, lists,
+and dictionaries. After that we'll look at conditional statements in
+Python and looping using Python's **for** and **while** loops.
+
+In the second half of this section, we will go into comprehensions, such
+as list and dictionary comprehensions. Then we'll look at Python's
+exception handling capabilities and how Python's file operations work.
+Next up is learning how to import pre-made modules and packages. The
+last two chapters cover Python functions and classes.
+
+Let's get started!

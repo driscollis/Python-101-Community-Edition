@@ -1,0 +1,75 @@
+# Chapter 38 - The Python egg
+
+Python **eggs** are an older distribution format for Python. The new
+format is called a Python **wheel**, which we will look at in the next
+chapter. An egg file is basically a zip file with a different extension.
+Python can import directly from an egg. You will need the **SetupTools**
+package to work with eggs. SetupTools is the original mainstream method
+of downloading and installing Python packages from PyPI and other
+sources via the command line, kind of like apt-get for Python. There was
+a fork of SetupTools called **distribute** that was eventually merged
+back into SetupTools. I only mention it because you may see references
+to that fork if you do much reading about Python eggs outside of this
+book.
+
+While the egg format is being migrated away from, you do still need to
+know about it as there are many packages that are distributed using this
+technology. It will probably be years before everyone has stopped using
+eggs. Let's learn how to make our own!
+
+Creating an egg
+---------------
+
+You can think of an egg as just an alternative to a source distribution
+or Windows executable, but it should be noted that for pure Python eggs,
+the egg file is completely cross-platform. We will take a look at how to
+create our own egg using the package we created in a previous modules
+and packages chapter. To get started creating an egg, you will need to
+create a new folder and put the **mymath** folder inside it. Then create
+a **setup.py** file in the parent directory to mymath with the following
+contents:
+
+``` {.sourceCode .python}
+from setuptools import setup, find_packages
+
+setup(
+    name = "mymath",
+    version = "0.1",
+    packages = find_packages()
+    )
+```
+
+Python has its own package for creating distributions that is called
+**distutils**. However instead of using Python's **distutils' setup**
+function, we're using **setuptools' setup**. We're also using
+setuptools' **find\_packages** function which will automatically look
+for any packages in the current directory and add them to the egg. To
+create said egg, you'll need to run the following from the command line:
+
+``` {.sourceCode .python}
+c:\Python34\python.exe setup.py bdist_egg
+```
+
+This will generate a lot of output, but when it's done you'll see that
+you have three new folders: **build**, **dist**, and
+**mymath.egg-info**. The only one we care about is the **dist** folder
+in which you will find your egg file, **mymath-0.1-py3.4.egg**. Note
+that on my machine, I forced it to run against Python 3.4 so that it
+would create the egg against that version of Python. The egg file itself
+is basically a zip file. If you change the extension to "zip", you can
+look inside it and see that it has two folders: **mymath** and
+**EGG-INFO**. At this point, you should be able to point
+**easy\_install** at your egg on your file system and have it install
+your package.
+
+Wrapping Up
+-----------
+
+Now it's your turn. Go onto the Python Package Index and find some pure
+Python modules to download. Then try creating eggs using the techniques
+you learned in this chapter. If you want to install an egg, you can use
+**easy\_install**. Uninstalling an egg is a bit tougher. You will have
+to go to its install location and delete the folder and / or egg file it
+installed as well as remove the entry for the package from the
+**easy-install.pth** file. All of these items can be found in your
+Python's **site-packages** folder.

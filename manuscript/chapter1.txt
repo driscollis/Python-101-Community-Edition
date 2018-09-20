@@ -1,0 +1,232 @@
+# Chapter 1 - IDLE Programming
+
+Using IDLE
+----------
+
+Python comes with its own code editor: **IDLE** (Integreted Development
+and Learning Environment). There is some lore that the name for IDLE
+comes from Eric Idle, an actor in *Monty Python*. An IDE is an editor
+for programmers that provides color highlighting of key words in the
+language, auto-complete, an "experimental" debugger and lots of other
+fun things. You can find an IDE for most popular languages and a number
+of IDEs will work with multiple languages. IDLE is kind of a lite IDE,
+but it does have all those items mentioned. It allows the programmer to
+write Python and debug their code quite easily. The reason I call it
+"lite" is the debugger is very basic and it's missing other features
+that programmers who have a background using products like *Visual
+Studio* will miss. You might also like to know that IDLE was created
+using Tkinter, a Python GUI toolkit that comes with Python.
+
+To open up IDLE, you will need to find it and you'll see something like
+this:
+
+![image](images/idle_main.jpg)
+
+Yes, it's a Python shell where you can type short scripts and see their
+output immediately and even interact with code in real time. There is no
+compiling of the code as Python is an interpretive language and runs in
+the Python interpreter. Let's write your first program now. Type the
+following after the command prompt (&gt;&gt;&gt;) in IDLE:
+
+``` {.sourceCode .python}
+print("Hello from Python!")
+```
+
+You have just written your first program! All your program does is write
+a string to the screen, but you'll find that very helpful later on.
+Please note that the **print** statement has changed in Python 3.x. In
+Python 2.x, you would have written the above like this:
+
+``` {.sourceCode .python}
+print "Hello from Python!"
+```
+
+In Python 3, the **print** statement was turned into a **print
+function**, which is why parentheses are required. You will learn what
+functions are in chapter 10.
+
+If you want to save your code into a file, go to the File menu and
+choose New Window (or press CTRL+N). Now you can type in your program
+and save it here. The primary benefit of using the Python shell is that
+you can experiment with small snippets to see how your code will behave
+before you put the code into a real program. The code editor screen
+looks a little different than the IDLE screenshot above:
+
+![image](images/idle_editor.jpg)
+
+Now we'll spend a little time looking at IDLE's other useful features.
+
+Python comes with lots of modules and packages that you can import to
+add new features. For example, you can import the **math** module for
+all kinds of good math functions, like square roots, cosines, etcetera.
+In the **File** menu, you'll find a **Path Browser** which is useful for
+figuring out where Python looks for module imports. You see, Python
+first looks in the same directory as the script that is running to see
+if the file it needs to import is there. Then it checks a predefined
+list of other locations. You can actually add and remove locations as
+well. The Path Browser will show you where these files are located on
+your hard drive, if you have imported anything. My Path Browser looks
+like this:
+
+![image](images/path_browser.jpg)
+
+Next there's a **Class Browser** that will help you navigate your code.
+Frankly it would make more sense if this menu option was called "Module
+Browser" as that is much closer to what you'll actually be doing. This
+is actually something that won't be very useful to you right now, but
+will be in the future. You'll find it helpful when you have lots of
+lines of code in a single file as it will give you a "tree-like"
+interface for your code. Note that you won't be able to load the Class
+Browser unless you have actually saved your program.
+
+The **Edit** menu has your typical features, such as Copy, Cut, Paste,
+Undo, Redo and Select All. It also contains various ways to search your
+code and do a search and replace. Finally, the Edit menu has some menu
+items that will show you various things, such as highlighting
+parentheses or displaying the auto-complete list.
+
+The **Format** menu has lots of useful functionality. It has some
+helpful items for **indenting** and **dedenting** your code, as well as
+commenting out your code. I find that pretty helpful when I'm testing my
+code. Commenting out your code can be very helpful. One way it can be
+helpful is when you have a lot of code and you need to find out why it's
+not working correctly. Commenting out portions of it and re-running the
+script can help you figure out where you went wrong. You just go along
+slowly uncommenting out stuff until you hit your bug. Which reminds me;
+you may have noticed that the main IDLE screen has a **Debugger** menu.
+
+That is nice for debugging, but only in the **Shell** window. Sadly you
+cannot use the debugger in your main editing menu. However you can run a
+module with debugging turned on such that you are able to interact with
+your program's objects. This can be useful in loops where you are trying
+to determine the current value of an item inside the loop, for example.
+If you happen to be using tkinter to create a user interface (UI), you
+can actually leave the **mainloop()** call off (which can block the UI)
+so you can debug your user interface. Finally, when an exception is
+raised with your debugger running, you can double-click the exception to
+jump directly to the code where the exception happened.
+
+If you need a more versatile debugger, you should either find a
+different IDE or try Python's debugger found in the **pdb** library.
+
+------------------------------------------------------------------------
+
+> **What are Comments?**
+>
+> A comment is a way to leave un-runnable code that documents what you
+> are doing in your code. Every programming language uses a different
+> symbol to demarcate where a comment starts and ends. What do comments
+> look like in Python though? A comment is anything that begins with an
+> octothorpe (i.e. a hash or pound sign). The following is an example of
+> some comments in action:
+>
+> ``` {.sourceCode .python}
+> # This is a comment before some code
+> print("Hello from Python!")
+> print("Winter is coming") # this is an in-line comment
+> ```
+>
+> You can write comments on a line all by themselves or following a
+> statement, like the second **print** statement above. The Python
+> interpreter ignores comments, so you can write anything you want in
+> them. Most programmers I have met don't use comments very much.
+> However, I highly recommend using comments liberally not just for
+> yourself, but for anyone else who might have to maintain or enhance
+> your code in the future. I have found my own comments useful when I
+> come back to a script that I wrote 6 months ago and I have found
+> myself working with code that didn't have comments and wishing that it
+> did so I could figure it out faster.
+>
+> Examples of good comments would include explanations about complex
+> code statements, or adding an explanation for acronyms in your code.
+> Sometimes you'll need to leave a comment to explain why you did
+> something a certain way because it's just not obvious.
+
+------------------------------------------------------------------------
+
+Now we need to get back to going over the menu options of IDLE:
+
+The **Run** menu has a couple of handy options. You can use it to bring
+up the Python Shell, check your code for errors, or run your code. The
+Options menu doesn't have very many items. It does have a Configure
+option that allows you to change the code highlighting colors, fonts and
+key shortcuts. Other than that, you get a Code Context option that is
+helpful in that it puts an overlay in the editing window which will show
+you which class or function you're currently in. We will be explaining
+functions and classes near the end of Part I. You will find this feature
+is useful whenever you have a lot of code in a function and the name has
+scrolled off the top of the screen. With this option enabled, that
+doesn't happen. Of course, if the function is too large to fit on one
+screen, then it may be getting too long and it could be time to break
+that function down into multiple functions. The other neat item in the
+Settings dialog is under the **General** tab where you can add other
+documentation. What this means is that you can add URLs to 3rd Party
+documentation, such as SQLAlchemy or pillow, and have it pulled into
+IDLE. To access the new documentation, just jump to the Help menu.
+
+The **Windows** menu shows you a list of currently open Windows and
+allows you to switch between them.
+
+Last but not least is the **Help** menu where you can learn about IDLE,
+get help with IDLE itself or load up a local copy of the Python
+documentation. The documentation will explain how each piece of Python
+works and is pretty exhaustive in its coverage. The Help menu is
+probably the most helpful in that you can get access to the docs even
+when you're not connected to the internet. You can search the
+documentation, find HOWTOs, read about any of the builtin libraries, and
+learn so much your head will probably start spinning.
+
+Other Tips
+----------
+
+When you see code examples in the following chapters, you can write and
+run them in IDLE. I wrote all my programs in IDLE for the first couple
+of years of my Python programming life and I was pretty happy with it.
+There are lots of free Python IDEs out there though and several IDEs
+that you have to pay for. If you want to go cheap, you might want to
+take a look at Eclipse+PyDev, Editra or even Notepad++. For a paid IDE,
+I would recommend WingWare's IDE or possibly PyCharm. They have many
+more features such as integration with code repositories, better
+debuggers, refactoring help, etc.
+
+In this book, we will be using IDLE in our examples because it comes
+with Python and will provide a common test bed. I still think IDLE has
+the best, most consistent code highlighting of any IDE I have used. Code
+highlighting is important in my mind in that it helps prevent me from
+using one of Python's keywords (or built-ins) for a variable name. In
+case you're wondering, here is a list of those key words:
+
+``` {.sourceCode .python}
+and       del       from      not       while
+as        elif      global    or        with
+assert    else      if        pass      yield
+break     except    import    print
+class     exec      in        raise
+continue  finally   is        return 
+def       for       lambda    try
+```
+
+Let's see what happens as we type out a few things in Python:
+
+![image](images/idle_code_colors.jpg)
+
+As you can see, IDLE color coded everything. A key word is magenta, a
+string of text is in green, a comment is in red and the output from the
+print function is in blue.
+
+Wrapping Up
+-----------
+
+In this chapter we learned how to use Python's integrated development
+environment, IDLE. We also learned what **comments** are and how to use
+them. At this point, you should be familiar enough with IDLE to use it
+in the rest of this book. There are many other integrated development
+environments (IDEs) for Python. There are free ones like PyDev and
+Editra, and there are some others that you have to pay for, such as
+WingWare and PyCharm. There are also plug-ins for regular text editors
+that allow you to code in Python too. I think IDLE is a good place to
+start, but if you already have a favorite editor, feel free to continue
+using that.
+
+At this point, we are ready to move on and start learning about Python's
+various data types. We will start with Strings in the following chapter.

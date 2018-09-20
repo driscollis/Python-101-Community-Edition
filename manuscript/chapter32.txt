@@ -1,0 +1,217 @@
+# Chapter 32 - Python Code Analysis
+
+Python code analysis can be a heavy subject, but it can be very helpful
+in making your programs better. There are several Python code analyzers
+that you can use to check your code and see if they conform to
+standards. pylint is probably the most popular. It's very configurable,
+customizable and pluggable too. It also checks your code to see if it
+conforms to PEP8, the official style guide of Python Core and it looks
+for programming errors too.
+
+Note that pylint checks your code against most, but not all of PEP8's
+standards. We will spend a little time learning about another code
+analysis package that is called **pyflakes**.
+
+Getting Started with pylint
+---------------------------
+
+The pylint package isn't included with Python, so you will need to go to
+the Python Package Index (PyPI) or the package's website to download it.
+You can use the following command to do all the work for you:
+
+``` {.sourceCode .python}
+pip install pylint
+```
+
+If everything goes as planned, you should now have **pylint** installed
+and we'll be ready to continue.
+
+Analyzing Your Code
+-------------------
+
+Once pylint is installed, you can run it on the command line without any
+arguments to see what options it accepts. If that doesn't work, you can
+type out the full path like this:
+
+``` {.sourceCode .python}
+c:\Python34\Scripts\pylint
+```
+
+Now we need some code to analyze. Here's a piece of code that has four
+errors in it. Save this to a file named *crummy\_code.py*:
+
+``` {.sourceCode .python}
+import sys
+
+class CarClass:
+    """"""     
+
+    def __init__(self, color, make, model, year):
+        """Constructor"""
+        self.color = color
+        self.make = make
+        self.model = model
+        self.year = year
+
+        if "Windows" in platform.platform():
+            print("You're using Windows!")
+
+        self.weight = self.getWeight(1, 2, 3)     
+
+    def getWeight(this):
+        """"""
+        return "2000 lbs"
+```
+
+Can you spot the errors without running the code? Let's see if pylint
+can find the issues!
+
+``` {.sourceCode .python}
+pylint crummy_code.py
+```
+
+When you run this command, you will see a lot of output sent to your
+screen. Here's a partial example:
+
+``` {.sourceCode .python}
+c:\py101>c:\Python34\Scripts\pylint crummy_code.py
+No config file found, using default configuration
+************* Module crummy_code
+C:  2, 0: Trailing whitespace (trailing-whitespace)
+C:  5, 0: Trailing whitespace (trailing-whitespace)
+C: 12, 0: Trailing whitespace (trailing-whitespace)
+C: 15, 0: Trailing whitespace (trailing-whitespace)
+C: 17, 0: Trailing whitespace (trailing-whitespace)
+C:  1, 0: Missing module docstring (missing-docstring)
+C:  3, 0: Empty class docstring (empty-docstring)
+C:  3, 0: Old-style class defined. (old-style-class)
+E: 13,24: Undefined variable 'platform' (undefined-variable)
+E: 16,36: Too many positional arguments for function call (too-many-function-args)
+C: 18, 4: Invalid method name "getWeight" (invalid-name)
+C: 18, 4: Empty method docstring (empty-docstring)
+E: 18, 4: Method should have "self" as first argument (no-self-argument)
+R: 18, 4: Method could be a function (no-self-use)
+R:  3, 0: Too few public methods (1/2) (too-few-public-methods)
+W:  1, 0: Unused import sys (unused-import)
+```
+
+Let's take a moment to break this down a bit. First we need to figure
+out what the letters designate: C is for convention, R is refactor, W is
+warning and E is error. pylint found 3 errors, 4 convention issues, 2
+lines that might be worth refactoring and 1 warning. The 3 errors plus
+the warning were what I was looking for. We should try to make this
+crummy code better and reduce the number of issues. We'll fix the
+imports and change the getWeight function to get\_weight since camelCase
+isn't allowed for method names. We also need to fix the call to
+get\_weight so it passes the right number of arguments and fix it so it
+has "self" as the first argument. Here's the new code:
+
+``` {.sourceCode .python}
+# crummy_code_fixed.py
+import platform
+
+class CarClass:
+    """"""
+
+    def __init__(self, color, make, model, year):
+        """Constructor"""
+        self.color = color
+        self.make = make
+        self.model = model
+        self.year = year
+
+        if "Windows" in platform.platform():
+            print("You're using Windows!")
+
+        self.weight = self.get_weight(3)
+
+    def get_weight(self, this):
+        """"""
+        return "2000 lbs"
+```
+
+Let's run this new code against pylint and see how much we've improved
+the results. For brevity, we'll just show the first section again:
+
+``` {.sourceCode .python}
+c:\py101>c:\Python34\Scripts\pylint crummy_code_fixed.py
+No config file found, using default configuration
+************* Module crummy_code_fixed
+C: 1,0: Missing docstring
+C: 4,0:CarClass: Empty docstring
+C: 21,4:CarClass.get_weight: Empty docstring
+W: 21,25:CarClass.get_weight: Unused argument 'this'
+R: 21,4:CarClass.get_weight: Method could be a function
+R: 4,0:CarClass: Too few public methods (1/2)
+```
+
+That helped a lot! If we added docstrings, we could halve the number of
+issues. Now we're ready to take a look at pyflakes!
+
+Getting Started with pyflakes
+-----------------------------
+
+The **pyflakes** project is a part of something known as the Divmod
+Project. Pyflakes doesn't actually execute the code it checks much like
+pylint doesn't execute the code it analyzes. You can install pyflakes
+using pip, easy\_install or from source.
+
+We will start by running pyflakes against the original version of the
+same piece of code that we used with pylint. Here it is again:
+
+``` {.sourceCode .python}
+import sys
+
+class CarClass:
+    """"""     
+
+    def __init__(self, color, make, model, year):
+        """Constructor"""
+        self.color = color
+        self.make = make
+        self.model = model
+        self.year = year
+
+        if "Windows" in platform.platform():
+            print("You're using Windows!")
+
+        self.weight = self.getWeight(1, 2, 3)     
+
+    def getWeight(this):
+        """"""
+        return "2000 lbs"
+```
+
+As was noted in the previous section, this silly piece of code has 4
+issues, 3 of which would stop the program from running. Let's see what
+pyflakes can find! Try running the following command and you'll see the
+following output:
+
+``` {.sourceCode .python}
+c:\py101>c:\Python34\Scripts\pyflakes.exe crummy_code.py
+crummy_code.py:1: 'sys' imported but unused
+crummy_code.py:13: undefined name 'platform'
+```
+
+While pyflakes was super fast at returning this output, it didn't find
+all the errors. The **getWeight** method call is passing too many
+arguments and the **getWeight** method itself is defined incorrectly as
+it doesn't have a **self** argument. Well, you can actually call the
+first argument anything you want, but by convention it's usually called
+**self**. If you fixed your code according to what pyflakes told you,
+your code still wouldn't work.
+
+Wrapping Up
+-----------
+
+The next step would be to try running pylint and pyflakes against some
+of your own code or against a Python package like SQLAlchemy and seeing
+what you get for output. You can learn a lot about your own code using
+these tools. pylint is integrated with many popular Python IDEs, such as
+Wingware, Editra, and PyDev. You may find some of the warnings from
+pylint to be annoying or not even really applicable. There are ways to
+suppress such things as deprecation warnings through command line
+options. Or you can use the **-generate-rcfile** to create an example
+config file that will help you control pylint. Note that pylint and
+pyflakes does not import your code, so you don't have to worry about
+undesirable side effects.

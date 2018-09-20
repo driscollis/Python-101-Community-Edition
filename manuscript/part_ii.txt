@@ -1,0 +1,45 @@
+Part II - Learning from the Library
+===================================
+
+In Part II, you will get an abbreviated tour of some of the Python
+Standard Library. The reason it's abbreviated is that the Python
+Standard Library is HUGE! So this section is to get you acquainted with
+using the modules that come with Python. I will be going over the
+modules I use the most in my day-to-day job and the modules I've seen
+used by my co-workers. I think this mini-tour will prepare you for
+digging in on your own.
+
+Let's take a look at what we'll be covering:
+
+> -   Introspection
+> -   csv
+> -   ConfigParser
+> -   logging
+> -   os
+> -   smtplib / email
+> -   subprocess
+> -   sys
+> -   thread / queues
+> -   time / datetime
+
+|
+
+The first chapter in this section will give you a quick tutorial into
+Python's **introspection** abilities; basically you'll learn how to make
+Python tell you about itself, which sounds kind of weird but is really
+quite valuable to know about. Next we'll learn how to use
+**ConfigParser**, a neat little module that let's you read and write
+config files. After that we'll take a look at **logging**. The **os**
+module can do lots of fun things, but we'll try to focus on the ones
+that I think you'll find most useful. The **subprocess** allows you to
+open other processes.
+
+You will find the **sys** module allows you to exit a program, get the
+Python path, acquire version information, redirect stdout and a whole
+lot more. The thread module allows you to create **threads** in your
+program. We won't dive too deep into that subject as it can get
+confusing pretty quickly. The **time** and **datetime** modules allow
+you to manipulate dates and time in Python, which has many applications
+when it comes to developing programs.
+
+Let's get started!

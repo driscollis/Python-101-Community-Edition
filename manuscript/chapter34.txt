@@ -1,0 +1,377 @@
+# Chapter 34 - SQLAlchemy
+
+**SQLAlchemy** is usually referred to as an **Object Relational Mapper
+(ORM)**, although it is much more full featured than any of the other
+Python ORMs that I've used, such as SqlObject or the one that's built
+into Django. SQLAlchemy was created by a fellow named Michael Bayer.
+Since I'm a music nut, we'll be creating a simple database to store
+album information. A database isn't a database without some
+relationships, so we'll create two tables and connect them. Here are a
+few other things we'll be learning:
+
+> -   Adding data to each table
+> -   Modifying data
+> -   Deleting data
+> -   Basic queries
+>
+> But first we need to actually make the database, so that's where we'll
+> begin our journey. You will need to install SQLAlchemy to follow along
+> in this tutorial. We'll use pip to get this job done:
+
+``` {.sourceCode .python}
+pip install sqlalchemy
+```
+
+Now we're ready to get started!
+
+How to Create a Database
+------------------------
+
+Creating a database with SQLAlchemy is really easy. SQLAlchemy uses a
+**Declarative** method for creating databases. We will write some code
+to generate the database and then explain how the code works. If you
+want a way to view your SQLite database, I would recommend the SQLite
+Manager plugin for Firefox. Here's some code to create our database
+tables:
+
+``` {.sourceCode .python}
+# table_def.py
+from sqlalchemy import create_engine, ForeignKey
+from sqlalchemy import Column, Date, Integer, String
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship, backref
+
+engine = create_engine('sqlite:///mymusic.db', echo=True)
+Base = declarative_base()
+
+class Artist(Base):
+    """"""
+    __tablename__ = "artists"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String)  
+
+class Album(Base):
+    """"""
+    __tablename__ = "albums"
+
+    id = Column(Integer, primary_key=True)
+    title = Column(String)
+    release_date = Column(Date)
+    publisher = Column(String)
+    media_type = Column(String)
+
+    artist_id = Column(Integer, ForeignKey("artists.id"))
+    artist = relationship("Artist", backref=backref("albums", order_by=id))
+
+# create tables
+Base.metadata.create_all(engine)
+```
+
+If you run this code, then you should see something similar to the
+following output:
+
+``` {.sourceCode .python}
+2014-04-03 09:43:57,541 INFO sqlalchemy.engine.base.Engine SELECT CAST('test plain returns' AS VARCHAR(60)) AS anon_1
+2014-04-03 09:43:57,551 INFO sqlalchemy.engine.base.Engine ()
+2014-04-03 09:43:57,551 INFO sqlalchemy.engine.base.Engine SELECT CAST('test unicode returns' AS VARCHAR(60)) AS anon_1
+2014-04-03 09:43:57,551 INFO sqlalchemy.engine.base.Engine ()
+2014-04-03 09:43:57,551 INFO sqlalchemy.engine.base.Engine PRAGMA table_info("artists")
+2014-04-03 09:43:57,551 INFO sqlalchemy.engine.base.Engine ()
+2014-04-03 09:43:57,551 INFO sqlalchemy.engine.base.Engine PRAGMA table_info("albums")
+2014-04-03 09:43:57,551 INFO sqlalchemy.engine.base.Engine ()
+2014-04-03 09:43:57,551 INFO sqlalchemy.engine.base.Engine
+CREATE TABLE artists (
+    id INTEGER NOT NULL,
+    name VARCHAR,
+    PRIMARY KEY (id)
+)
+
+
+2014-04-03 09:43:57,551 INFO sqlalchemy.engine.base.Engine ()
+2014-04-03 09:43:57,661 INFO sqlalchemy.engine.base.Engine COMMIT
+2014-04-03 09:43:57,661 INFO sqlalchemy.engine.base.Engine
+CREATE TABLE albums (
+    id INTEGER NOT NULL,
+    title VARCHAR,
+    release_date DATE,
+    publisher VARCHAR,
+    media_type VARCHAR,
+    artist_id INTEGER,
+    PRIMARY KEY (id),
+    FOREIGN KEY(artist_id) REFERENCES artists (id)
+)
+
+
+2014-04-03 09:43:57,661 INFO sqlalchemy.engine.base.Engine ()
+2014-04-03 09:43:57,741 INFO sqlalchemy.engine.base.Engine COMMIT
+```
+
+Why did this happen? Because when we created the engine object, we set
+its **echo** parameter to **True**. The engine is where the database
+connection information is and it has all the DBAPI stuff in it that
+makes communication with your database possible. You'll note that we're
+creating a SQLite database. Ever since Python 2.5, SQLite has been
+supported by the language. If you want to connect to some other
+database, then you'll need to edit the connection string. Just in case
+you're confused about what we're talking about, here is the code in
+question:
+
+``` {.sourceCode .python}
+engine = create_engine('sqlite:///mymusic.db', echo=True)
+```
+
+The string, **sqlite:///mymusic.db**, is our connection string. Next we
+create an instance of the declarative base, which is what we'll be
+basing our table classes on. Next we have two classes, **Artist** and
+**Album** that define what our database tables will look like. You'll
+notice that we have **Columns**, but no column names. SQLAlchemy
+actually used the variable names as the column names unless you
+specifically specify one in the **Column** definition. You'll note that
+we are using an **id** Integer field as our primary key in both classes.
+This field will auto-increment. The other columns are pretty
+self-explanatory until you get to the **ForeignKey**. Here you'll see
+that we're tying the **artist\_id** to the **id** in the **Artist**
+table. The relationship directive tells SQLAlchemy to tie the Album
+class/table to the Artist table. Due to the way we set up the
+ForeignKey, the relationship directive tells SQLAlchemy that this is a
+**many-to-one relationship**, which is what we want. Many albums to one
+artist. You can read more about table relationships
+[here](http://docs.sqlalchemy.org/en/rel_0_7/orm/relationships.html#relationship-patterns).
+
+The last line of the script will create the tables in the database. If
+you run this script multiple times, it won't do anything new after the
+first time as the tables are already created. You could add another
+table though and then it would create the new one.
+
+How to Insert / Add Data to Your Tables
+---------------------------------------
+
+A database isn't very useful unless it has some data in it. In this
+section we'll show you how to connect to your database and add some data
+to the two tables. It's much easier to take a look at some code and then
+explain it, so let's do that!
+
+``` {.sourceCode .python}
+# add_data.py
+import datetime
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from table_def import Album, Artist
+
+engine = create_engine('sqlite:///mymusic.db', echo=True)
+
+# create a Session
+Session = sessionmaker(bind=engine)
+session = Session()
+
+# Create an artist
+new_artist = Artist(name="Newsboys")
+
+new_artist.albums = [Album(title="Read All About It",
+                           release_date=datetime.date(1988,12,1),
+                           publisher="Refuge", media_type="CD")]
+
+# add more albums
+more_albums = [Album(title="Hell Is for Wimps",
+                     release_date=datetime.date(1990,7,31),
+                     publisher="Star Song", media_type="CD"),
+               Album(title="Love Liberty Disco",
+                     release_date=datetime.date(1999,11,16),
+                     publisher="Sparrow", media_type="CD"),
+               Album(title="Thrive",
+                     release_date=datetime.date(2002,3,26),
+                     publisher="Sparrow", media_type="CD")]
+new_artist.albums.extend(more_albums)
+
+# Add the record to the session object
+session.add(new_artist)
+# commit the record the database
+session.commit()
+
+# Add several artists
+session.add_all([
+    Artist(name="MXPX"),
+    Artist(name="Kutless"),
+    Artist(name="Thousand Foot Krutch")
+    ])
+session.commit()
+```
+
+First we need to import our table definitions from the previous script.
+Then we connect to the database with our engine and create something
+new, the **Session** object. The **session** is our handle to the
+database and lets us interact with it. We use it to create, modify, and
+delete records and we also use sessions to query the database. Next we
+create an **Artist** object and add an album. You'll note that to add an
+album, you just create a list of **Album** objects and set the artist
+object's "albums" property to that list or you can extend it, as you see
+in the second part of the example. At the end of the script, we add
+three additional Artists using the **add\_all**. As you have probably
+noticed by now, you need to use the session object's **commit** method
+to write the data to the database. Now it's time to turn our attention
+to modifying the data.
+
+How to Modify Records with SQLAlchemy
+-------------------------------------
+
+What happens if you saved some bad data. For example, you typed your
+favorite album's title incorrectly or you got the release date wrong for
+that fan edition you own? Well you need to learn how to modify that
+record! This will actually be our jumping off point into learning
+SQLAlchemy queries as you need to find the record that you need to
+change and that means you need to write a query for it. Here's some code
+that shows us the way:
+
+``` {.sourceCode .python}
+# modify_data.py
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from table_def import Album, Artist
+
+engine = create_engine('sqlite:///mymusic.db', echo=True)
+
+# create a Session
+Session = sessionmaker(bind=engine)
+session = Session()
+
+# querying for a record in the Artist table
+res = session.query(Artist).filter(Artist.name=="Kutless").first()
+print(res.name)
+
+# changing the name
+res.name = "Beach Boys"
+session.commit()
+
+# editing Album data
+artist, album = session.query(Artist, Album).filter(
+    Artist.id==Album.artist_id).filter(Album.title=="Thrive").first()
+album.title = "Step Up to the Microphone"
+session.commit()
+```
+
+Our first query goes out and looks up an Artist by name using the
+**filter** method. The **.first()** tells SQLAlchemy that we only want
+the first result. We could have used **.all()** if we thought there
+would be multiple results and we wanted all of them. Anyway, this query
+returns an Artist object that we can manipulate. As you can see, we
+changed the **name** from **Kutless** to **Beach Boys** and then
+committed out changes.
+
+Querying a joined table is a little bit more complicated. This time we
+wrote a query that queries both our tables. It filters using the Artist
+id AND the Album title. It returns two objects: an artist and an album.
+Once we have those, we can easily change the title for the album. Wasn't
+that easy? At this point, we should probably note that if we add stuff
+to the session erroneously, we can **rollback** our changes/adds/deletes
+by using **session.rollback()**. Speaking of deleting, let's tackle that
+subject!
+
+How to Delete Records in SQLAlchemy
+-----------------------------------
+
+Sometimes you just have to delete a record. Whether it's because you're
+involved in a cover-up or because you don't want people to know about
+your love of Britney Spears music, you just have to get rid of the
+evidence. In this section, we'll show you how to do just that!
+Fortunately for us, SQLAlchemy makes deleting records really easy. Just
+take a look at the following code!
+
+``` {.sourceCode .python}
+# deleting_data.py
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from table_def import Album, Artist
+
+engine = create_engine('sqlite:///mymusic.db', echo=True)
+
+# create a Session
+Session = sessionmaker(bind=engine)
+session = Session()
+
+res = session.query(Artist).filter(Artist.name=="MXPX").first()
+
+session.delete(res)
+session.commit()
+```
+
+As you can see, all you had to do was create another SQL query to find
+the record you want to delete and then call **session.delete(res)**. In
+this case, we deleted our MXPX record. Some people think punk will never
+die, but they must not know any DBAs! We've already seen queries in
+action, but let's take a closer look and see if we can learn anything
+new.
+
+The Basic SQL Queries of SQLAlchemy
+-----------------------------------
+
+SQLAlchemy provides all the queries you'll probably ever need. We'll be
+spending a little time just looking at a few of the basic ones though,
+such as a couple simple SELECTs, a JOINed SELECT and using the LIKE
+query. You'll also learn where to go for information on other types of
+queries. For now, let's look at some code:
+
+``` {.sourceCode .python}
+# queries.py
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from table_def import Album, Artist
+
+engine = create_engine('sqlite:///mymusic.db', echo=True)
+
+# create a Session
+Session = sessionmaker(bind=engine)
+session = Session()
+
+# how to do a SELECT * (i.e. all)
+res = session.query(Artist).all()
+for artist in res:
+    print(artist.name)
+
+# how to SELECT the first result
+res = session.query(Artist).filter(Artist.name=="Newsboys").first()
+
+# how to sort the results (ORDER_BY)
+res = session.query(Album).order_by(Album.title).all()
+for album in res:
+    print(album.title)
+
+# how to do a JOINed query
+qry = session.query(Artist, Album)
+qry = qry.filter(Artist.id==Album.artist_id)
+artist, album = qry.filter(Album.title=="Step Up to the Microphone").first()
+
+# how to use LIKE in a query
+res = session.query(Album).filter(Album.publisher.like("S%a%")).all()
+for item in res:
+    print(item.publisher)
+```
+
+The first query we run will grab all the artists in the database (a
+SELECT *) and print out each of their name fields. Next you'll see how
+to just do a query for a specific artist and return just the first
+result. The third query shows how do a SELECT* on the Album table and
+order the results by album title. The fourth query is the same query (a
+query on a JOIN) we used in our editing section except that we've broken
+it down to better fit PEP8 standards regarding line length. Another
+reason to break down long queries is that they become more readable and
+easier to fix later on if you messed something up. The last query uses
+LIKE, which allows us to pattern match or look for something that's
+"like" a specified string. In this case, we wanted to find any records
+that had a Publisher that started with a capital "S", some character, an
+"a" and then anything else. So this will match the publishers Sparrow
+and Star, for example.
+
+SQLAlchemy also supports IN, IS NULL, NOT, AND, OR and all the other
+filtering keywords that most DBAs use. SQLAlchemy also supports literal
+SQL, scalars, etc, etc.
+
+Wrapping Up
+-----------
+
+At this point you should know SQLAlchemy well enough to get started
+using it confidently. The project also has excellent documentation that
+you should be able to use to answer just about anything you need to
+know. If you get stuck, the SQLAlchemy users group / mailing list is
+very responsive to new users and even the main developers are there to
+help you figure things out.

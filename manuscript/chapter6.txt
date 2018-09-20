@@ -1,0 +1,154 @@
+# Chapter 6 - Python Comprehensions
+
+The Python language has a couple of methods for creating lists and
+dictionaries that are known as comprehensions. There is also a third
+type of comprehension for creating a Python set. In this chapter we will
+learn how to use each type of comprehension. You will find that the
+comprehension constructs build on the knowledge you have acquired from
+the previous chapters as they contain loops and conditionals themselves.
+
+List Comprehensions
+-------------------
+
+List comprehensions in Python are very handy. They can also be a little
+hard to understand when and why you would use them. List comprehensions
+tend to be harder to read than just using a simple **for** loop as well.
+You may want to review the looping chapter before you continue.
+
+If you are ready, then we'll spend some time looking at how to construct
+list comprehensions and learn how they can be used. A list comprehension
+is basically a one line **for** loop that produces a Python **list**
+data structure. Here's a simple example:
+
+``` {.sourceCode .python}
+>>> x = [i for i in range(5)]
+```
+
+Let's break this down a bit. Python comes with a range function that can
+return a list of numbers. By default, it returns integers starting at 0
+and going up to but not including the number you pass it. So in this
+case, it returns a list containing the integers 0-4. This can be useful
+if you need to create a list very quickly. For example, say you're
+parsing a file and looking for something in particular. You could use a
+list comprehension as a kind of filter:
+
+``` {.sourceCode .python}
+if [i for i in line if "SOME TERM" in i]:
+    # do something
+```
+
+I have used code similar to this to look through a file quickly to parse
+out specific lines or sections of the file. When you throw functions
+into the mix, you can start doing some really cool stuff. Say you want
+to apply a function to every element in a list, such as when you need to
+cast a bunch of strings into integers:
+
+``` {.sourceCode .python}
+>>> x = ['1', '2', '3', '4', '5']
+>>> y = [int(i) for i in x]
+>>> y
+[1, 2, 3, 4, 5]
+```
+
+This sort of thing comes up more often than you'd think. I have also had
+to loop over a list of strings and call a string method, such as strip
+on them because they had all kinds of leading or ending white space:
+
+``` {.sourceCode .python}
+>>> myStrings = [s.strip() for s in myStringList]
+```
+
+There are also occasions where one needs to create a nested list
+comprehension. One reason to do that is to flatten multiple lists into
+one. This example comes from the Python documentation:
+
+``` {.sourceCode .python}
+>>> vec = [[1,2,3], [4,5,6], [7,8,9]]
+>>> [num for elem in vec for num in elem]
+[1, 2, 3, 4, 5, 6, 7, 8, 9]
+```
+
+The documentation shows several other interesting examples for nested
+list comprehensions as well. I highly recommend taking a look at it! At
+this point, you should now be capable of using list comprehensions in
+your own code and use them well. Just use your imagination and you'll
+start seeing lots of good places where you too can use them.
+
+Now we're ready to move on to Python's dictionary comprehensions!
+
+Dictionary Comprehensions
+-------------------------
+
+Dictionary comprehensions started life in Python 3.0, but were
+backported to Python 2.7. They were originally proposed in the [Python
+Enhancement Proposal 274 (PEP
+274)](http://www.python.org/dev/peps/pep-0274/) back in 2001. They are
+pretty similar to a list comprehension in the way that they are
+organized.
+
+The best way to understand is to just do one!
+
+``` {.sourceCode .python}
+>>> print( {i: str(i) for i in range(5)} )
+{0: '0', 1: '1', 2: '2', 3: '3', 4: '4'}
+```
+
+This is a pretty straightforward comprehension. Basically it is creating
+an integer key and string value for each item in the range. Now you may
+be wondering how you could use a dictionary comprehension in real life.
+[Mark Pilgrim](http://www.diveintopython3.net/comprehensions.html)
+mentioned that you could use a dictionary comprehension for swapping the
+dictionary's keys and values. Here's how you would do that:
+
+``` {.sourceCode .python}
+>>> my_dict = {1:"dog", 2:"cat", 3:"hamster"}
+>>> print( {value:key for key, value in my_dict.items()} )
+{'hamster': 3, 'dog': 1, 'cat': 2}
+```
+
+This will only work if the dictionary values are of a non-mutable type,
+such as a string. Otherwise you will end up causing an exception to be
+raised.
+
+I could also see a dictionary comprehension being useful for creating a
+table out of class variables and their values. However, we haven't
+covered classes at this point, so I won't confuse you with that here.
+
+Set Comprehensions
+------------------
+
+Set comprehensions are created in much the same way as dictionary
+comprehensions. Now a Python set is much like a mathematical set in that
+it doesn't have any repeated elements. You can create a normal set like
+this:
+
+``` {.sourceCode .python}
+>>> my_list = [1, 2, 2, 3, 4, 5, 5, 7, 8]
+>>> my_set = set(my_list)
+>>> my_set
+set([1, 2, 3, 4, 5, 7, 8])
+```
+
+As you can see from the example above, the call to set has removed the
+duplicates from the list. Now let's rewrite this code to use a set
+comprehension:
+
+``` {.sourceCode .python}
+>>> my_list = [1, 2, 2, 3, 4, 5, 5, 7, 8]
+>>> my_set = {x for x in my_list}
+>>> my_set
+set([1, 2, 3, 4, 5, 7, 8])
+```
+
+You will notice that to create a set comprehension, we basically changed
+the square brackets that a list comprehension uses to the curly braces
+that the dictionary comprehension has.
+
+Wrapping Up
+-----------
+
+Now you know how to use the various Python comprehensions. You will
+probably find the list comprehension the most useful at first and also
+the most popular. If you start using your imagination, I am sure you
+will be able to find uses for all three types of comprehensions. Now
+we're ready to move on and learn about exception handling!

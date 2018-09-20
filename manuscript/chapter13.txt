@@ -1,0 +1,229 @@
+# Chapter 13 - The csv Module
+
+The csv module gives the Python programmer the ability to parse CSV
+(Comma Separated Values) files. A CSV file is a human readable text file
+where each line has a number of fields, separated by commas or some
+other delimiter. You can think of each line as a row and each field as a
+column. The CSV format has no standard, but they are similar enough that
+the csv module will be able to read the vast majority of CSV files. You
+can also write CSV files using the csv module.
+
+Reading a CSV File
+------------------
+
+There are two ways to read a CSV file. You can use the csv module's
+**reader** function or you can use the **DictReader** class. We will
+look at both methods. But first, we need to get a CSV file so we have
+something to parse. There are many websites that provide interesting
+information in CSV format. We will be using the World Health
+Organization's (WHO) website to download some information on
+Tuberculosis. You can go here to get it:
+<http://www.who.int/tb/country/data/download/en/>. Once you have the
+file, we'll be ready to start. Ready? Then let's look at some code!
+
+``` {.sourceCode .python}
+import csv
+
+def csv_reader(file_obj):
+    """
+    Read a csv file
+    """
+    reader = csv.reader(file_obj)
+    for row in reader:
+        print(" ".join(row))
+
+if __name__ == "__main__":
+    csv_path = "TB_data_dictionary_2014-02-26.csv"
+    with open(csv_path, "r") as f_obj:
+        csv_reader(f_obj)
+```
+
+Let's take a moment to break this down a bit. First off, we have to
+actually import the **csv** module. Then we create a very simple
+function called **csv\_reader** that accepts a file object. Inside the
+function, we pass the file object into the **csv.reader** function,
+which returns a reader object. The reader object allows iteration, much
+like a regular file object does. This lets us iterate over each row in
+the reader object and print out the line of data, minus the commas. This
+works because each row is a list and we can join each element in the
+list together, forming one long string.
+
+Now let's create our own CSV file and feed it into the **DictReader**
+class. Here's a really simple one:
+
+``` {.sourceCode .python}
+first_name,last_name,address,city,state,zip_code
+Tyrese,Hirthe,1404 Turner Ville,Strackeport,NY,19106-8813
+Jules,Dicki,2410 Estella Cape Suite 061,Lake Nickolasville,ME,00621-7435
+Dedric,Medhurst,6912 Dayna Shoal,Stiedemannberg,SC,43259-2273
+```
+
+Let's save this in a file named **data.csv**. Now we're ready to parse
+the file using the DictReader class. Let's try it out:
+
+``` {.sourceCode .python}
+import csv
+
+def csv_dict_reader(file_obj):
+    """
+    Read a CSV file using csv.DictReader
+    """
+    reader = csv.DictReader(file_obj, delimiter=',')
+    for line in reader:
+        print(line["first_name"]),
+        print(line["last_name"])
+
+if __name__ == "__main__":
+    with open("data.csv") as f_obj:
+        csv_dict_reader(f_obj)
+```
+
+In the example above, we open a file and pass the file object to our
+function as we did before. The function passes the file object to our
+DictReader class. We tell the DictReader that the delimiter is a comma.
+This isn't actually required as the code will still work without that
+keyword argument. However, it's a good idea to be explicit so you know
+what's going on here. Next we loop over the reader object and discover
+that each line in the reader object is a dictionary. This makes printing
+out specific pieces of the line very easy.
+
+Now we're ready to learn how to write a csv file to disk.
+
+Writing a CSV File
+------------------
+
+The csv module also has two methods that you can use to write a CSV
+file. You can use the **writer** function or the DictWriter class. We'll
+look at both of these as well. We will be with the writer function.
+Let's look at a simple example:
+
+``` {.sourceCode .python}
+import csv
+
+def csv_writer(data, path):
+    """
+    Write data to a CSV file path
+    """
+    with open(path, "w", newline='') as csv_file:
+        writer = csv.writer(csv_file, delimiter=',')
+        for line in data:
+            writer.writerow(line)
+
+if __name__ == "__main__":
+    data = ["first_name,last_name,city".split(","),
+            "Tyrese,Hirthe,Strackeport".split(","),
+            "Jules,Dicki,Lake Nickolasville".split(","),
+            "Dedric,Medhurst,Stiedemannberg".split(",")
+            ]
+    path = "output.csv"
+    csv_writer(data, path)
+```
+
+In the code above, we create a **csv\_writer** function that accepts two
+arguments: data and path. The data is a list of lists that we create at
+the bottom of the script. We use a shortened version of the data from
+the previous example and split the strings on the comma. This returns a
+list. So we end up with a nested list that looks like this:
+
+``` {.sourceCode .python}
+[['first_name', 'last_name', 'city'],
+ ['Tyrese', 'Hirthe', 'Strackeport'],
+ ['Jules', 'Dicki', 'Lake Nickolasville'],
+ ['Dedric', 'Medhurst', 'Stiedemannberg']]
+```
+
+The **csv\_writer** function opens the path that we pass in and creates
+a csv writer object. Then we loop over the nested list structure and
+write each line out to disk. Note that we specified what the delimiter
+should be when we created the writer object. If you want the delimiter
+to be something besides a comma, this is where you would set it.
+
+Now we're ready to learn how to write a CSV file using the
+**DictWriter** class! We're going to use the data from the previous
+version and transform it into a list of dictionaries that we can feed to
+our hungry DictWriter. Let's take a look:
+
+``` {.sourceCode .python}
+import csv
+
+def csv_dict_writer(path, fieldnames, data):
+    """
+    Writes a CSV file using DictWriter
+    """
+    with open(path, "w", newline='') as out_file:
+        writer = csv.DictWriter(out_file, delimiter=',', fieldnames=fieldnames)
+        writer.writeheader()
+        for row in data:
+            writer.writerow(row)
+
+if __name__ == "__main__":
+    data = ["first_name,last_name,city".split(","),
+            "Tyrese,Hirthe,Strackeport".split(","),
+            "Jules,Dicki,Lake Nickolasville".split(","),
+            "Dedric,Medhurst,Stiedemannberg".split(",")
+            ]
+    my_list = []
+    fieldnames = data[0]
+    for values in data[1:]:
+        inner_dict = dict(zip(fieldnames, values))
+        my_list.append(inner_dict)
+
+    path = "dict_output.csv"
+    csv_dict_writer(path, fieldnames, my_list)
+```
+
+We will start in the second section first. As you can see, we start out
+with the nested list structure that we had before. Next we create an
+empty list and a list that contains the field names, which happens to be
+the first list inside the nested list. Remember, lists are zero-based,
+so the first element in a list starts at zero! Next we loop over the
+nested list construct, starting with the second element:
+
+``` {.sourceCode .python}
+for values in data[1:]:
+    inner_dict = dict(zip(fieldnames, values))
+    my_list.append(inner_dict)
+```
+
+Inside the **for** loop, we use Python builtins to create dictionary.
+The **zip** method will take two iterators (lists in this case) and turn
+them into a list of tuples. Here's an example:
+
+``` {.sourceCode .python}
+zip(fieldnames, values)
+[('first_name', 'Dedric'), ('last_name', 'Medhurst'), ('city', 'Stiedemannberg')]
+```
+
+Now when your wrap that call in **dict**, it turns that list of tuples
+into a dictionary. Finally we append the dictionary to the list. When
+the **for** finishes, you'll end up with a data structure that looks
+like this:
+
+> \[{'city': 'Strackeport', 'first\_name': 'Tyrese', 'last\_name': 'Hirthe'},
+>
+> :   {'city': 'Lake Nickolasville', 'first\_name': 'Jules',
+>     'last\_name': 'Dicki'}, {'city': 'Stiedemannberg', 'first\_name':
+>     'Dedric', 'last\_name': 'Medhurst'}\]
+>
+At the end of the second session, we call our **csv\_dict\_writer**
+function and pass in all the required arguments. Inside the function, we
+create a DictWriter instance and pass it a file object, a delimiter
+value and our list of field names. Next we write the field names out to
+disk and loop over the data one row at a time, writing the data to disk.
+The DictWriter class also supports the **writerows** method, which we
+could have used instead of the loop. The **csv.writer** function also
+supports this functionality.
+
+You may be interested to know that you can also create **Dialects** with
+the csv module. This allows you to tell the csv module how to read or
+write a file in a very explicit manner. If you need this sort of thing
+because of an oddly formatted file from a client, then you'll find this
+functionality invaluable.
+
+Wrapping Up
+-----------
+
+Now you know how to use the csv module to read and write CSV files.
+There are many websites that put out their data in this format and it is
+used a lot in the business world. In our next chapter, we will begin
+learning about the ConfigParser module.

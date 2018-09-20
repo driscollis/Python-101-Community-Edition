@@ -1,0 +1,286 @@
+# Chapter 11 - Classes
+
+Everything in Python is an object. That's a very vague statement unless
+you've taken a computer programming class or two. What this means is
+that every *thing* in Python has methods and values. The reason is that
+everything is based on a class. A class is the blueprint of an object.
+Let's take a look at what I mean:
+
+``` {.sourceCode .python}
+>>> x = "Mike"
+>>> dir(x)
+['__add__', '__class__', '__contains__', '__delattr__', '__doc__', '__eq__', 
+'__format__', '__ge__', '__getattribute__', '__getitem__', '__getnewargs__', 
+'__getslice__', '__gt__', '__hash__', '__init__', '__le__', '__len__', '__lt__', 
+'__mod__', '__mul__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__',
+'__rmod__', '__rmul__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', 
+'_formatter_field_name_split', '_formatter_parser', 'capitalize', 'center', 'count',
+'decode', 'encode', 'endswith', 'expandtabs', 'find', 'format', 'index', 'isalnum', 
+'isalpha', 'isdigit', 'islower', 'isspace', 'istitle', 'isupper', 'join', 'ljust', 
+'lower', 'lstrip', 'partition', 'replace', 'rfind', 'rindex', 'rjust', 'rpartition',
+'rsplit', 'rstrip', 'split', 'splitlines', 'startswith', 'strip', 'swapcase', 'title', 
+'translate', 'upper', 'zfill']
+```
+
+Here we have a string assigned to the variable **x**. It might not look
+like much, but that string has a lot of methods. If you use Python's
+**dir** keyword, you can get a list of all the methods you can call on
+your string. There are 71 methods here! Technically we're not supposed
+to call the methods that start with underscores directly, so that
+reduces the total to 38, but that's still a lot of methods! What does
+this mean though? It means that a string is based on a class and **x**
+is an **instance** of that class!
+
+In Python we can create our own classes. Let's get started!
+
+Creating a Class
+----------------
+
+Creating a class in Python is very easy. Here is a very simple example:
+
+``` {.sourceCode .python}
+# Python 2.x syntax
+class Vehicle(object):
+    """docstring"""
+
+    def __init__(self):
+        """Constructor"""
+        pass
+```
+
+This class doesn't do anything in particular, however it is a very good
+learning tool. For example, to create a class, we need to use Python's
+**class** keyword, followed by the name of the class. In Python,
+convention says that the class name should have the first letter
+capitalized. Next we have an open parentheses followed by the word
+**object** and a closed parentheses. The **object** is what the class is
+based on or inheriting from. This is known as the base class or parent
+class. Most classes in Python are based on **object**. Classes have a
+special method called **\_\_init\_\_** (for initialization). This method
+is called whenever you create (or instantiate) an object based on this
+class. The **\_\_init\_\_** method is only called once and is not to be
+called again inside the program. Another term for **\_\_init\_\_** is
+**constructor**, although this term isn't used that much in Python.
+
+You may be wondering why I keep saying **method** instead of
+**function**. A function changes its name to "method" when it is within
+a class. You will also notice that every method has to have at least one
+argument (i.e. self), which is not true with a regular function.
+
+In Python 3, we don't need to explicitly say we're inheriting from
+**object**. Instead, we could have written the above like this:
+
+``` {.sourceCode .python}
+# Python 3.x syntax
+class Vehicle:
+    """docstring"""
+
+    def __init__(self):
+        """Constructor"""
+        pass
+```
+
+You will notice that the only difference is that we no longer need the
+parentheses if we're basing our class on **object**. Let's expand our
+class definition a bit and give it some attributes and methods.
+
+``` {.sourceCode .python}
+class Vehicle(object):
+    """docstring"""
+
+    def __init__(self, color, doors, tires):
+        """Constructor"""
+        self.color = color
+        self.doors = doors
+        self.tires = tires
+
+    def brake(self):
+        """
+        Stop the car
+        """
+        return "Braking"
+
+    def drive(self):
+        """
+        Drive the car
+        """
+        return "I'm driving!"
+```
+
+The code above added three attributes and two methods. The three
+attributes are:
+
+``` {.sourceCode .python}
+self.color = color
+self.doors = doors
+self.tires = tires
+```
+
+Attributes describe the vehicle. So the vehicle has a color, some number
+of doors and some number of tires. It also has two methods. A method
+describes what a class does. So in this case, a vehicle can **brake**
+and **drive**. You may have noticed that all of the methods, including
+the first one have a funny argument called **self**. Let's talk about
+that!
+
+What is self?
+-------------
+
+Python classes need a way to refer to themselves. This isn't some kind
+of narcissistic navel-gazing on the part of the class. Instead, it's a
+way to tell one instance from another. The word **self** is a way to
+describe itself, literally. Let's take a look at an example as I always
+find that helpful when I'm learning something new and strange:
+
+Add the following code to the end of that class you wrote above and save
+it:
+
+``` {.sourceCode .python}
+if __name__ == "__main__":
+    car = Vehicle("blue", 5, 4)
+    print(car.color)
+
+    truck = Vehicle("red", 3, 6)
+    print(truck.color)
+```
+
+The conditional statement above is a common way of telling Python that
+you only want to run the following code if this code is executed as a
+standalone file. If you had imported your module into another script,
+then the code underneath the conditional would not run. Anyway, if you
+run this code, you will create two instances of the Vehicle class: a car
+instance and a truck instance. Each instance will have its own
+attributes and methods. This is why when we print out the color of each
+instance, they are different. The reason is that the class is using that
+**self** argument to tell itself which is which. Let's change the class
+a bit to make the methods more unique:
+
+``` {.sourceCode .python}
+class Vehicle(object):
+    """docstring"""
+
+    def __init__(self, color, doors, tires, vtype):
+        """Constructor"""
+        self.color = color
+        self.doors = doors
+        self.tires = tires
+        self.vtype = vtype
+
+    def brake(self):
+        """
+        Stop the car
+        """
+        return "%s braking" % self.vtype
+
+    def drive(self):
+        """
+        Drive the car
+        """
+        return "I'm driving a %s %s!" % (self.color, self.vtype)
+
+if __name__ == "__main__":
+    car = Vehicle("blue", 5, 4, "car")
+    print(car.brake())
+    print(car.drive())
+
+    truck = Vehicle("red", 3, 6, "truck")
+    print(truck.drive())
+    print(truck.brake())
+```
+
+In this example, we pass in another parameter to tell the class which
+vehicle type we're creating. Then we call each method for each instance.
+If you run this code, you should see the following output:
+
+``` {.sourceCode .python}
+car braking
+I'm driving a blue car!
+I'm driving a red truck!
+truck braking
+```
+
+This demonstrates how the instance keeps track of its "self". You will
+also notice that we are able to get the values of the attributes from
+the **\_\_init\_\_** method into the other methods. The reason is
+because all those attributes are prepended with **self.**. If we hadn't
+done that, the variables would have gone out of scope at the end of the
+**\_\_init\_\_** method.
+
+Subclasses
+----------
+
+The real power of classes becomes apparent when you get into subclasses.
+You may not have realized it, but we've already created a subclass when
+we created a class based on **object**. In other words, we subclassed
+**object**. Now because **object** isn't very interesting, the previous
+examples don't really demonstrate the power of subclassing. So let's
+subclass our Vehicle class and find out how all this works.
+
+``` {.sourceCode .python}
+class Car(Vehicle):
+    """
+    The Car class
+    """
+
+    def brake(self):
+        """
+        Override brake method
+        """
+        return "The car class is breaking slowly!"
+
+if __name__ == "__main__":
+    car = Car("yellow", 2, 4, "car")
+    car.brake()
+    'The car class is breaking slowly!'
+    car.drive()
+    "I'm driving a yellow car!"
+```
+
+For this example, we subclassed our **Vehicle** class. You will notice
+that we didn't include an **\_\_init\_\_** method or a **drive** method.
+The reason is that when you subclass Vehicle, you get all its attributes
+and methods unless you override them. Thus you will notice that we did
+override the **brake** method and made it say something different from
+the default. The other methods we left the same. So when you tell the
+car to drive, it uses the original method and we learn that we're
+driving a yellow car. Wasn't that neat?
+
+Using the default values of the parent class is known as **inheriting**
+or **inheritance**. This is a big topic in Object Oriented Programming
+(OOP). This is also a simple example of **polymorphism**. Polymorphic
+classes typically have the same interfaces (i.e. methods, attributes),
+but they are not aware of each other. In Python land, polymorphism isn't
+very rigid about making sure the interfaces are exactly the same.
+Instead, it follows the concept of **duck typing**. The idea of **duck
+typing** is that if it walks like a duck and talks like a duck, it must
+be a duck. So in Python, as long as the class has method names that are
+the same, it doesn't matter if the implementation of the methods are
+different.
+
+Anyway, you really don't need to know the nitty gritty details of all
+that to use classes in Python. You just need to be aware of the
+terminology so if you want to dig deeper, you will be able to. You can
+find lots of good examples of Python polymorphism that will help you
+figure out if and how you might use that concept in your own
+applications.
+
+Now, when you subclass, you can override as much or as little from the
+parent class as you want. If you completely override it, then you would
+probably be just as well off just creating a new class.
+
+Wrapping Up
+-----------
+
+Classes are a little complicated, but they are very powerful. They allow
+you to use variables across methods which can make code reuse even
+easier. I would recommend taking a look at Python's source for some
+excellent examples of how classes are defined and used.
+
+We are now at the end of Part I. Congratulations for making it this far!
+You now have the tools necessary to build just about anything in Python!
+In Part II, we will spend time learning about using some of the
+wonderful modules that Python includes in its distribution. This will
+help you to better understand the power of Python and familiarize
+yourself with using the Standard Library. Part II will basically be a
+set of tutorials to help you on your way to becoming a great Python
+programmer!

@@ -1,0 +1,434 @@
+Appendix A: Putting It All Together
+===================================
+
+Now that you've finished reading the book, what do you do? Most beginner
+programming books I've read would leave you hanging at this point, but
+not this one. In this chapter, we will take what we've learned and apply
+it to create a real program! First we need some background and a set of
+requirements. In the business world, we might call this a
+**specification**. The more specific the specification is, the more
+likely your code will match the customer's expectations. Unfortunately,
+you will find that in the real world, good specifications are hard to
+come by and you have to spend a lot of time nailing down exactly what
+the customer wants. But I digress. Let's get started on our program!
+
+The Background
+--------------
+
+This book was written using a markup language called
+**RestructuredText**. Each chapter of the book was saved in its own file
+(Ex. chapter1.rst) as I have found that my proofers would rather proof
+individual chapters than get overwhelmed by large chunks of the book.
+Here is a really short example that demonstrates how to create a chapter
+heading:
+
+![image](images/appendix_1.jpg)
+
+You may want to take a look at this [Quick
+Reference](http://docutils.sourceforge.net/docs/user/rst/quickref.html)
+to learn more about RestructuredText.
+
+The Specification
+-----------------
+
+What I need to be able to do is find a way to produce a PDF out of these
+individual chapters, add the customer's name and email address to each
+page and email the PDF to each customer. This was my original idea for
+distributing the book to my Kickstarter backers. Note that Kickstarter
+provides the customer information in a CSV file.
+
+Breaking the Specification Down
+-------------------------------
+
+Most programs that you will write can be broken down into smaller
+programs. In fact, you will want to do this to make your code more
+**modular**. This means that if you break the code down into small
+enough pieces that the pieces can be reused by other programs. We won't
+go that far in this example, but you should have an idea of how to do
+that by the end of this chapter.
+
+Let's break the specification down a bit. Here are the tasks that
+occurred to me:
+
+> -   Write a program to put all the chapters into one book file
+> -   Figure out how to add a footer
+> -   Find some way to turn the book file into a PDF
+> -   Write a program that can email PDFs
+
+Let's start with the first two items since they're related.
+
+Turning Chapters Into a Book
+----------------------------
+
+I went the easy route and just created a Python list of the chapters in
+the order that I wanted them to appear in the book. I could have used
+Python's **glob** module to grab all the files in a folder that had the
+**.rst** extension, but then they might not have been in the right
+order.
+
+Let's take a look at a simple example of what I did:
+
+``` {.sourceCode .python}
+import os
+import subprocess
+
+chapters = ['chapter_1.rst',
+            'chapter_2.rst',
+            'chapter_3.rst']
+
+def read_chapter(chapter):
+    """
+    Reads a chapter and returns the stream
+    """
+    path = os.path.join("data", chapter)
+    try:
+        with open(path) as chp_handler:
+            data = chp_handler.read()
+    except (IOError, OSError):
+        raise Exception("Unable to open chapter: %s" % chapter)
+
+    return data
+
+def make_book(name="Mike", email_address="test@py.com"):
+    """
+    Creates Python 101 book
+    """
+    book_path = "output/python101.rst"
+    pdf_path = "output/python101.pdf"
+    page_break = """
+.. raw:: pdf
+
+    PageBreak
+    """
+    footer = """
+.. footer::
+
+    Copyright |copy| 2014 by Michael Driscoll, all rights reserved.
+
+    Licensed to %s <%s>
+
+.. |copy| unicode:: 0xA9 .. copyright sign
+    """ % (name, email_address)
+    try:
+        with open(book_path, "w") as book:
+            book.write(footer + "\n")
+            for chapter in chapters:
+                data = read_chapter(chapter)
+                book.write(data)
+                book.write("\n")
+                book.write(page_break + "\n")
+    except:
+        print("Error writing book!")
+        raise
+
+    cmd = [r"C:\Python27\Scripts\rst2pdf.exe", 
+           book_path, "-o", pdf_path]
+    subprocess.call(cmd)
+
+if __name__ == "__main__":
+    make_book()
+```
+
+Let's break this down a bit. At the beginning of the script, we import
+two modules: **os** and **subprocess**. Then we create a really simple
+function that will open a chapter file that's located in the **data**
+folder, read the chapter and return the file's contents. The meat of the
+program is in the **make\_book** function. Here we set up the names of
+the RestructuredText file and the PDF. Then we create a **page\_break**
+variable and a **footer** variable. These two variables contain
+RestructuredText that we insert into the document. Right now, the
+program does not insert a customer's name or email, but will just use a
+couple of defaults instead.
+
+Next we open the RestructuredText book document in **write** mode and
+write the footer text to it. Then we loop over the chapters, writing
+them to disk with a page break between each of them. Then at the very
+end of the script, we call a program called **rst2pdf** that will turn
+our new book file into a PDF. At this point, we have about a third of
+the program written. Now we just need to figure out how to read CSV file
+and email the PDF.
+
+Reading the Customer CSV File
+-----------------------------
+
+You may recall that we already covered a module that can help us in this
+quest back in Chapter 13. It's the **csv** module, of course! I won't
+reveal exactly what information Kickstarter has in their files, but we
+can create our own pretend version. Let's say it's something like this:
+
+``` {.sourceCode .python}
+Mike Driscoll,test@py.com
+Andy Hunter,andwa@hunter.org
+Toby Mac,macdaddy@gotee.com
+```
+
+Let's create a quick function that can extract the name and email
+address from this file.
+
+``` {.sourceCode .python}
+import csv
+
+def read_csv(path):
+    """"""
+    try:
+        with open(path) as csv_file:
+            reader = csv.reader(csv_file)
+            for line in reader:
+                name, email = line
+                print(name)
+                print(email)
+    except IOError:
+        print("Error reading file: %s" % path)
+        raise
+
+if __name__ == "__main__":
+    path = "backers.csv"
+    read_csv(path)
+```
+
+All this script does is read the CSV file and print out the name and
+email address. Let's rename the function to **main** and have it call
+our **make\_book** function:
+
+``` {.sourceCode .python}
+def main(path):
+    """"""
+    try:
+        with open(path) as csv_file:
+            reader = csv.reader(csv_file)
+            for line in reader:
+                name, email = line
+                make_book(name, email)
+    except IOError:
+        print("Error reading file: %s" % path)
+        raise
+
+if __name__ == "__main__":
+    main("backers.csv")
+```
+
+This will call the **make\_book** function 3 times, so we will create
+the PDF 3 times and overwrite each time. You can check the file at the
+end of the run to see which name and email address is in the footer.
+This gets us two-thirds of the way there. All that's left is to figure
+out how to send the PDF out in an email. Fortunately, we covered that
+back in Chapter 17 when you learned about the **email** and **smtplib**
+modules!
+
+Emailing the PDF
+----------------
+
+Let's spend a few minutes putting together a simple program that can
+email PDFs. Here's a fairly simple example:
+
+``` {.sourceCode .python}
+import os
+import smtplib
+
+from email import encoders
+from email.mime.text import MIMEText
+from email.mime.base import MIMEBase
+from email.mime.multipart import MIMEMultipart
+from email.utils import formatdate
+
+def send_email(email, pdf):
+    """
+    Send an email out
+    """
+    header0 = 'Content-Disposition'
+    header1 ='attachment; filename="%s"' % os.path.basename(pdf)
+    header = header0, header1 
+
+    host  = "mail.server.com"
+    server = smtplib.SMTP(host)
+    subject = "Test email from Python"
+    to = email
+    from_addr = "test@pylib.com"
+    body_text = "Here is the Alpha copy of Python 101, Part I"
+
+    # create the message
+    msg = MIMEMultipart()
+    msg["From"] = from_addr
+    msg["Subject"] = subject
+    msg["Date"] = formatdate(localtime=True)
+    msg["To"] = email
+
+    msg.attach( MIMEText(body_text) )
+
+    attachment = MIMEBase('application', "octet-stream")
+    try:
+        with open(pdf, "rb") as fh:
+            data = fh.read()
+        attachment.set_payload( data )
+        encoders.encode_base64(attachment)
+        attachment.add_header(*header)
+        msg.attach(attachment)
+    except IOError:
+        msg = "Error opening attachment file %s" % file_to_attach
+        print(msg)
+
+    server.sendmail(from_addr, to, msg.as_string())
+
+if __name__ == "__main__":
+    send_email("mike@example.org", "output/python101.pdf")
+```
+
+This is basically a modified example of the email attachment code from
+earlier in the book. This function is made to accept two arguments: an
+email address and a path to a PDF file. Technically, you could pass it
+any type of file and it would work. You will need to modify the **host**
+variable to point to your own SMTP server. I tested this on my machine
+with the proper host name and it worked great. Now we just need to
+integrate this code into the main code.
+
+Putting it all Together
+-----------------------
+
+Now we get to put all the code together and see it as a whole. Here it
+is:
+
+``` {.sourceCode .python}
+import csv
+import os
+import smtplib
+import subprocess
+
+from email import encoders
+from email.mime.text import MIMEText
+from email.mime.base import MIMEBase
+from email.mime.multipart import MIMEMultipart
+from email.utils import formatdate
+
+chapters = ['chapter_1.rst',
+            'chapter_2.rst',
+            'chapter_3.rst']
+
+def make_book(name="Mike", email_address="test@py.com"):
+    """
+    Creates Python 101 book
+    """
+    book_path = "output/python101.rst"
+    pdf_path = "output/python101.pdf"
+    page_break = """
+.. raw:: pdf
+
+    PageBreak
+    """
+    footer = """
+.. footer::
+
+    Copyright |copy| 2014 by Michael Driscoll, all rights reserved.
+
+    Licensed to %s <%s>
+
+.. |copy| unicode:: 0xA9 .. copyright sign
+    """ % (name, email_address)
+    try:
+        with open(book_path, "w") as book:
+            book.write(footer + "\n")
+            for chapter in chapters:
+                data = read_chapter(chapter)
+                book.write(data)
+                book.write("\n")
+                book.write(page_break + "\n")
+    except:
+        print("Error writing book!")
+        raise
+
+    cmd = [r"C:\Python27\Scripts\rst2pdf.exe", 
+           book_path, "-o", pdf_path]
+    subprocess.call(cmd)
+    return pdf_path
+
+def read_chapter(chapter):
+    """
+    Reads a chapter and returns the stream
+    """
+    path = os.path.join("data", chapter)
+    try:
+        with open(path) as chp_handler:
+            data = chp_handler.read()
+    except (IOError, OSError):
+        raise Exception("Unable to open chapter: %s" % chapter)
+
+    return data
+
+def send_email(email, pdf):
+    """
+    Send an email out
+    """
+    header0 = 'Content-Disposition'
+    header1 ='attachment; filename="%s"' % os.path.basename(pdf)
+    header = header0, header1 
+
+    host  = "mail.server.com"
+    server = smtplib.SMTP(host)
+    subject = "Test email from Python"
+    to = email
+    from_addr = "test@pylib.com"
+    body_text = "Here is the Alpha copy of Python 101, Part I"
+
+    # create the message
+    msg = MIMEMultipart()
+    msg["From"] = from_addr
+    msg["Subject"] = subject
+    msg["Date"] = formatdate(localtime=True)
+    msg["To"] = email
+
+    msg.attach( MIMEText(body_text) )
+
+    attachment = MIMEBase('application', "octet-stream")
+    try:
+        with open(pdf, "rb") as fh:
+            data = fh.read()
+        attachment.set_payload( data )
+        encoders.encode_base64(attachment)
+        attachment.add_header(*header)
+        msg.attach(attachment)
+    except IOError:
+        msg = "Error opening attachment file %s" % file_to_attach
+        print(msg)
+
+    server.sendmail(from_addr, to, msg.as_string())
+
+def main(path):
+    """"""
+    try:
+        with open(path) as csv_file:
+            reader = csv.reader(csv_file)
+            for line in reader:
+                name, email = line
+                pdf = make_book(name, email)
+                send_email(email, pdf)
+    except IOError:
+        print("Error reading file: %s" % path)
+        raise
+
+if __name__ == "__main__":
+    main("backers.csv")
+```
+
+Let's go over the minor changes. First off, we had to change the
+**make\_book** function so that it returned the PDF path. Then we
+changed the **main** function so that it took that path and passed it to
+the **send\_email** function along with the email address. Two changes
+and we're done!
+
+Wrapping Up
+-----------
+
+Now you have the knowledge to take apart a new program and turn it into
+a set of smaller tasks. Then you can join the smaller programs into one
+large program. There are lots of different ways we could have done this.
+For example, we could have left each piece in its own file or module.
+Then we could import each piece into a different script and run them
+that way. That would be a good exercise for to try on your own.
+
+When I did this, I ran into issues with my email host. Most email hosts
+will not let you send out lots of emails per hour or even make many
+connections at once. You can find a few services on the internet that
+you can use instead of your own internet provider that may work better
+for you.
+
+I hope you found this chapter helpful in your own endeavours. Thanks for
+reading!

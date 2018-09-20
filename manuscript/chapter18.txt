@@ -1,0 +1,196 @@
+# Chapter 18 - The sqlite Module
+
+**SQLite** is a self-contained, server-less, config-free transactional
+SQL database engine. Python gained the **sqlite3** module all the way
+back in version 2.5 which means that you can create SQLite database with
+any current Python without downloading any additional dependencies.
+Mozilla uses SQLite databases for its popular Firefox browser to store
+bookmarks and other various pieces of information. In this chapter you
+will learn the following:
+
+> -   How to create a SQLite database
+> -   How to insert data into a table
+> -   How to edit the data
+> -   How to delete the data
+> -   Basic SQL queries
+
+In other words, rather than covering bits and pieces of the **sqlite3**
+module, we'll go through how to actually use it.
+
+If you want to inspect your database visually, you can use the SQLite
+Manager plugin for Firefox (just Google for it) or if you like the
+command line, you can use SQLite's command line shell.
+
+How to Create a Database and INSERT Some Data
+---------------------------------------------
+
+Creating a database in SQLite is really easy, but the process requires
+that you know a little SQL to do it. Here's some code that will create a
+database to hold music albums:
+
+``` {.sourceCode .python}
+import sqlite3
+
+conn = sqlite3.connect("mydatabase.db") # or use :memory: to put it in RAM
+
+cursor = conn.cursor()
+
+# create a table
+cursor.execute("""CREATE TABLE albums
+                  (title text, artist text, release_date text, 
+                   publisher text, media_type text) 
+               """)
+```
+
+First we have to import the **sqlite3** module and create a connection
+to the database. You can pass it a file path, file name or just use use
+the special string ":memory:" to create the database in memory. In our
+case, we created it on disk in a file called **mydatabase.db**. Next we
+create a cursor object, which allows you to interact with the database
+and add records, among other things. Here we use SQL syntax to create a
+table named **albums** with 5 text fields: title, artist, release\_date,
+publisher and media\_type. SQLite only supports five **data types**:
+null, integer, real, text and blob. Let's build on this code and insert
+some data into our new table!
+
+**Note: If you run the CREATE TABLE command and the database already
+exists, you will receive an error message.**
+
+``` {.sourceCode .python}
+# insert some data
+cursor.execute("""INSERT INTO albums 
+                  VALUES ('Glow', 'Andy Hunter', '7/24/2012', 
+                          'Xplore Records', 'MP3')"""
+               )
+
+# save data to database
+conn.commit()
+
+# insert multiple records using the more secure "?" method
+albums = [('Exodus', 'Andy Hunter', '7/9/2002', 'Sparrow Records', 'CD'),
+          ('Until We Have Faces', 'Red', '2/1/2011', 'Essential Records', 'CD'),
+          ('The End is Where We Begin', 'Thousand Foot Krutch', '4/17/2012', 'TFKmusic', 'CD'),
+          ('The Good Life', 'Trip Lee', '4/10/2012', 'Reach Records', 'CD')]
+cursor.executemany("INSERT INTO albums VALUES (?,?,?,?,?)", albums)
+conn.commit()
+```
+
+Here we use the INSERT INTO SQL command to insert a record into our
+database. Note that each item had to have single quotes around it. This
+can get complicated when you need to insert strings that include single
+quotes in them. Anyway, to save the record to the database, we have to
+**commit** it. The next piece of code shows how to add multiple records
+at once by using the cursor's **executemany** method. Note that we're
+using question marks (?) instead of string substitution (%s) to insert
+the values. Using string substitution is NOT safe and should not be used
+as it can allow SQL injection attacks to occur. The question mark method
+is much better and using SQLAlchemy is even better because it does all
+the escaping for you so you won't have to mess with the annoyances of
+converting embedded single quotes into something that SQLite will
+accept.
+
+Updating and Deleting Records
+-----------------------------
+
+Being able to update your database records is key to keeping your data
+accurate. If you can't update, then your data will become out of date
+and pretty useless very quickly. Sometimes you will need to delete rows
+from your data too. We'll be covering both of those topics in this
+section. First, let's do an update!
+
+``` {.sourceCode .python}
+import sqlite3
+
+conn = sqlite3.connect("mydatabase.db")
+cursor = conn.cursor()
+
+sql = """
+UPDATE albums 
+SET artist = 'John Doe' 
+WHERE artist = 'Andy Hunter'
+"""
+cursor.execute(sql)
+conn.commit()
+```
+
+Here we use SQL's **UPDATE** command to update out albums table. You can
+use **SET** to change a field, so in this case we change the artist
+field to be *John Doe* in any record **WHERE** the artist field is set
+to *Andy Hunter*. Wasn't that easy? Note that if you don't commit the
+changes, then your changes won't be written out to the database. The
+**DELETE** command is almost as easy. Let's check that out!
+
+``` {.sourceCode .python}
+import sqlite3
+
+conn = sqlite3.connect("mydatabase.db")
+cursor = conn.cursor()
+
+sql = """
+DELETE FROM albums
+WHERE artist = 'John Doe'
+"""
+cursor.execute(sql)
+conn.commit()
+```
+
+Deleting is even easier than updating. The SQL is only 2 lines! In this
+case, all we had to do was tell SQLite which table to delete from
+(albums) and which records to delete using the WHERE clause. Thus it
+looked for any records that had "John Doe" in its artist field and
+deleted it.
+
+Basic SQLite Queries
+--------------------
+
+Queries in SQLite are pretty much the same as what you'd use for other
+databases, such as MySQL or Postgres. You just use normal SQL syntax to
+run the queries and then have the cursor object execute the SQL. Here
+are a few examples:
+
+``` {.sourceCode .python}
+import sqlite3
+
+conn = sqlite3.connect("mydatabase.db")
+#conn.row_factory = sqlite3.Row
+cursor = conn.cursor()
+
+sql = "SELECT * FROM albums WHERE artist=?"
+cursor.execute(sql, [("Red")])
+print(cursor.fetchall())  # or use fetchone()
+
+print("\nHere's a listing of all the records in the table:\n")
+for row in cursor.execute("SELECT rowid, * FROM albums ORDER BY artist"):
+    print(row)
+
+print("\nResults from a LIKE query:\n")
+sql = """
+SELECT * FROM albums 
+WHERE title LIKE 'The%'"""
+cursor.execute(sql)
+print(cursor.fetchall())
+```
+
+The first query we execute is a **SELECT \*** which means that we want
+to select all the records that match the artist name we pass in, which
+in this case is "Red". Next we execute the SQL and use **fetchall()** to
+return all the results. You can also use **fetchone()** to grab the
+first result. You'll also notice that there's a commented out section
+related to a mysterious **row\_factory**. If you un-comment that line,
+the results will be returned as Row objects that are kind of like Python
+dictionaries and give you access to the row's fields just like a
+dictionary. However, you cannot do item assignment with a Row object.
+
+The second query is much like the first, but it returns every record in
+the database and orders the results by the artist name in ascending
+order. This also demonstrates how we can loop over the results. The last
+query shows how to use SQL's LIKE command to search for partial phrases.
+In this case, we do a search of the entire table for titles that start
+with "The". The percent sign (%) is a wildcard operator.
+
+Wrapping Up
+-----------
+
+Now you know how to use Python to create a SQLite database. You can also
+create, update and delete records as well as run queries against your
+database.

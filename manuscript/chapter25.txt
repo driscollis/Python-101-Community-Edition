@@ -1,0 +1,477 @@
+# Chapter 25 - Decorators
+
+Python decorators are really cool, but they can be a little hard to
+understand at first. A decorator in Python is a function that accepts
+another function as an argument. The decorator will usually modify or
+enhance the function it accepted and return the modified function. This
+means that when you call a decorated function, you will get a function
+that may be a little different that may have additional features
+compared with the base definition. But let's back up a bit. We should
+probably review the basic building block of a decorator, namely, the
+function.
+
+A Simple Function
+-----------------
+
+A function is a block of code that begins with the Python keyword
+**def** followed by the actual name of the function. A function can
+accept zero or more arguments, keyword arguments or a mixture of the
+two. A function always returns something. If you do not specify what a
+function should return, it will return **None**. Here is a very simple
+function that just returns a string:
+
+``` {.sourceCode .python}
+def a_function():
+    """A pretty useless function"""
+    return "1+1"
+
+if __name__ == "__main__":
+    value = a_function()
+    print(value)
+```
+
+All we do in the code above is call the function and print the return
+value. Let's create another function:
+
+``` {.sourceCode .python}
+def another_function(func):
+    """
+    A function that accepts another function
+    """
+    def other_func():
+        val = "The result of %s is %s" % (func(),
+                                          eval(func())
+                                          )
+        return val
+    return other_func
+```
+
+This function accepts one argument and that argument has to be a
+function or callable. In fact, it really should only be called using the
+previously defined function. You will note that this function has a
+nested function inside of it that we are calling **other\_func**. It
+will take the result of the function passed to it, evaluate it and
+create a string that tells us about what it did, which it then returns.
+Let's look at the full version of the code:
+
+``` {.sourceCode .python}
+def another_function(func):
+    """
+    A function that accepts another function
+    """
+
+    def other_func():
+        val = "The result of %s is %s" % (func(),
+                                          eval(func())
+                                          )
+        return val
+    return other_func
+
+def a_function():
+    """A pretty useless function"""
+    return "1+1"
+
+if __name__ == "__main__":
+    value = a_function()
+    print(value)
+    decorator = another_function(a_function)
+    print(decorator())
+```
+
+This is how a decorator works. We create one function and then pass it
+into a second function. The second function is the **decorator**
+function. The decorator will modify or enhance the function that was
+passed to it and return the modification. If you run this code, you
+should see the following as output to stdout:
+
+``` {.sourceCode .python}
+1+1
+The result of 1+1 is 2
+```
+
+Let's change the code slightly to turn **another\_function** into a
+decorator:
+
+``` {.sourceCode .python}
+def another_function(func):
+    """
+    A function that accepts another function
+    """
+
+    def other_func():
+        val = "The result of %s is %s" % (func(),
+                                          eval(func())
+                                          )
+        return val
+    return other_func
+
+@another_function
+def a_function():
+    """A pretty useless function"""
+    return "1+1"
+
+if __name__ == "__main__":
+    value = a_function()
+    print(value)
+```
+
+You will note that in Python, a decorator starts with the <**@*>\*
+symbol followed by the name of the function that we will be using to
+"decorate" our regular with. To apply the decorator, you just put it on
+the line before the function definition. Now when we call
+**a\_function**, it will get decorated and we'll get the following
+result:
+
+``` {.sourceCode .python}
+The result of 1+1 is 2
+```
+
+Let's create a decorator that actually does something useful.
+
+Creating a Logging Decorator
+----------------------------
+
+Sometimes you will want to create a log of what a function is doing.
+Most of the time, you will probably be doing your logging within the
+function itself. Occasionally you might want to do it at the function
+level to get an idea of the flow of the program or perhaps to fulfill
+some business rules, like auditing. Here's a little decorator that we
+can use to record any function's name and what it returns:
+
+``` {.sourceCode .python}
+import logging
+
+def log(func):
+    """
+    Log what function is called
+    """
+    def wrap_log(*args, **kwargs):
+        name = func.__name__
+        logger = logging.getLogger(name)
+        logger.setLevel(logging.INFO)
+
+        # add file handler
+        fh = logging.FileHandler("%s.log" % name)
+        fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        formatter = logging.Formatter(fmt)
+        fh.setFormatter(formatter)
+        logger.addHandler(fh)
+
+        logger.info("Running function: %s" % name)
+        result = func(*args, **kwargs)
+        logger.info("Result: %s" % result)
+        return func
+    return wrap_log
+
+@log
+def double_function(a):
+    """
+    Double the input parameter
+    """
+    return a*2
+
+if __name__ == "__main__":
+    value = double_function(2)
+```
+
+This little script has a **log** function that accepts a function as its
+sole argument. It will create a logger object and a log file name based
+on the name of the function. Then the log function will log what
+function was called and what the function returned, if anything.
+
+Built-in Decorators
+-------------------
+
+Python comes with several built-in decorators. The big three are:
+
+> -   @classmethod
+> -   @staticmethod
+> -   @property
+
+There are also decorators in various parts of Python's standard library.
+One example would be **functools.wraps**. We will be limiting our scope
+to the three above though.
+
+@classmethod and @staticmethod
+------------------------------
+
+I have never actually used these myself, so I did a fair bit of
+research. The <**@classmethod*>\* decorator can be called with with an
+instance of a class or directly by the class itself as its first
+argument. According to the Python documentation: *It can be called
+either on the class (such as C.f()) or on an instance (such as C().f()).
+The instance is ignored except for its class. If a class method is
+called for a derived class, the derived class object is passed as the
+implied first argument*. The primary use case of a @classmethod
+decorator that I have found in my research is as an alternate
+constructor or helper method for initialization.
+
+The <**@staticmethod*>\* decorator is just a function inside of a class.
+You can call it both with and without instantiating the class. A typical
+use case is when you have a function where you believe it has a
+connection with a class. It's a stylistic choice for the most part.
+
+It might help to see a code example of how these two decorators work:
+
+``` {.sourceCode .python}
+class DecoratorTest(object):
+    """
+    Test regular method vs @classmethod vs @staticmethod
+    """
+
+    def __init__(self):
+        """Constructor"""
+        pass
+
+    def doubler(self, x):
+        """"""
+        print("running doubler")
+        return x*2
+
+    @classmethod
+    def class_tripler(klass, x):
+        """"""
+        print("running tripler: %s" % klass)
+        return x*3
+
+    @staticmethod
+    def static_quad(x):
+        """"""
+        print("running quad")
+        return x*4
+
+if __name__ == "__main__":
+    decor = DecoratorTest()
+    print(decor.doubler(5))
+    print(decor.class_tripler(3))
+    print(DecoratorTest.class_tripler(3))
+    print(DecoratorTest.static_quad(2))
+    print(decor.static_quad(3))
+
+    print(decor.doubler)
+    print(decor.class_tripler)
+    print(decor.static_quad)
+```
+
+This example demonstrates that you can call a regular method and both
+decorated methods in the same way. You will notice that you can call
+both the @classmethod and the @staticmethod decorated functions directly
+from the class or from an instance of the class. If you try to call a
+regular function with the class (i.e. DecoratorTest.doubler(2)) you will
+receive a **TypeError**. You will also note that the last print
+statement shows that decor.static\_quad returns a regular function
+instead of a bound method.
+
+Python Properties
+-----------------
+
+Python has a neat little concept called a property that can do several
+useful things. We will be looking into how to do the following:
+
+> -   Convert class methods into read-only attributes
+> -   Reimplement setters and getters into an attribute
+
+One of the simplest ways to use a property is to use it as a decorator
+of a method. This allows you to turn a class method into a class
+attribute. I find this useful when I need to do some kind of combination
+of values. Others have found it useful for writing conversion methods
+that they want to have access to as methods. Let's take a look at a
+simple example:
+
+``` {.sourceCode .python}
+class Person(object):
+    """"""
+
+    def __init__(self, first_name, last_name):
+        """Constructor"""
+        self.first_name = first_name
+        self.last_name = last_name
+
+    @property
+    def full_name(self):
+        """
+        Return the full name
+        """
+        return "%s %s" % (self.first_name, self.last_name)
+```
+
+In the code above, we create two class attributes or properties:
+**self.first\_name** and **self.last\_name**. Next we create a
+**full\_name** method that has a <**@property*>\* decorator attached to
+it. This allows us to do the following in an interpreter session:
+
+``` {.sourceCode .python}
+>>> person = Person("Mike", "Driscoll")
+>>> person.full_name
+'Mike Driscoll'
+>>> person.first_name
+'Mike'
+>>> person.full_name = "Jackalope"
+Traceback (most recent call last):
+  File "<string>", line 1, in <fragment>
+AttributeError: can't set attribute
+```
+
+As you can see, because we turned the method into a property, we can
+access it using normal dot notation. However, if we try to set the
+property to something different, we will cause an **AttributeError** to
+be raised. The only way to change the **full\_name** property is to do
+so indirectly:
+
+``` {.sourceCode .python}
+>>> person.first_name = "Dan"
+>>> person.full_name
+'Dan Driscoll'
+```
+
+This is kind of limiting, so let's look at another example where we can
+make a property that does allow us to set it.
+
+Replacing Setters and Getters with a Python property
+----------------------------------------------------
+
+Let's pretend that we have some legacy code that someone wrote who
+didn't understand Python very well. If you're like me, you've already
+seen this kind of code before:
+
+``` {.sourceCode .python}
+from decimal import Decimal
+
+class Fees(object):
+    """"""
+
+    def __init__(self):
+        """Constructor"""
+        self._fee = None
+
+    def get_fee(self):
+        """
+        Return the current fee
+        """
+        return self._fee
+
+    def set_fee(self, value):
+        """
+        Set the fee
+        """
+        if isinstance(value, str):
+            self._fee = Decimal(value)
+        elif isinstance(value, Decimal):
+            self._fee = value
+```
+
+To use this class, we have to use the setters and getters that are
+defined:
+
+``` {.sourceCode .python}
+>>> f = Fees()
+>>> f.set_fee("1")
+>>> f.get_fee()
+Decimal('1')
+```
+
+If you want to add the normal dot notation access of attributes to this
+code without breaking all the applications that depend on this piece of
+code, you can change it very simply by adding a property:
+
+``` {.sourceCode .python}
+from decimal import Decimal
+
+class Fees(object):
+    """"""
+
+    def __init__(self):
+        """Constructor"""
+        self._fee = None
+
+    def get_fee(self):
+        """
+        Return the current fee
+        """
+        return self._fee
+
+    def set_fee(self, value):
+        """
+        Set the fee
+        """
+        if isinstance(value, str):
+            self._fee = Decimal(value)
+        elif isinstance(value, Decimal):
+            self._fee = value
+
+    fee = property(get_fee, set_fee)
+```
+
+We added one line to the end of this code. Now we can do stuff like
+this:
+
+``` {.sourceCode .python}
+>>> f = Fees()
+>>> f.set_fee("1")
+>>> f.fee
+Decimal('1')
+>>> f.fee = "2"
+>>> f.get_fee()
+Decimal('2')
+```
+
+As you can see, when we use **property** in this manner, it allows the
+fee property to set and get the value itself without breaking the legacy
+code. Let's rewrite this code using the property decorator and see if we
+can get it to allow setting.
+
+``` {.sourceCode .python}
+from decimal import Decimal
+
+class Fees(object):
+    """"""
+
+    def __init__(self):
+        """Constructor"""
+        self._fee = None
+
+    @property
+    def fee(self):
+        """
+        The fee property - the getter
+        """
+        return self._fee
+
+    @fee.setter
+    def fee(self, value):
+        """
+        The setter of the fee property
+        """
+        if isinstance(value, str):
+            self._fee = Decimal(value)
+        elif isinstance(value, Decimal):
+            self._fee = value
+
+if __name__ == "__main__":
+    f = Fees()
+```
+
+The code above demonstrates how to create a "setter" for the **fee**
+property. You can do this by decorating a second method that is also
+called **fee** with a decorator called <**@fee.setter**>. The setter is
+invoked when you do something like this:
+
+``` {.sourceCode .python}
+>>> f = Fees()
+>>> f.fee = "1"
+```
+
+If you look at the signature for **property**, it has fget, fset, fdel
+and doc as "arguments". You can create another decorated method using
+the same name to correspond to a delete function using
+<**@fee.deleter*>\* if you want to catch the **del** command against the
+attribute.
+
+Wrapping Up
+-----------
+
+At this point you should know how to create your own decorators and how
+to use a few of Python's built-in decorators. We looked at @classmethod,
+@property and @staticmethod. I would be curious to know how my readers
+use the built-in decorators and how they use their own custom
+decorators.

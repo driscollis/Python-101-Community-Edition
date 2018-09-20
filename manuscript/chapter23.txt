@@ -1,0 +1,513 @@
+# Chapter 23 - The xml module
+
+Python has built-in XML parsing capabilities that you can access via its
+**xml** module. In this article, we will be focusing on two of the xml
+module's sub-modules:
+
+> -   minidom
+> -   ElementTree
+
+We'll start with minidom simply because this used to be the de-facto
+method of XML parsing. Then we will look at how to use ElementTree
+instead.
+
+Working with minidom
+--------------------
+
+To start out, well need some actual XML to parse. Take a look at the
+following short example of XML:
+
+``` {.sourceCode .xml}
+<?xml version="1.0" ?>
+<zAppointments reminder="15">
+    <appointment>
+        <begin>1181251680</begin>        
+        <uid>040000008200E000</uid>
+        <alarmTime>1181572063</alarmTime>
+        <state></state>
+        <location></location>
+        <duration>1800</duration>
+        <subject>Bring pizza home</subject>
+    </appointment>
+</zAppointments>
+```
+
+This is fairly typical XML and actually pretty intuitive to read. There
+is some really nasty XML out in the wild that you may have to work with.
+Anyway, save the XML code above with the following name: *appt.xml*
+
+Let's spend some time getting acquainted with how to parse this file
+using Python's **minidom** module. This is a fairly long piece of code,
+so prepare yourself.
+
+``` {.sourceCode .python}
+import xml.dom.minidom
+import urllib.request
+
+class ApptParser(object):
+
+    def __init__(self, url, flag='url'):
+        self.list = []
+        self.appt_list = []        
+        self.flag = flag
+        self.rem_value = 0
+        xml = self.getXml(url)             
+        self.handleXml(xml)
+
+    def getXml(self, url):
+        try:
+            print(url)
+            f = urllib.request.urlopen(url)
+        except:
+            f = url
+
+        doc = xml.dom.minidom.parse(f)
+        node = doc.documentElement        
+        if node.nodeType == xml.dom.Node.ELEMENT_NODE:
+            print('Element name: %s' % node.nodeName)
+            for (name, value) in node.attributes.items():
+                print('    Attr -- Name: %s  Value: %s' % (name, value))
+
+        return node
+
+    def handleXml(self, xml):
+        rem = xml.getElementsByTagName('zAppointments')        
+        appointments = xml.getElementsByTagName("appointment")
+        self.handleAppts(appointments)
+
+    def getElement(self, element):
+        return self.getText(element.childNodes)
+
+    def handleAppts(self, appts):
+        for appt in appts:
+            self.handleAppt(appt)
+            self.list = []
+
+    def handleAppt(self, appt):
+        begin     = self.getElement(appt.getElementsByTagName("begin")[0])
+        duration  = self.getElement(appt.getElementsByTagName("duration")[0])
+        subject   = self.getElement(appt.getElementsByTagName("subject")[0])
+        location  = self.getElement(appt.getElementsByTagName("location")[0])
+        uid       = self.getElement(appt.getElementsByTagName("uid")[0])
+
+        self.list.append(begin)
+        self.list.append(duration)
+        self.list.append(subject)
+        self.list.append(location)
+        self.list.append(uid)
+        if self.flag == 'file':
+
+            try:
+                state     = self.getElement(appt.getElementsByTagName("state")[0])
+                self.list.append(state)
+                alarm     = self.getElement(appt.getElementsByTagName("alarmTime")[0])
+                self.list.append(alarm)
+            except Exception as e:
+                print(e)
+
+        self.appt_list.append(self.list)        
+
+    def getText(self, nodelist):
+        rc = ""
+        for node in nodelist:
+            if node.nodeType == node.TEXT_NODE:
+                rc = rc + node.data
+        return rc
+
+if __name__ == "__main__":
+    appt = ApptParser("appt.xml")
+    print(appt.appt_list)   
+```
+
+This code is loosely based on an example from the Python documentation
+and I have to admit that I think my mutation of it is a bit ugly. Let's
+break this code down a bit. The url parameter you see in the
+**ApptParser** class can be either a url or a file. In the **getXml**
+method, we use an exception handler to try and open the url. If it
+happens to raise an error, than we assume that the url is actually a
+file path. Next we use minidom's **parse** method to parse the XML. Then
+we pull out a node from the XML. We'll ignore the conditional as it
+isn't important to this discussion. Finally, we return the **node**
+object.
+
+Technically, the node is XML and we pass it on to the **handleXml**
+method. To grab all the appointment instances in the XML, we do this:
+
+``` {.sourceCode .python}
+xml.getElementsByTagName("appointment"). 
+```
+
+Then we pass that information to the **handleAppts** method. That's a
+lot of passing information around. It might be a good idea to refactor
+this code a bit to make it so that instead of passing information
+around, it just set class variables and then called the next method
+without any arguments. I'll leave this as an exercise for the reader.
+Anyway, all the **handleAppts** method does is loop over each
+appointment and call the **handleAppt** method to pull some additional
+information out of it, add the data to a list and add that list to
+another list. The idea was to end up with a list of lists that held all
+the pertinent data regarding my appointments.
+
+You will notice that the handleAppt method calls the **getElement**
+method which calls the **getText** method. Technically, you could skip
+the call to getElement and just call getText directly. On the other
+hand, you may need to add some additional processing to getElement to
+convert the text to some other type before returning it back. For
+example, you may want to convert numbers to integers, floats or
+decimal.Decimal objects.
+
+Let's try one more example with minidom before we move on. We will use
+an XML example from Microsoft's MSDN website:
+[<http://msdn.microsoft.com/en-us/library/ms762271%28VS.85%29.aspx>](http://msdn.microsoft.com/en-us/library/ms762271%28VS.85%29.aspx).
+Save the following XML as *example.xml*
+
+``` {.sourceCode .xml}
+<?xml version="1.0"?>
+<catalog>
+   <book id="bk101">
+      <author>Gambardella, Matthew</author>
+      <title>XML Developer's Guide</title>
+      <genre>Computer</genre>
+      <price>44.95</price>
+      <publish_date>2000-10-01</publish_date>
+      <description>An in-depth look at creating applications 
+      with XML.</description>
+   </book>
+   <book id="bk102">
+      <author>Ralls, Kim</author>
+      <title>Midnight Rain</title>
+      <genre>Fantasy</genre>
+      <price>5.95</price>
+      <publish_date>2000-12-16</publish_date>
+      <description>A former architect battles corporate zombies, 
+      an evil sorceress, and her own childhood to become queen 
+      of the world.</description>
+   </book>
+   <book id="bk103">
+      <author>Corets, Eva</author>
+      <title>Maeve Ascendant</title>
+      <genre>Fantasy</genre>
+      <price>5.95</price>
+      <publish_date>2000-11-17</publish_date>
+      <description>After the collapse of a nanotechnology 
+      society in England, the young survivors lay the 
+      foundation for a new society.</description>
+   </book>
+</catalog>
+```
+
+For this example, we'll just parse the XML, extract the book titles and
+print them to stdout. Here's the code:
+
+``` {.sourceCode .python}
+import xml.dom.minidom as minidom
+
+def getTitles(xml):
+    """
+    Print out all titles found in xml
+    """
+    doc = minidom.parse(xml)
+    node = doc.documentElement
+    books = doc.getElementsByTagName("book")
+
+    titles = []
+    for book in books:
+        titleObj = book.getElementsByTagName("title")[0]
+        titles.append(titleObj)
+
+    for title in titles:
+        nodes = title.childNodes
+        for node in nodes:
+            if node.nodeType == node.TEXT_NODE:
+                print(node.data)
+
+if __name__ == "__main__":
+    document = 'example.xml'
+    getTitles(document)
+```
+
+This code is just one short function that accepts one argument, the XML
+file. We import the minidom module and give it the same name to make it
+easier to reference. Then we parse the XML. The first two lines in the
+function are pretty much the same as the previous example. We use the
+**getElementsByTagName** method to grab the parts of the XML that we
+want, then iterate over the result and extract the book titles from
+them. This actually extracts title objects, so we need to iterate over
+that as well and pull out the plain text, which is why we use a nested
+**for** loop.
+
+Now let's spend a little time trying out a different sub-module of the
+xml module named **ElementTree**.
+
+Parsing with ElementTree
+------------------------
+
+In this section, you will learn how to create an XML file, edit XML and
+parse the XML with ElementTree. For comparison's sake, we'll use the
+same XML we used in the previous section to illustrate the differences
+between using minidom and ElementTree. Here is the original XML again:
+
+``` {.sourceCode .xml}
+<?xml version="1.0" ?>
+<zAppointments reminder="15">
+    <appointment>
+        <begin>1181251680</begin>        
+        <uid>040000008200E000</uid>
+        <alarmTime>1181572063</alarmTime>
+        <state></state>
+        <location></location>
+        <duration>1800</duration>
+        <subject>Bring pizza home</subject>
+    </appointment>
+</zAppointments>
+```
+
+Let's begin by learning how to create this piece of XML programmatically
+using Python!
+
+How to Create XML with ElementTree
+----------------------------------
+
+Creating XML with ElementTree is very simple. In this section, we will
+attempt to create the XML above with Python. Here's the code:
+
+``` {.sourceCode .python}
+import xml.etree.ElementTree as xml
+
+def createXML(filename):
+    """
+    Create an example XML file
+    """
+    root = xml.Element("zAppointments")
+    appt = xml.Element("appointment")
+    root.append(appt)
+
+    # add appointment children
+    begin = xml.SubElement(appt, "begin")
+    begin.text = "1181251680"
+
+    uid = xml.SubElement(appt, "uid")
+    uid.text = "040000008200E000"
+
+    alarmTime = xml.SubElement(appt, "alarmTime")
+    alarmTime.text = "1181572063"
+
+    state = xml.SubElement(appt, "state")
+
+    location = xml.SubElement(appt, "location")
+
+    duration = xml.SubElement(appt, "duration")
+    duration.text = "1800"
+
+    subject = xml.SubElement(appt, "subject")
+
+    tree = xml.ElementTree(root)
+    with open(filename, "w") as fh:
+        tree.write(fh)
+
+if __name__ == "__main__":
+    createXML("appt.xml")
+```
+
+If you run this code, you should get something like the following
+(probably all on one line):
+
+``` {.sourceCode .xml}
+<zAppointments>
+    <appointment>
+        <begin>1181251680</begin>
+        <uid>040000008200E000</uid>
+        <alarmTime>1181572063</alarmTime>
+        <state />
+        <location />
+        <duration>1800</duration>
+        <subject />
+    </appointment>
+</zAppointments>
+```
+
+This is pretty close to the original and is certainly valid XML. While
+it's not quite the same, it's close enough. Let's take a moment to
+review the code and make sure we understand it. First we create the root
+element by using ElementTree's Element function. Then we create an
+appointment element and append it to the root. Next we create
+SubElements by passing the appointment Element object (appt) to
+SubElement along with a name, like "begin". Then for each SubElement, we
+set its text property to give it a value. At the end of the script, we
+create an ElementTree and use it to write the XML out to a file.
+
+Now we're ready to learn how to edit the file!
+
+How to Edit XML with ElementTree
+--------------------------------
+
+Editing XML with ElementTree is also easy. To make things a little more
+interesting though, we'll add another appointment block to the XML:
+
+``` {.sourceCode .xml}
+<?xml version="1.0" ?>
+<zAppointments reminder="15">
+    <appointment>
+        <begin>1181251680</begin>        
+        <uid>040000008200E000</uid>
+        <alarmTime>1181572063</alarmTime>
+        <state></state>
+        <location></location>
+        <duration>1800</duration>
+        <subject>Bring pizza home</subject>
+    </appointment>
+        <appointment>
+        <begin>1181253977</begin>        
+        <uid>sdlkjlkadhdakhdfd</uid>
+        <alarmTime>1181588888</alarmTime>
+        <state>TX</state>
+        <location>Dallas</location>
+        <duration>1800</duration>
+        <subject>Bring pizza home</subject>
+    </appointment>
+</zAppointments>
+```
+
+Now let's write some code to change each of the begin tag's values from
+seconds since the epoch to something a little more readable. We'll use
+Python's **time** module to facilitate this:
+
+``` {.sourceCode .python}
+import time
+import xml.etree.cElementTree as ET
+
+def editXML(filename):
+    """
+    Edit an example XML file
+    """
+    tree = ET.ElementTree(file=filename)
+    root = tree.getroot()
+
+    for begin_time in root.iter("begin"):
+        begin_time.text = time.ctime(int(begin_time.text))
+
+    tree = ET.ElementTree(root)
+    with open("updated.xml", "w") as f:
+        tree.write(f)
+
+if __name__ == "__main__":
+    editXML("original_appt.xml")
+```
+
+Here we create an ElementTree object (tree) and we extract the **root**
+from it. Then we use ElementTree's **iter()** method to find all the
+tags that are labeled "begin". Note that the iter() method was added in
+Python 2.7. In our for loop, we set each item's text property to a more
+human readable time format via **time.ctime()**. You'll note that we had
+to convert the string to an integer when passing it to ctime. The output
+should look something like the following:
+
+``` {.sourceCode .xml}
+<zAppointments reminder="15">
+    <appointment>
+        <begin>Thu Jun 07 16:28:00 2007</begin>        
+        <uid>040000008200E000</uid>
+        <alarmTime>1181572063</alarmTime>
+        <state />
+        <location />
+        <duration>1800</duration>
+        <subject>Bring pizza home</subject>
+    </appointment>
+    <appointment>
+        <begin>Thu Jun 07 17:06:17 2007</begin>        
+        <uid>sdlkjlkadhdakhdfd</uid>
+        <alarmTime>1181588888</alarmTime>
+        <state>TX</state>
+        <location>Dallas</location>
+        <duration>1800</duration>
+        <subject>Bring pizza home</subject>
+    </appointment>
+</zAppointments>
+```
+
+You can also use ElementTree's **find()** or **findall()** methods to
+search for specific tags in your XML. The find() method will just find
+the first instance whereas the findall() will find all the tags with the
+specified label. These are helpful for editing purposes or for parsing,
+which is our next topic!
+
+How to Parse XML with ElementTree
+---------------------------------
+
+Now we get to learn how to do some basic parsing with ElementTree. First
+we'll read through the code and then we'll go through bit by bit so we
+can understand it. Note that this code is based around the original
+example, but it should work on the second one as well.
+
+``` {.sourceCode .python}
+import xml.etree.cElementTree as ET
+
+def parseXML(xml_file):
+    """
+    Parse XML with ElementTree
+    """
+    tree = ET.ElementTree(file=xml_file)
+    print(tree.getroot())
+    root = tree.getroot()
+    print("tag=%s, attrib=%s" % (root.tag, root.attrib))
+
+    for child in root:
+        print(child.tag, child.attrib)
+        if child.tag == "appointment":
+            for step_child in child:
+                print(step_child.tag)
+
+    # iterate over the entire tree
+    print("-" * 40)
+    print("Iterating using a tree iterator")
+    print("-" * 40)
+    iter_ = tree.getiterator()
+    for elem in iter_:
+        print(elem.tag)
+
+    # get the information via the children!
+    print("-" * 40)
+    print("Iterating using getchildren()")
+    print("-" * 40)
+    appointments = root.getchildren()
+    for appointment in appointments:
+        appt_children = appointment.getchildren()
+        for appt_child in appt_children:
+            print("%s=%s" % (appt_child.tag, appt_child.text))
+
+if __name__ == "__main__":
+    parseXML("appt.xml")
+```
+
+You may have already noticed this, but in this example and the last one,
+we've been importing cElementTree instead of the normal ElementTree. The
+main difference between the two is that cElementTree is C-based instead
+of Python-based, so it's much faster. Anyway, once again we create an
+ElementTree object and extract the root from it. You'll note that we
+print out the root and the root's tag and attributes. Next we show
+several ways of iterating over the tags. The first loop just iterates
+over the XML child by child. This would only print out the top level
+child (appointment) though, so we added an if statement to check for
+that child and iterate over its children too.
+
+Next we grab an iterator from the tree object itself and iterate over it
+that way. You get the same information, but without the extra steps in
+the first example. The third method uses the root's **getchildren()**
+function. Here again we need an inner loop to grab all the children
+inside each appointment tag. The last example uses the root's **iter()**
+method to just loop over any tags that match the string "begin".
+
+As mentioned in the last section, you could also use **find()** or
+**findall()** to help you find specific tags or sets of tags
+respectively. Also note that each Element object has a **tag** and a
+**text** property that you can use to acquire that exact information.
+
+Wrapping Up
+-----------
+
+Now you know how to use minidom to parse XML. You have also learned how
+to use ElementTree to create, edit and parse XML. There are other
+libraries outside of Python that provide additional methods for working
+with XML too. Be sure you do some research to make sure you're using a
+tool that you understand as this topic can get pretty confusing if the
+tool you're using is obtuse.

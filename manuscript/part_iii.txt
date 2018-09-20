@@ -1,0 +1,29 @@
+Part III - Intermediate Odds and Ends
+=====================================
+
+In Part III, you will learn about some Python internals that many would
+consider intermediate-level Python. You have graduated from the milk and
+you're ready for some meat! In this section, we will take a look at the
+following topics:
+
+> -   Debugging
+> -   Decorators
+> -   The lambda statement
+> -   Profiling your code
+> -   Testing
+
+The first chapter in this section will introduce you to Python's
+debugging module, **pdb** and how to use it to debug your code. The next
+chapter is all about decorators. You will learn about how to create them
+and about a few of the decorators that are built into Python. For the
+third chapter, we will be looking at the lambda statement, which
+basically creates a one-line anonymous function. It's a little weird,
+but fun! The fourth chapter will cover how you profile your code. This
+discipline gives you the ability to find possible bottlenecks in your
+code so that you know where to focus to optimize your code. The final
+chapter in this section is about testing your code. In it you will
+discover how to test your code using a couple of Python's own built-in
+modules.
+
+I think you will find this section very helpful in continuing your
+Python education. Let's jump right in!

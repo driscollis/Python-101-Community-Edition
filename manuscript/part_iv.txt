@@ -1,0 +1,37 @@
+Part IV - Tips, Tricks and Tutorials
+====================================
+
+In Part IV, you will learn how to install 3rd party packages from the
+Python Package Index (PyPI). You will learn a bit about
+**easy\_install**, **pip** and **setup.py** and how to use these tools
+to install the packages. This is just the first chapter though. Here's a
+listing of the packages you will learn about:
+
+> -   configobj - working with Config files in a more "Pythonic" way.
+> -   lxml - a package for working with XML
+> -   pylint / pyflakes - Python code analyzers
+> -   requests - a Python-friendly version of urllib
+> -   SQLAlchemy - an Object Relational Mapper for Python
+> -   virtualenv - learn about virtual environments in Python
+
+The reason we will be looking at **configobj** is because I think it
+works better than ConfigParser, the module that comes with Python. The
+configobj package has an interface that is just more intuitive and
+powerful than ConfigParser. In the next chapter, we'll look at the
+**lxml** module and learn a couple of new ways to read, parse and create
+XML. In the fourth chapter, we will look at **pylint** and **pyflakes**,
+which are great for code analysis. They can look at your module and
+check for errors. pylint can also be used to help you get your code to
+conform to PEP8, the Python style guide.
+
+The **requests** package is great replacement for the **urllib** module.
+Its interface is simpler and the documentation is quite good. SQLAlchemy
+is the premier Object Relational Mapper for Python. It allows you to
+write SQL queries, tables, etc in Python code. One of its best features
+is that if you need to switch database backends, you won't have to
+change your code very much to continue working with said database. For
+the last chapter, we'll look at **virtualenv**, a neat module that
+allows you to create mini-virtual environments that you can write your
+code in. These virtual environments are especially handy for testing out
+new modules or just new releases of modules before you apply them to
+your Python core installation.

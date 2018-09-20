@@ -1,0 +1,211 @@
+# Chapter 36 - Creating Modules and Packages
+
+Creating Python modules is something that most Python programmers do
+every day without even thinking about it. Any time you save a new Python
+script, you have created a new module. You can import your module into
+other modules. A package is a collection of related modules. The things
+you import into your scripts from the standard library are modules or
+packages. In this chapter, we will learn how to create modules and
+packages. We'll spend more time on packages since they're more
+complicated than modules.
+
+How to Create a Python Module
+-----------------------------
+
+We will begin by creating a super simple module. This module will
+provide us with basic arithmetic and no error handling. Here's our first
+example:
+
+``` {.sourceCode .python}
+def add(x, y):    
+    return x + y
+
+def division(x, y):
+    return x / y
+
+def multiply(x, y):
+    return x * y
+
+def subtract(x, y):
+    return x - y
+```
+
+This code has issues, of course. If you pass in two Integers to the
+**division** method, then you'll end up getting an Integer back if you
+are using Python 2.x. This may not be what you're expecting. There's
+also no error checking for division by zero or mixing of strings and
+numbers. But that's not the point. The point is that if you save this
+code, you have a fully qualified module. Let's call it
+**arithmetic.py**. Now what can you do with a module anyway? You can
+import it and use any of the defined functions or classes that are
+inside it. And we could make it **executable** with a little spit and
+polish. Let's do both!
+
+First we'll write a little script that imports our module and runs the
+functions in it. Save the following as **math\_test.py**:
+
+``` {.sourceCode .python}
+import arithmetic
+
+print(arithmetic.add(5, 8))
+print(arithmetic.subtract(10, 5))
+print(arithmetic.division(2, 7))
+print(arithmetic.multiply(12, 6))
+```
+
+Now let's modify the original script so that we can run it from the
+command line. Here's one of the simplest ways to do it:
+
+``` {.sourceCode .python}
+def add(x, y):
+    return x + y
+
+def division(x, y):
+    return x / y
+
+def multiply(x, y):
+    return x * y
+
+def subtract(x, y):
+    return x - y
+
+if __name__ == "__main__":
+    import sys
+    print(sys.argv)
+    v = sys.argv[1].lower()
+    valOne = int(sys.argv[2])
+    valTwo = int(sys.argv[3])
+    if v == "a":
+        print(add(valOne, valTwo))
+    elif v == "d":
+        print(division(valOne, valTwo))
+    elif v == "m":
+        print(multiply(valOne, valTwo))
+    elif v == "s":
+        print(subtract(valOne, valTwo))
+    else:
+        pass
+```
+
+The proper way to do this script would be to use Python's **optparse
+(pre-2.7)** or **argparse (2.7+)** module. You should spend some time to
+figure out one of these modules as a learning exercise. In the meantime,
+we will move on to packages!
+
+How to Create a Python Package
+------------------------------
+
+The main difference between a module and a package is that a package is
+a collection of modules AND it has an **\_\_init\_\_.py** file.
+Depending on the complexity of the package, it may have more than one
+**\_\_init\_\_.py**. Let's take a look at a simple folder structure to
+make this more obvious, then we'll create some simple code to follow the
+structure we define.
+
+``` {.sourceCode .python}
+mymath/
+    __init__.py
+    adv/
+        __init__.py
+        sqrt.py
+    add.py
+    subtract.py
+    multiply.py
+    divide.py
+```
+
+Now we just need to replicate this structure in our own package. Let's
+give that a whirl! Create each of these files in a folder tree like the
+above example. For the add, subtract, multiply and divide files, you can
+use the functions we created in the earlier example. For the **sqrt.py**
+module, we'll use the following code.
+
+``` {.sourceCode .python}
+# sqrt.py
+import math
+
+def squareroot(n):
+    return math.sqrt(n)
+```
+
+You can leave both **\_\_init\_\_.py** files blank, but then you'll have
+to write code like **mymath.add.add(x,y)** which is pretty ugly, so
+we'll add the following code to the outer **\_\_init\_\_.py** to make
+using our package easier to understand and use.
+
+``` {.sourceCode .python}
+# outer __init__.py
+from . add import add
+from . divide import division
+from . multiply import multiply
+from . subtract import subtract
+from .adv.sqrt import squareroot
+```
+
+Now we should be able to use our module once we have it on our Python
+path. You can copy the folder into your Python's **site-packages**
+folder to do this. On Windows it's in the following general location:
+**C:\\Python34\\Lib\\site-packages**. Alternatively, you can edit the
+path on the fly in your test code. Let's see how that's done:
+
+``` {.sourceCode .python}
+import sys
+
+# modify this path to match your environment 
+sys.path.append('C:\Users\mdriscoll\Documents')
+
+import mymath
+
+print(mymath.add(4,5))
+print(mymath.division(4, 2))
+print(mymath.multiply(10, 5))
+print(mymath.squareroot(48))
+```
+
+Note that my path does NOT include the **mymath** folder. You want to
+append the parent folder that holds your new module, NOT the module
+folder itself. If you do this, then the code above should work.
+
+You can also create a **setup.py** script and install your package in
+**develop** mode. Here's an example setup.py script:
+
+``` {.sourceCode .python}
+#!/usr/bin/env python
+
+from setuptools import setup
+
+
+# This setup is suitable for "python setup.py develop".
+
+setup(name='mymath',
+      version='0.1',
+      description='A silly math package',
+      author='Mike Driscoll',
+      author_email='mike@mymath.org',
+      url='http://www.mymath.org/',
+      packages=['mymath', 'mymath.adv'],
+      )
+```
+
+You would save this script one level above the **mymath** folder. To
+install the package in develop mode, you would do the following:
+
+``` {.sourceCode .python}
+python setup.py develop
+```
+
+This will install a link file in the site-packages folder that points to
+where ever your package resides. This is great for testing without
+actually installing your package.
+
+Congratulations! You've just created a Python package!
+
+Wrapping Up
+-----------
+
+You've just learned how to create your very own, custom-made modules and
+packages. You will find that the more you code, the more often you'll
+create programs that have parts that you want to re-use. You can put
+those reusable pieces of code into modules. Eventually you will have
+enough related modules that you may want to turn them into a package.
+Now you have the tools to actually do that!

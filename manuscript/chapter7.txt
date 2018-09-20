@@ -1,0 +1,264 @@
+# Chapter 7 - Exception Handling
+
+What do you do when something bad happens in your program? Let's say you
+try to open a file, but you typed in the wrong path or you ask the user
+for information and they type in some garbage. You don't want your
+program to crash, so you implement exception handling. In Python, the
+construct is usually wrapped in what is know as a **try/except**. We
+will be looking at the following topics in this chapter:
+
+> -   Common exception types
+> -   Handling exceptions with **try/except**
+> -   Learn how **try/except/finally** works
+> -   Discover how the **else** statement works in conjunction with the
+>     **try/except**
+
+Let's start out by learning about some of the most common exceptions
+that you'll see in Python. Note: an error and an exception are just
+different words that describe the same thing when we are talking about
+exception handling.
+
+Common Exceptions
+-----------------
+
+You have seen a few exceptions already. Here is a list of the most
+common built-in exceptions (definitions from the [Python
+documentation](http://docs.python.org/2/library/exceptions.html)):
+
+> -   **Exception** (this is what almost all the others are built
+>     off of)
+> -   **AttributeError** - Raised when an attribute reference or
+>     assignment fails.
+> -   **IOError** - Raised when an I/O operation (such as a print
+>     statement, the built-in open() function or a method of a
+>     file object) fails for an I/O-related reason, e.g., "file not
+>     found" or "disk full".
+> -   **ImportError** - Raised when an import statement fails to find
+>     the module definition or when a **from ... import** fails to find
+>     a name that is to be imported.
+> -   **IndexError** - Raised when a sequence subscript is out of range.
+> -   **KeyError** - Raised when a mapping (dictionary) key is not found
+>     in the set of existing keys.
+> -   **KeyboardInterrupt** - Raised when the user hits the interrupt
+>     key (normally Control-C or Delete).
+> -   **NameError** - Raised when a local or global name is not found.
+> -   **OSError** - Raised when a function returns a
+>     system-related error.
+> -   **SyntaxError** - Raised when the parser encounters a
+>     syntax error.
+> -   **TypeError** - Raised when an operation or function is applied to
+>     an object of inappropriate type. The associated value is a string
+>     giving details about the type mismatch.
+> -   **ValueError** - Raised when a built-in operation or function
+>     receives an argument that has the right type but an inappropriate
+>     value, and the situation is not described by a more precise
+>     exception such as IndexError.
+> -   **ZeroDivisionError** - Raised when the second argument of a
+>     division or modulo operation is zero.
+
+There are a lot of other exceptions as well, but you probably won't see
+them all that often. However, if you are interested, you can go and read
+all about them in the [Python
+documentation](http://docs.python.org/2/library/exceptions.html).
+
+How to Handle Exceptions
+------------------------
+
+Handling exceptions in Python is really easy. Let's spend some time
+writing some examples that will cause exceptions. We will start with one
+of the most common computer science problems: division by zero.
+
+``` {.sourceCode .python}
+>>> 1 / 0
+Traceback (most recent call last):
+    File "<string>", line 1, in <fragment>
+ZeroDivisionError: integer division or modulo by zero
+
+>>> try:
+        1 / 0
+    except ZeroDivisionError:
+        print("You cannot divide by zero!")
+
+You cannot divide by zero!
+```
+
+If you think back to elementary math class, you will recall that you
+cannot divide by zero. In Python, this operation will cause an error, as
+you can see in the first half of the example. To catch the error, we
+wrap the operation with a **try/except** statement.
+
+------------------------------------------------------------------------
+
+**Bare Excepts**
+
+Here's another way to catch the error:
+
+``` {.sourceCode .python}
+>>> try:
+        1 / 0
+    except:
+        print("You cannot divide by zero!")
+```
+
+This is **not** recommended! In Python, this is known as a **bare
+except**, which means it will catch any and all exceptions. The reason
+this is not recommended is that you don't know which exception you are
+catching. When you have something like **except ZeroDivisionError**, you
+are obviously trying to catch a division by zero error. In the code
+above, you cannot tell what you are trying to catch.
+
+------------------------------------------------------------------------
+
+Let's take a look at a couple of other examples.
+
+``` {.sourceCode .python}
+>>> my_dict = {"a":1, "b":2, "c":3}
+>>> try:
+        value = my_dict["d"]
+    except KeyError:
+        print("That key does not exist!")
+
+That key does not exist!
+>>> my_list = [1, 2, 3, 4, 5]
+>>> try:
+        my_list[6]
+    except IndexError:
+        print("That index is not in the list!")
+
+That index is not in the list!
+```
+
+In the first example, we create a 3-element dictionary. Then we try to
+access a key that is not in the dictionary. Because the key is not in
+the dictionary, it raises a **KeyError**, which we catch. The second
+example shows a list that is 5 items in length. We try to grab the 7th
+item from the index. Remember, Python lists are zero-based, so when you
+say \[6\], you're asking for the 7th item. Anyway, because there are
+only 5 items, it raises an **IndexError**, which we also catch.
+
+You can also catch multiple exceptions with a single statement. There
+are a couple of different ways to do this. Let's take a look:
+
+``` {.sourceCode .python}
+my_dict = {"a":1, "b":2, "c":3}
+try:
+    value = my_dict["d"]
+except IndexError:
+    print("This index does not exist!")
+except KeyError:
+    print("This key is not in the dictionary!")
+except:
+    print("Some other error occurred!")
+```
+
+This is a fairly standard way to catch multiple exceptions. First we try
+to access a key that doesn't exist in the dictionary. The try/except
+checks to see if you are catching a KeyError, which you are in the
+second **except** statement. You will also note that we have a bare
+except at the end. This is usually not recommended, but you'll probably
+see it from time to time, so it's good to know about it. Also note that
+most of the time, you won't need to wrap a block of code in multiple
+**except** handlers. You normally just need to wrap it in one.
+
+Here's another way to catch multiple exceptions:
+
+``` {.sourceCode .python}
+try:
+    value = my_dict["d"]
+except (IndexError, KeyError):
+    print("An IndexError or KeyError occurred!")
+```
+
+Notice that in this example, we are putting the errors that we want to
+catch inside of parentheses. The problem with this method is that it's
+hard to tell which error has actually occurred, so the previous example
+is recommended.
+
+Most of the time when an exception occurs, you will need to alert the
+user by printing to the screen or logging the message. Depending on the
+severity of the error, you may need to exit your program. Sometimes you
+will need to clean up before you exit the program. For example, if you
+have opened a database connection, you will want to close it before you
+exit your program or you may end up leaving connections open. Another
+example is closing a file handle that you have been writing to. You will
+learn more about file handling in the next chapter. But first, we need
+to learn how to clean up after ourselves. This is facilitated with the
+**finally** statement.
+
+The finally Statement
+---------------------
+
+The **finally** statement is really easy to use. Let's take a look at a
+silly example:
+
+``` {.sourceCode .python}
+my_dict = {"a":1, "b":2, "c":3}
+
+try:
+    value = my_dict["d"]
+except KeyError:
+    print("A KeyError occurred!")
+finally:
+    print("The finally statement has executed!")
+```
+
+If you run the code above, it will print the statement in the **except**
+and the **finally**. This is pretty simple, right? Now you can use the
+**finally** statement to clean up after yourself. You would also put the
+exit code at the end of the **finally** statement.
+
+try, except, or else!
+---------------------
+
+The **try/except** statement also has an **else** clause. The **else**
+will only run if there are no errors raised. We will spend a few moments
+looking at a couple examples:
+
+``` {.sourceCode .python}
+my_dict = {"a":1, "b":2, "c":3}
+
+try:
+    value = my_dict["a"]
+except KeyError:
+    print("A KeyError occurred!")
+else:
+    print("No error occurred!")
+```
+
+Here we have a dictionary with 3 elements and in the **try/except** we
+access a key that exists. This works, so the **KeyError** is **not**
+raised. Because there is no error, the **else** executes and "No error
+occurred!" is printed to the screen. Now let's add in the **finally**
+statement:
+
+``` {.sourceCode .python}
+my_dict = {"a":1, "b":2, "c":3}
+
+try:
+    value = my_dict["a"]
+except KeyError:
+    print("A KeyError occurred!")
+else:
+    print("No error occurred!")
+finally:
+    print("The finally statement ran!")
+```
+
+If you run this example, it will execute the **else** and **finally**
+statements. Most of the time, you won't see the **else** statement used
+as any code that follows a **try/except** will be executed if no errors
+were raised. The only good usage of the **else** statement that I've
+seen mentioned is where you want to execute a **second** piece of code
+that can **also** raise an error. Of course, if an error is raised in
+the **else**, then it won't get caught.
+
+Wrapping Up
+-----------
+
+Now you should be able to handle exceptions in your code. If you find
+your code raising an exception, you will know how to wrap it in such a
+way that you can catch the error and exit gracefully or continue without
+interruption.
+
+Now we're ready to move on and learn about how to work with files in
+Python.

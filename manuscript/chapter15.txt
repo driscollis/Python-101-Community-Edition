@@ -1,0 +1,361 @@
+# Chapter 15 - Logging
+
+Python provides a very powerful logging library in its standard library.
+A lot of programmers use print statements for debugging (myself
+included), but you can also use logging to do this. It's actually
+cleaner to use logging as you won't have to go through all your code to
+remove the print statements. In this chapter we'll cover the following
+topics:
+
+> -   Creating a simple logger
+> -   How to log from multiple modules
+> -   Log formatting
+> -   Log configuration
+
+By the end of this chapter, you should be able to confidently create
+your own logs for your applications. Let's get started!
+
+Creating a Simple Logger
+------------------------
+
+Creating a log with the logging module is easy and straight-forward.
+It's easiest to just look at a piece of code and then explain it, so
+here's some code for you to read:
+
+``` {.sourceCode .python}
+import logging
+
+# add filemode="w" to overwrite
+logging.basicConfig(filename="sample.log", level=logging.INFO)
+
+logging.debug("This is a debug message")
+logging.info("Informational message")
+logging.error("An error has happened!")
+```
+
+As you might expect, to access the logging module you have to first
+import it. The easiest way to create a log is to use the logging
+module's basicConfig function and pass it some keyword arguments. It
+accepts the following: filename, filemode, format, datefmt, level and
+stream. In our example, we pass it a file name and the logging level,
+which we set to INFO. There are five levels of logging (in ascending
+order): DEBUG, INFO, WARNING, ERROR and CRITICAL. By default, if you run
+this code multiple times, it will append to the log if it already
+exists. If you would rather have your logger overwrite the log, then
+pass in a **filemode="w"** as mentioned in the comment in the code.
+Speaking of running the code, this is what you should get if you ran it
+once:
+
+``` {.sourceCode .python}
+INFO:root:Informational message
+ERROR:root:An error has happened!
+```
+
+Note that the debugging message isn't in the output. That is because we
+set the level at INFO, so our logger will only log if it's a INFO,
+WARNING, ERROR or CRITICAL message. The root part just means that this
+logging message is coming from the root logger or the main logger. We'll
+look at how to change that so it's more descriptive in the next section.
+If you don't use **basicConfig**, then the logging module will output to
+the console / stdout.
+
+The logging module can also log some exceptions to file or wherever you
+have it configured to log to. Here's an example:
+
+``` {.sourceCode .python}
+import logging
+
+logging.basicConfig(filename="sample.log", level=logging.INFO)
+log = logging.getLogger("ex")
+
+try:
+    raise RuntimeError
+except RuntimeError:
+    log.exception("Error!")
+```
+
+Let's break this down a bit. Here we use the **logging** module's
+**getLogger** method to return a logger object that has been named
+**ex**. This is handy when you have multiple loggers in one application
+as it allows you to identify which messages came from each logger. This
+example will force a **RuntimeError** to be raised, catch the error and
+log the entire traceback to file, which can be very handy when
+debugging.
+
+How to log From Multiple Modules (and Formatting too!)
+------------------------------------------------------
+
+The more you code, the more often you end up creating a set of custom
+modules that work together. If you want them all to log to the same
+place, then you've come to the right place. We'll look at the simple way
+and then show a more complex method that's also more customizable.
+Here's one easy way to do it:
+
+``` {.sourceCode .python}
+import logging
+import otherMod
+
+def main():
+    """
+    The main entry point of the application
+    """
+    logging.basicConfig(filename="mySnake.log", level=logging.INFO)
+    logging.info("Program started")
+    result = otherMod.add(7, 8)
+    logging.info("Done!")
+
+if __name__ == "__main__":
+    main()
+```
+
+Here we import logging and a module of our own creation ("otherMod").
+Then we create our log file as before. The other module looks like this:
+
+``` {.sourceCode .python}
+# otherMod.py
+import logging
+
+def add(x, y):
+    """"""
+    logging.info("added %s and %s to get %s" % (x, y, x+y))
+    return x+y
+```
+
+If you run the main code, you should end up with a log that has the
+following contents:
+
+``` {.sourceCode .python}
+INFO:root:Program started
+INFO:root:added 7 and 8 to get 15
+INFO:root:Done!
+```
+
+Do you see the problem with doing it this way? You can't really tell
+very easily where the log messages are coming from. This will only get
+more confusing the more modules there are that write to this log. So we
+need to fix that. That brings us to the complex way of creating a
+logger. Let's take a look at a different implementation:
+
+``` {.sourceCode .python}
+import logging
+import otherMod2
+
+def main():
+    """
+    The main entry point of the application
+    """
+    logger = logging.getLogger("exampleApp")
+    logger.setLevel(logging.INFO)
+
+    # create the logging file handler
+    fh = logging.FileHandler("new_snake.log")
+
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    fh.setFormatter(formatter)
+
+    # add handler to logger object
+    logger.addHandler(fh)
+
+    logger.info("Program started")
+    result = otherMod2.add(7, 8)
+    logger.info("Done!")
+
+if __name__ == "__main__":
+    main()
+```
+
+Here we create a logger instance named "exampleApp". We set its logging
+level, create a logging file handler object and a logging Formatter
+object. The file handler has to set the formatter object as its
+formatter and then the file handler has to be added to the logger
+instance. The rest of the code in main is mostly the same. Just note
+that instead of "logging.info", it's "logger.info" or whatever you call
+your logger variable. Here's the updated **otherMod2** code:
+
+``` {.sourceCode .python}
+# otherMod2.py
+import logging
+
+module_logger = logging.getLogger("exampleApp.otherMod2")
+
+def add(x, y):
+    """"""
+    logger = logging.getLogger("exampleApp.otherMod2.add")
+    logger.info("added %s and %s to get %s" % (x, y, x+y))
+    return x+y
+```
+
+Note that here we have two loggers defined. We don't do anything with
+the module\_logger in this case, but we do use the other one. If you run
+the main script, you should see the following output in your file:
+
+``` {.sourceCode .python}
+2012-08-02 15:37:40,592 - exampleApp - INFO - Program started
+2012-08-02 15:37:40,592 - exampleApp.otherMod2.add - INFO - added 7 and 8 to get 15
+2012-08-02 15:37:40,592 - exampleApp - INFO - Done!
+```
+
+You will notice that all references to root have been removed. Instead
+it uses our **Formatter** object which says that we should get a human
+readable time, the logger name, the logging level and then the message.
+These are actually known as **LogRecord** attributes. For a full list of
+**LogRecord** attributes, [see the
+documentation](https://docs.python.org/3/library/logging.html#logrecord-attributes)
+as there are too many to list here.
+
+Configuring Logs for Work and Pleasure
+--------------------------------------
+
+The logging module can be configured 3 different ways. You can configure
+it using methods (loggers, formatters, handlers) like we did earlier in
+this article; you can use a configuration file and pass it to
+fileConfig(); or you can create a dictionary of configuration
+information and pass it to the dictConfig() function. Let's create a
+configuration file first and then we'll look at how to execute it with
+Python. Here's an example config file:
+
+``` {.sourceCode .python}
+[loggers]
+keys=root,exampleApp
+
+[handlers]
+keys=fileHandler, consoleHandler
+
+[formatters]
+keys=myFormatter
+
+[logger_root]
+level=CRITICAL
+handlers=consoleHandler
+
+[logger_exampleApp]
+level=INFO
+handlers=fileHandler
+qualname=exampleApp
+
+[handler_consoleHandler]
+class=StreamHandler
+level=DEBUG
+formatter=myFormatter
+args=(sys.stdout,)
+
+[handler_fileHandler]
+class=FileHandler
+formatter=myFormatter
+args=("config.log",)
+
+[formatter_myFormatter]
+format=%(asctime)s - %(name)s - %(levelname)s - %(message)s
+datefmt=
+```
+
+You'll notice that we have two loggers specified: root and exampleApp.
+For whatever reason, "root" is required. If you don't include it, Python
+will raise a **ValueError** from config.py's **\_install\_loggers**
+function, which is a part of the logging module. If you set the root's
+handler to **fileHandler**, then you'll end up doubling the log output,
+so to keep that from happening, we send it to the console instead. Study
+this example closely. You'll need a section for every key in the first
+three sections. Now let's see how we load it in the code:
+
+``` {.sourceCode .python}
+# log_with_config.py
+import logging
+import logging.config
+import otherMod2
+
+def main():
+    """
+    Based on http://docs.python.org/howto/logging.html#configuring-logging
+    """
+    logging.config.fileConfig('logging.conf')
+    logger = logging.getLogger("exampleApp")
+
+    logger.info("Program started")
+    result = otherMod2.add(7, 8)
+    logger.info("Done!")
+
+if __name__ == "__main__":
+    main()
+```
+
+As you can see, all you need to do is pass the config file path to
+**logging.config.fileConfig**. You'll also notice that we don't need all
+that setup code any more as that's all in the config file. Also we can
+just import the **otherMod2** module with no changes. Anyway, if you run
+the above, you should end up with the following in your log file:
+
+``` {.sourceCode .python}
+2012-08-02 18:23:33,338 - exampleApp - INFO - Program started
+2012-08-02 18:23:33,338 - exampleApp.otherMod2.add - INFO - added 7 and 8 to get 15
+2012-08-02 18:23:33,338 - exampleApp - INFO - Done!
+```
+
+As you might have guessed, it's very similar to the other example. Now
+we'll move on to the other config method. The dictionary configuration
+method (dictConfig) wasn't added until Python 2.7, so make sure you have
+that or a later version, otherwise you won't be able to follow along.
+It's not well documented how this works. In fact, the examples in the
+documentation show **YAML** for some reason. Anyway, here's some working
+code for you to look over:
+
+``` {.sourceCode .python}
+# log_with_config.py
+import logging
+import logging.config
+import otherMod2
+
+def main():
+    """
+    Based on http://docs.python.org/howto/logging.html#configuring-logging
+    """
+    dictLogConfig = {
+        "version":1,
+        "handlers":{
+                    "fileHandler":{
+                        "class":"logging.FileHandler",
+                        "formatter":"myFormatter",
+                        "filename":"config2.log"
+                        }
+                    },        
+        "loggers":{
+            "exampleApp":{
+                "handlers":["fileHandler"],
+                "level":"INFO",
+                }
+            },
+
+        "formatters":{
+            "myFormatter":{
+                "format":"%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+                }
+            }
+        }
+
+    logging.config.dictConfig(dictLogConfig)
+
+    logger = logging.getLogger("exampleApp")
+
+    logger.info("Program started")
+    result = otherMod2.add(7, 8)
+    logger.info("Done!")
+
+if __name__ == "__main__":
+    main()
+```
+
+If you run this code, you'll end up with the same output as the previous
+method. Note that you don't need the "root" logger when you use a
+dictionary configuration.
+
+Wrapping Up
+-----------
+
+At this point you should know how to get started using loggers and how
+to configure them in several different ways. You should also have gained
+the knowledge of how to modify the output using the Formatter object.
+The logging module is very handy for troubleshooting what went wrong in
+your application. Be sure to spend some time practicing with this module
+before writing a large application.
+
+In the next chapter we will be looking at how to use the **os** module.

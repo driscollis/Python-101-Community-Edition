@@ -1,0 +1,263 @@
+# Chapter 8 - Working with Files
+
+This chapter introduces the topic of reading and writing data to files
+on your hard drive. You will find that reading and writing files in
+Python is very easy to do. Let's get started!
+
+How to Read a File
+------------------
+
+Python has a builtin function called **open** that we can use to open a
+file for reading. Create a text file name "test.txt" with the following
+contents:
+
+``` {.sourceCode .python}
+This is a test file
+line 2
+line 3
+this line intentionally left blank  
+```
+
+Here are a couple of examples that show how to use **open** for reading:
+
+``` {.sourceCode .python}
+handle = open("test.txt")
+handle = open(r"C:\Users\mike\py101book\data\test.txt", "r")
+```
+
+The first example will open a file named **test.txt** in read-only mode.
+This is the default mode of the **open** function. Note that we didn't
+pass a fully qualified path to the file that we wanted to open in the
+first example. Python will automatically look in the folder that the
+script is running in for **test.txt**. If it doesn't find it, then you
+will receive an IOError.
+
+The second example does show a fully qualified path to the file, but
+you'll notice that it begins with an "r". This means that we want Python
+to treat the string as a raw string. Let's take a moment to see the
+difference between specifying a raw string versus a regular string:
+
+``` {.sourceCode .python}
+>>> print("C:\Users\mike\py101book\data\test.txt")
+C:\Users\mike\py101book\data    est.txt
+>>> print(r"C:\Users\mike\py101book\data\test.txt")
+C:\Users\mike\py101book\data\test.txt
+```
+
+As you can see, when we don't specify it as a raw string, we get an
+invalid path. Why does this happen? Well, as you might recall from the
+strings chapter, there are certain special characters that need to be
+escaped, such as "n" or "t". In this case, we see there's a "t" (i.e. a
+tab), so the string obediently adds a tab to our path and screws it up
+for us.
+
+The second argument in the second example is also an "r". This tells
+**open** that we want to open the file in read-only mode. In other
+words, it does the same thing as the first example, but it's more
+explicit. Now let's actually read the file!
+
+Put the following lines into a Python script and save it in the same
+location as your test.txt file:
+
+``` {.sourceCode .python}
+handle = open("test.txt", "r")
+data = handle.read()
+print(data)
+handle.close()
+```
+
+If you run this, it will open the file and read the entire file as a
+string into the **data** variable. Then we print that data and close the
+file handle. You should always close a file handle as you never know
+when another program will want to access it. Closing the file will also
+help save memory and prevent strange bugs in your programs. You can tell
+Python to just read a line at a time, to read all the lines into a
+Python list or to read the file in chunks. The last option is very handy
+when you are dealing with really large files and you don't want to read
+the whole thing in, which might fill up the PC's memory.
+
+Let's spend some time looking at different ways to read files.
+
+``` {.sourceCode .python}
+handle = open("test.txt", "r")
+data = handle.readline() # read just one line
+print(data)
+handle.close()
+```
+
+If you run this example, it will only read the first line of your text
+file and print it out. That's not too useful, so let's try the file
+handle's readlines() method:
+
+``` {.sourceCode .python}
+handle = open("test.txt", "r")
+data = handle.readlines() # read ALL the lines!
+print(data)
+handle.close()
+```
+
+After running this code, you will see a Python list printed to the
+screen because that's what the **readlines** method returns: a list!
+Let's take a moment to learn how to read a file in smaller chunks.
+
+How To Read Files Piece by Piece
+--------------------------------
+
+The easiest way to read a file in chunks is to use a loop. First we will
+learn how to read a file line by line and then we will learn how to read
+it a kilobyte at a time. We will use a **for** loop for our first
+example:
+
+``` {.sourceCode .python}
+handle = open("test.txt", "r")
+
+for line in handle:
+    print(line)
+
+handle.close()
+```
+
+Here we open up a read-only file handle and then we use a **for** loop
+to iterate over it. You will find that you can iterate over all kinds of
+objects in Python (strings, lists, tuples, keys in a dictionary, etc).
+That was pretty simple, right? Now let's do it in chunks!
+
+``` {.sourceCode .python}
+handle = open("test.txt", "r")
+
+while True:
+    data = handle.read(1024)
+    print(data)
+    if not data:
+        break
+```
+
+In this example, we use Python's **while** loop to read a kilobyte of
+the file at a time. As you probably know, a kilobyte is 1024 bytes or
+characters. Now let's pretend that we want to read a binary file, like a
+PDF.
+
+How to Read a Binary File
+-------------------------
+
+Reading a binary file is very easy. All you need to do is change the
+file mode:
+
+``` {.sourceCode .python}
+handle = open("test.pdf", "rb")
+```
+
+So this time we changed the file mode to **rb**, which means
+**read-binary**. You will find that you may need to read binary files
+when you download PDFs from the internet or transfer files from PC to
+PC.
+
+Writing Files in Python
+-----------------------
+
+If you have been following along, you can probably guess what the
+file-mode flag is for writing files: "w" and "wb" for write-mode and
+write-binary-mode. Let's take a look at a simple example, shall we?
+
+**CAUTION**: When using "w" or "wb" modes, if the file already exists,
+it will be overwritten with no warning! You can check if a file exists
+before you open it by using Python's **os** module. See the
+**os.path.exists** section in **Chapter 16**.
+
+``` {.sourceCode .python}
+handle = open("test.txt", "w")
+handle.write("This is a test!")
+handle.close()
+```
+
+That was easy! All we did here was change the file mode to "w" and we
+called the file handle's **write** method to write some text to the
+file. The file handle also has a **writelines** method that will accept
+a list of strings that the handle will then write to disk in order.
+
+Using the with Operator
+-----------------------
+
+Python has a neat little builtin called **with** which you can use to
+simplify reading and writing files. The **with** operator creates what
+is known as a **context manager** in Python that will automatically
+close the file for you when you are done processing it. Let's see how
+this works:
+
+``` {.sourceCode .python}
+with open("test.txt") as file_handler:
+    for line in file_handler:
+        print(line)
+```
+
+The syntax for the **with** operator is a little strange, but you'll
+pick it up pretty quickly. Basically what we're doing is replacing:
+
+``` {.sourceCode .python}
+handle = open("test.txt")
+```
+
+with this:
+
+``` {.sourceCode .python}
+with open("test.txt") as file_handler:
+```
+
+You can do all the usual file I/O operations that you would normally do
+as long as you are within the **with** code block. Once you leave that
+code block, the file handle will close and you won't be able to use it
+any more. Yes, you read that correctly. You no longer have to close the
+file handle explicitly as the **with** operator does it automatically!
+See if you can change some of the earlier examples from this chapter so
+that they use the **with** method too.
+
+Catching Errors
+---------------
+
+Sometimes when you are working with files, bad things happen. The file
+is locked because some other process is using it or you have some kind
+of permission error. When this happens, an **IOError** will probably
+occur. In this section, we will look at how to catch errors the normal
+way and how to catch them using the **with** operator. Hint: the idea is
+basically the same in both!
+
+``` {.sourceCode .python}
+try:
+    file_handler = open("test.txt")
+    for line in file_handler:
+        print(line)
+except IOError:
+    print("An IOError has occurred!")
+finally:
+    file_handler.close()
+```
+
+In the example above, we wrap the usual code inside of a **try/except**
+construct. If an error occurs, we print out a message to the screen.
+Note that we also make sure we close the file using the **finally**
+statement. Now we're ready to look at how we would do this same thing
+using **with**:
+
+``` {.sourceCode .python}
+try:
+    with open("test.txt") as file_handler:
+        for line in file_handler:
+            print(line)
+except IOError:
+    print("An IOError has occurred!")
+```
+
+As you might have guessed, we just wrapped the **with** block in the
+same way as we did in the previous example. The difference here is that
+we do not need the **finally** statement as the context manager handles
+that for us.
+
+Wrapping Up
+-----------
+
+At this point you should be pretty well versed in dealing with files in
+Python. Now you know how to read and write files using the older style
+and the newer **with** style. You will most likely see both styles in
+the wild. In the next chapter, we will learn how to import other modules
+that come with Python. This will allow us to create programs using
+pre-built modules. Let's get started!

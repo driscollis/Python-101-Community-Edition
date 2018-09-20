@@ -1,0 +1,477 @@
+# Chapter 31 - Parsing XML with lxml
+
+In Part I, we looked at some of Python's built-in XML parsers. In this
+chapter, we will look at the fun third-party package, **lxml** from
+codespeak. It uses the ElementTree API, among other things. The lxml
+package has XPath and XSLT support, includes an API for SAX and a
+C-level API for compatibility with C/Pyrex modules. Here is what we will
+cover:
+
+> -   How to Parse XML with lxml
+> -   A Refactoring example
+> -   How to Parse XML with lxml.objectify
+> -   How to Create XML with lxml.objectify
+
+For this chapter, we will use the examples from the **minidom** parsing
+example and see how to parse those with lxml. Here's an XML example from
+a program that was written for keeping track of appointments:
+
+``` {.sourceCode .xml}
+<?xml version="1.0" ?>
+<zAppointments reminder="15">
+    <appointment>
+        <begin>1181251680</begin>
+        <uid>040000008200E000</uid>
+        <alarmTime>1181572063</alarmTime>
+        <state></state>
+        <location></location>
+        <duration>1800</duration>
+        <subject>Bring pizza home</subject>
+    </appointment>
+    <appointment>
+        <begin>1234360800</begin>
+        <duration>1800</duration>
+        <subject>Check MS Office website for updates</subject>
+        <location></location>
+        <uid>604f4792-eb89-478b-a14f-dd34d3cc6c21-1234360800</uid>
+        <state>dismissed</state>
+  </appointment>
+</zAppointments>
+```
+
+Let's learn how to parse this with lxml!
+
+Parsing XML with lxml
+---------------------
+
+The XML above shows two appointments. The beginning time is in seconds
+since the epoch; the uid is generated based on a hash of the beginning
+time and a key; the alarm time is the number of seconds since the epoch,
+but should be less than the beginning time; and the state is whether or
+not the appointment has been snoozed, dismissed or not. The rest of the
+XML is pretty self-explanatory. Now let's see how to parse it.
+
+``` {.sourceCode .python}
+from lxml import etree
+
+def parseXML(xmlFile):
+    """
+    Parse the xml
+    """
+    with open(xmlFile) as fobj:
+        xml = fobj.read()
+
+    root = etree.fromstring(xml)
+
+    for appt in root.getchildren():
+        for elem in appt.getchildren():
+            if not elem.text:
+                text = "None"
+            else:
+                text = elem.text
+            print(elem.tag + " => " + text)
+
+if __name__ == "__main__":
+    parseXML("example.xml")
+```
+
+First off, we import the needed modules, namely the **etree** module
+from the lxml package and the **StringIO** function from the built-in
+**StringIO** module. Our **parseXML** function accepts one argument: the
+path to the XML file in question. We open the file, read it and close
+it. Now comes the fun part! We use etree's parse function to parse the
+XML code that is returned from the StringIO module. For reasons I don't
+completely understand, the parse function requires a file-like object.
+
+Anyway, next we iterate over the context (i.e. the
+**lxml.etree.iterparse object**) and extract the tag elements. We add
+the conditional if statement to replace the empty fields with the word
+"None" to make the output a little clearer. And that's it.
+
+Parsing the Book Example
+------------------------
+
+Well, the result of that example was kind of boring. Most of the time,
+you want to save the data you extract and do something with it, not just
+print it out to stdout. So for our next example, we'll create a data
+structure to contain the results. Our data structure for this example
+will be a list of dicts. We'll use the MSDN book example here from the
+earlier chapter again. Save the following XML as *example.xml*
+
+``` {.sourceCode .xml}
+<?xml version="1.0"?>
+<catalog>
+   <book id="bk101">
+      <author>Gambardella, Matthew</author>
+      <title>XML Developer's Guide</title>
+      <genre>Computer</genre>
+      <price>44.95</price>
+      <publish_date>2000-10-01</publish_date>
+      <description>An in-depth look at creating applications 
+      with XML.</description>
+   </book>
+   <book id="bk102">
+      <author>Ralls, Kim</author>
+      <title>Midnight Rain</title>
+      <genre>Fantasy</genre>
+      <price>5.95</price>
+      <publish_date>2000-12-16</publish_date>
+      <description>A former architect battles corporate zombies, 
+      an evil sorceress, and her own childhood to become queen 
+      of the world.</description>
+   </book>
+   <book id="bk103">
+      <author>Corets, Eva</author>
+      <title>Maeve Ascendant</title>
+      <genre>Fantasy</genre>
+      <price>5.95</price>
+      <publish_date>2000-11-17</publish_date>
+      <description>After the collapse of a nanotechnology 
+      society in England, the young survivors lay the 
+      foundation for a new society.</description>
+   </book>
+</catalog>
+```
+
+Now let's parse this XML and put it in our data structure!
+
+``` {.sourceCode .python}
+from lxml import etree
+
+def parseBookXML(xmlFile):
+
+    with open(xmlFile) as fobj:
+        xml = fobj.read()
+
+    root = etree.fromstring(xml)
+
+    book_dict = {}
+    books = []
+    for book in root.getchildren():
+        for elem in book.getchildren():
+            if not elem.text:
+                text = "None"
+            else:
+                text = elem.text
+            print(elem.tag + " => " + text)
+            book_dict[elem.tag] = text
+        if book.tag == "book":
+            books.append(book_dict)
+            book_dict = {}
+    return books
+
+if __name__ == "__main__":
+    parseBookXML("books.xml")
+```
+
+This example is pretty similar to our last one, so we'll just focus on
+the differences present here. Right before we start iterating over the
+context, we create an empty dictionary object and an empty list. Then
+inside the loop, we create our dictionary like this:
+
+``` {.sourceCode .python}
+book_dict[elem.tag] = text
+```
+
+The text is either **elem.text** or **None**. Finally, if the tag
+happens to be **book**, then we're at the end of a book section and need
+to add the dict to our list as well as reset the dict for the next book.
+As you can see, that is exactly what we have done. A more realistic
+example would be to put the extracted data into a **Book** class. I have
+done the latter with json feeds before.
+
+Now we're ready to learn how to parse XML with **lxml.objectify**!
+
+Parsing XML with lxml.objectify
+-------------------------------
+
+The lxml module has a module called **objectify** that can turn XML
+documents into Python objects. I find "objectified" XML documents very
+easy to work with and I hope you will too. You may need to jump through
+a hoop or two to install it as **pip** doesn't work with lxml on
+Windows. Be sure to go to the Python Package index and look for a
+version that's been made for your version of Python. Also note that the
+latest pre-built installer for lxml only supports Python 3.2 (at the
+time of writing), so if you have a newer version of Python, you may have
+some difficulty getting lxml installed for your version.
+
+Anyway, once you have it installed, we can start going over this
+wonderful piece of XML again:
+
+``` {.sourceCode .xml}
+<?xml version="1.0" ?>
+<zAppointments reminder="15">
+    <appointment>
+        <begin>1181251680</begin>
+        <uid>040000008200E000</uid>
+        <alarmTime>1181572063</alarmTime>
+        <state></state>
+        <location></location>
+        <duration>1800</duration>
+        <subject>Bring pizza home</subject>
+    </appointment>
+    <appointment>
+        <begin>1234360800</begin>
+        <duration>1800</duration>
+        <subject>Check MS Office website for updates</subject>
+        <location></location>
+        <uid>604f4792-eb89-478b-a14f-dd34d3cc6c21-1234360800</uid>
+        <state>dismissed</state>
+  </appointment>
+</zAppointments>
+```
+
+Now we need to write some code that can parse and modify the XML. Let's
+take a look at this little demo that shows a bunch of the neat abilities
+that objectify provides.
+
+``` {.sourceCode .python}
+from lxml import etree, objectify
+
+def parseXML(xmlFile):
+    """Parse the XML file"""
+    with open(xmlFile) as f:
+        xml = f.read()
+
+    root = objectify.fromstring(xml)
+
+    # returns attributes in element node as dict
+    attrib = root.attrib
+
+    # how to extract element data
+    begin = root.appointment.begin
+    uid = root.appointment.uid
+
+    # loop over elements and print their tags and text
+    for appt in root.getchildren():
+        for e in appt.getchildren():
+            print("%s => %s" % (e.tag, e.text))
+        print()
+
+    # how to change an element's text
+    root.appointment.begin = "something else"
+    print(root.appointment.begin)
+
+    # how to add a new element
+    root.appointment.new_element = "new data"
+
+    # remove the py:pytype stuff
+    objectify.deannotate(root)
+    etree.cleanup_namespaces(root)
+    obj_xml = etree.tostring(root, pretty_print=True)
+    print(obj_xml)
+
+    # save your xml
+    with open("new.xml", "w") as f:
+        f.write(obj_xml)
+
+if __name__ == "__main__":
+    f = r'path\to\sample.xml'
+    parseXML(f)
+```
+
+The code is pretty well commented, but we'll spend a little time going
+over it anyway. First we pass it our sample XML file and **objectify**
+it. If you want to get access to a tag's attributes, use the **attrib**
+property. It will return a dictionary of the attributes of the tag. To
+get to sub-tag elements, you just use dot notation. As you can see, to
+get to the **begin** tag's value, we can just do something like this:
+
+``` {.sourceCode .python}
+begin = root.appointment.begin
+```
+
+One thing to be aware of is if the value happens to have leading zeroes,
+the returned value may have them truncated. If that is important to you,
+then you should use the following syntax instead:
+
+``` {.sourceCode .python}
+begin = root.appointment.begin.text
+```
+
+If you need to iterate over the children elements, you can use the
+**iterchildren** method. You may have to use a nested for loop structure
+to get everything. Changing an element's value is as simple as just
+assigning it a new value.
+
+``` {.sourceCode .python}
+root.appointment.new_element = "new data"
+```
+
+Now we're ready to learn how to create XML using **lxml.objectify**.
+
+Creating XML with lxml.objectify
+--------------------------------
+
+The lxml.objectify sub-package is extremely handy for parsing and
+creating XML. In this section, we will show how to create XML using the
+lxml.objectify module. We'll start with some simple XML and then try to
+replicate it. Let's get started!
+
+We will continue using the following XML for our example:
+
+``` {.sourceCode .xml}
+<?xml version="1.0" ?>
+<zAppointments reminder="15">
+    <appointment>
+        <begin>1181251680</begin>
+        <uid>040000008200E000</uid>
+        <alarmTime>1181572063</alarmTime>
+        <state></state>
+        <location></location>
+        <duration>1800</duration>
+        <subject>Bring pizza home</subject>
+    </appointment>
+    <appointment>
+        <begin>1234360800</begin>
+        <duration>1800</duration>
+        <subject>Check MS Office website for updates</subject>
+        <location></location>
+        <uid>604f4792-eb89-478b-a14f-dd34d3cc6c21-1234360800</uid>
+        <state>dismissed</state>
+  </appointment>
+</zAppointments>
+```
+
+Let's see how we can use lxml.objectify to recreate this XML:
+
+``` {.sourceCode .python}
+from lxml import etree, objectify
+
+def create_appt(data):
+    """
+    Create an appointment XML element
+    """
+    appt = objectify.Element("appointment")
+    appt.begin = data["begin"]
+    appt.uid = data["uid"]
+    appt.alarmTime = data["alarmTime"]
+    appt.state = data["state"]
+    appt.location = data["location"]
+    appt.duration = data["duration"]
+    appt.subject = data["subject"]
+    return appt
+
+def create_xml():
+    """
+    Create an XML file
+    """
+
+    xml = '''<?xml version="1.0" encoding="UTF-8"?>
+    <zAppointments>
+    </zAppointments>
+    '''
+
+    root = objectify.fromstring(xml)
+    root.set("reminder", "15")
+
+    appt = create_appt({"begin":1181251680,
+                        "uid":"040000008200E000",
+                        "alarmTime":1181572063,
+                        "state":"",
+                        "location":"",
+                        "duration":1800,
+                        "subject":"Bring pizza home"}
+                       )
+    root.append(appt)
+
+    uid = "604f4792-eb89-478b-a14f-dd34d3cc6c21-1234360800"
+    appt = create_appt({"begin":1234360800,
+                        "uid":uid,
+                        "alarmTime":1181572063,
+                        "state":"dismissed",
+                        "location":"",
+                        "duration":1800,
+                        "subject":"Check MS Office website for updates"}
+                       )
+    root.append(appt)
+
+    # remove lxml annotation
+    objectify.deannotate(root)
+    etree.cleanup_namespaces(root)
+
+    # create the xml string
+    obj_xml = etree.tostring(root,
+                             pretty_print=True,
+                             xml_declaration=True)
+
+    try:
+        with open("example.xml", "wb") as xml_writer:
+            xml_writer.write(obj_xml)
+    except IOError:
+        pass
+
+if __name__ == "__main__":
+    create_xml()
+```
+
+Let's break this down a bit. We will start with the **create\_xml**
+function. In it we create an XML root object using the objectify
+module's **fromstring** function. The root object will contain
+**zAppointment** as its tag. We set the root's **reminder** attribute
+and then we call our **create\_appt** function using a dictionary for
+its argument. In the **create\_appt** function, we create an instance of
+an Element (technically, it's an **ObjectifiedElemen**t) that we assign
+to our **appt** variable. Here we use **dot-notatio**n to create the
+tags for this element. Finally we return the **appt** element back and
+append it to our **root** object. We repeat the process for the second
+appointment instance.
+
+The next section of the **create\_xml** function will remove the lxml
+annotation. If you do not do this, your XML will end up looking like the
+following:
+
+``` {.sourceCode .xml}
+<?xml version="1.0" ?>
+<zAppointments py:pytype="TREE" reminder="15">
+    <appointment py:pytype="TREE">
+        <begin py:pytype="int">1181251680</begin>
+        <uid py:pytype="str">040000008200E000</uid>
+        <alarmTime py:pytype="int">1181572063</alarmTime>
+        <state py:pytype="str"/>
+        <location py:pytype="str"/>
+        <duration py:pytype="int">1800</duration>
+        <subject py:pytype="str">Bring pizza home</subject>
+    </appointment><appointment py:pytype="TREE">
+        <begin py:pytype="int">1234360800</begin>
+        <uid py:pytype="str">604f4792-eb89-478b-a14f-dd34d3cc6c21-1234360800</uid>
+        <alarmTime py:pytype="int">1181572063</alarmTime>
+        <state py:pytype="str">dismissed</state>
+        <location py:pytype="str"/>
+        <duration py:pytype="int">1800</duration>
+        <subject py:pytype="str">Check MS Office website for updates</subject>
+    </appointment>
+</zAppointments>
+```
+
+To remove all that unwanted annotation, we call the following two
+functions:
+
+``` {.sourceCode .python}
+objectify.deannotate(root)
+etree.cleanup_namespaces(root)
+```
+
+The last piece of the puzzle is to get lxml to generate the XML itself.
+Here we use lxml's **etree** module to do the hard work:
+
+``` {.sourceCode .python}
+obj_xml = etree.tostring(root, 
+                         pretty_print=True,
+                         xml_declaration=True)
+```
+
+The tostring function will return a nice string of the XML and if you
+set **pretty\_print** to True, it will usually return the XML in a nice
+format too. The **xml\_declaration** keyword argument tells the etree
+module whether or not to include the first declaration line (i.e.
+**&lt;?xml version="1.0" ?&gt;**.
+
+Wrapping Up
+-----------
+
+Now you know how to use lxml's etree and objectify modules to parse XML.
+You also know how to use objectify to create XML. Knowing how to use
+more than one module to accomplish the same task can be valuable in
+seeing how to approach the same problem from different angles. It will
+also help you choose the tool that you're most comfortable with.

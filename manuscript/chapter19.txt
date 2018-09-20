@@ -1,0 +1,231 @@
+# Chapter 19 - The subprocess Module
+
+The **subprocess** module gives the developer the ability to start
+processes or programs from Python. In other words, you can start
+applications and pass arguments to them using the subprocess module. The
+subprocess module was added way back in Python 2.4 to replace the **os**
+modules set of os.popen, os.spawn and os.system calls as well as replace
+popen2 and the old **commands** module. We will be looking at the
+following aspects of the subprocess module:
+
+> -   the call function
+> -   the Popen class
+> -   how to communicate with a spawned process
+>
+> Let's get started!
+
+The call function
+-----------------
+
+The subprocess module provides a function named **call**. This function
+allows you to call another program, wait for the command to complete and
+then return the return code. It accepts one or more arguments as well as
+the following keyword arguments (with their defaults): stdin=None,
+stdout=None, stderr=None, shell=False.
+
+Let's look at a simple example:
+
+``` {.sourceCode .python}
+>>> import subprocess
+>>> subprocess.call("notepad.exe")
+0
+```
+
+If you run this on a Windows machine, you should see Notepad open up.
+You will notice that IDLE waits for you to close Notepad and then it
+returns a code zero (0). This means that it completed successfully. If
+you receive anything except for a zero, then it usually means you have
+had some kind of error.
+
+Normally when you call this function, you would want to assign the
+resulting return code to a variable so you can check to see if it was
+the result you expected. Let's do that:
+
+``` {.sourceCode .python}
+>>> code = subprocess.call("notepad.exe")
+>>> if code == 0:
+        print("Success!")
+    else:
+        print("Error!")      
+Success!
+```
+
+If you run this code, you will see that it prints out **Success!** to
+the screen. The **call** method also accepts arguments to be passed to
+the program that you're executing. Let's see how that works:
+
+``` {.sourceCode .python}
+>>> code = subprocess.call(["ping", "www.yahoo.com"])
+
+Pinging ds-any-fp3-real.wa1.b.yahoo.com [98.139.180.149] with 32 bytes of data:
+Reply from 98.139.180.149: bytes=32 time=66ms TTL=45
+Reply from 98.139.180.149: bytes=32 time=81ms TTL=45
+Reply from 98.139.180.149: bytes=32 time=81ms TTL=45
+Reply from 98.139.180.149: bytes=32 time=69ms TTL=45
+
+Ping statistics for 98.139.180.149:
+    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),
+Approximate round trip times in milli-seconds:
+    Minimum = 66ms, Maximum = 81ms, Average = 74ms
+>>> code
+0
+```
+
+You will notice that in this example we are passing a list of arguments.
+The first item in the list is the program we want to call. Anything else
+in the list are arguments that we want to pass to that program. So in
+this example, we are executing a ping against Yahoo's website. You will
+notice that the return code was zero, so everything completed
+successfully.
+
+You can also execute the program using the operating system's **shell**.
+This does add a level of abstraction to the process and it raises the
+possibility of security issues. Here is the Python documentation's
+official warning on the matter:
+
+**Executing shell commands that incorporate unsanitized input from an
+untrusted source makes a program vulnerable to shell injection, a
+serious security flaw which can result in arbitrary command execution.
+For this reason, the use of shell=True is strongly discouraged in cases
+where the command string is constructed from external input.**
+
+The usual recommendation is not to use it if an outside process or
+person can modify the call's arguments. If you're hard-coding something
+yourself, then it doesn't matter as much.
+
+The Popen Class
+---------------
+
+The **Popen** class executes a child program in a new process. Unlike
+the **call** method, it does not wait for the called process to end
+unless you tell it to using by using the **wait** method. Let's try
+running Notepad through Popen and see if we can detect a difference:
+
+``` {.sourceCode .python}
+>>> program = "notepad.exe"
+>>> subprocess.Popen(program)
+<subprocess.Popen object at 0x01EE0430>
+```
+
+Here we create a variable called **program** and assign it the value of
+"notepad.exe". Then we pass it to the Popen class. When you run this,
+you will see that it immediately returns the **subprocess.Popen object**
+and the application that was called executes. Let's make Popen wait for
+the program to finish:
+
+``` {.sourceCode .python}
+>>> program = "notepad.exe"
+>>> process = subprocess.Popen(program)
+>>> code = process.wait()
+>>> print(code)
+0
+```
+
+When you do this in IDLE, Notepad will pop up and may be in front of
+your IDLE session. Just move Notepad out of the way, but do not close
+it! You need to tell your process to **wait** for you won't be able to
+get the return code. Once you've typed that line, close Notepad and
+print the code out. Or you could just put all this code into a saved
+Python file and run that.
+
+Note that using the **wait** method can cause the child process to
+deadlock when using the stdout/stderr=PIPE commands when the process
+generates enough output to block the pipe. You can use the
+**communicate** method to alleviate this situation. We'll be looking at
+that method in the next section.
+
+Now let's try running Popen using multiple arguments:
+
+``` {.sourceCode .python}
+>>> subprocess.Popen(["ls", "-l"])
+<subprocess.Popen object at 0xb7451001>
+```
+
+If you run this code in Linux, you'll see it print out the Popen object
+message and then a listing of the permissions and contents of whatever
+folder you ran this in. You can use the shell argument with Popen too,
+but the same caveats apply to Popen as they did to the call method.
+
+Learning to Communicate
+-----------------------
+
+There are several ways to communicate with the process you have invoked.
+We're just going to focus on how to use the subprocess module's
+**communicate** method. Let's take a look:
+
+``` {.sourceCode .python}
+args = ["ping", "www.yahoo.com"]
+process = subprocess.Popen(args,
+                           stdout=subprocess.PIPE)
+
+data = process.communicate()
+print(data)
+```
+
+In this code example, we create an **args** variable to hold our list of
+arguments. Then we redirect standard out (stdout) to our subprocess so
+we can communicate with it. The **communicate** method itself allows us
+to communicate with the process we just spawned. We can actually pass
+input to the process using this method. But in this example, we just use
+communicate to read from standard out. You will notice when you run this
+code that communicate will wait for the process to finish and then
+returns a two-element tuple that contains what was in stdout and stderr.
+Here is the result from my run:
+
+``` {.sourceCode .python}
+('Pinging ds-any-fp3-real.wa1.b.yahoo.com [98.139.180.149] with 32 bytes of data:
+Reply from 98.139.180.149: bytes=32 time=139ms TTL=45
+Reply from 98.139.180.149: bytes=32 time=162ms TTL=45
+Reply from 98.139.180.149: bytes=32 time=164ms TTL=45
+Reply from 98.139.180.149: bytes=32 time=110ms TTL=45    
+Ping statistics for 98.139.180.149:
+Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),
+Approximate round trip times in milli-seconds:
+Minimum = 110ms, Maximum = 164ms, Average = 143ms
+', None)
+```
+
+That's kind of ugly. Let's make it print out the result in a more
+readable format, shall we?
+
+``` {.sourceCode .python}
+import subprocess
+
+args = ["ping", "www.yahoo.com"]
+process = subprocess.Popen(args, stdout=subprocess.PIPE)
+
+data = process.communicate()
+for line in data:
+    print(line)
+```
+
+If you run this code, you should see something like the following
+printed to your screen:
+
+``` {.sourceCode .python}
+Pinging ds-any-fp3-real.wa1.b.yahoo.com [98.139.180.149] with 32 bytes of data:
+Reply from 98.139.180.149: bytes=32 time=67ms TTL=45
+Reply from 98.139.180.149: bytes=32 time=68ms TTL=45
+Reply from 98.139.180.149: bytes=32 time=70ms TTL=45
+Reply from 98.139.180.149: bytes=32 time=69ms TTL=45
+
+Ping statistics for 98.139.180.149:
+    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),
+Approximate round trip times in milli-seconds:
+    Minimum = 67ms, Maximum = 70ms, Average = 68ms
+
+None
+```
+
+That last line that says "None" is the result of stderr, which means
+that there were no errors.
+
+Wrapping Up
+-----------
+
+At this point, you have the knowledge to use the subprocess module
+effectively. You can open a process in two different ways, you know how
+to wait for a return code, and you know how to communicate with the
+child process that you created.
+
+In the next chapter, we will be looking at the **sys** module.

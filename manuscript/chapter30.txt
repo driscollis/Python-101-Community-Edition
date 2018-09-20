@@ -1,0 +1,174 @@
+# Chapter 30 - ConfigObj
+
+Python comes with a handy module called **ConfigParser**. It's good for
+creating and reading configuration files (aka INI files). However,
+Michael Foord (author of IronPython in Action) and Nicola Larosa decided
+to write their own configuration module called **ConfigObj**. In many
+ways, it is an improvement over the standard library's module. For
+example, it will return a dictionary-like object when it reads a config
+file. ConfigObj can also understand some Python types. Another neat
+feature is that you can create a configuration spec that ConfigObj will
+use to validate the config file.
+
+Getting Started
+---------------
+
+First of all, you need to go and get ConfigObj. This is a good time to
+use your knowledge from the last chapter on installing packages. Here is
+how you would get ConfigObj with pip:
+
+``` {.sourceCode .python}
+pip install configobj
+```
+
+Once you have it installed, we can move on. To start off, open a text
+editor and create a file with some contents like this:
+
+``` {.sourceCode .python}
+product = Sony PS3
+accessories = controller, eye, memory stick
+# This is a comment that will be ignored
+retail_price = $400
+```
+
+Save it where ever you like. I'm going to call mine *config.ini*. Now
+let's see how ConfigObj can be used to extract that information:
+
+``` {.sourceCode .python}
+>>> from configobj import ConfigObj
+>>> config = ConfigObj(r"path to config.ini")
+>>> config["product"]
+'Sony PS3'
+>>> config["accessories"]
+['controller', 'eye', 'memory stick']
+>>> type(config["accessories"])
+<type 'list'>
+```
+
+As you can see, ConfigObj uses Python's **dict** API to access the
+information it has extracted. All you had to do to get ConfigObj to
+parse the file was to pass the file's path to ConfigObj. Now, if the
+information had been under a section (i.e. \[Sony\]), then you would
+have had to do pre-pend everything with \["Sony"\], like this:
+**config\["Sony"\]\["product"\]**. Also take note that the *accessories*
+section was returned as a list of strings. ConfigObj will take any valid
+line with a comma-separated list and return it as a Python list. You can
+also create multi-line strings in the config file as long as you enclose
+them with triple single or double quotes.
+
+If you need to create a sub-section in the file, then use extra square
+brackets. For example, **\[Sony\]** is the top section,
+**\[\[Playstation\]\]** is the sub-section and **\[\[\[PS3\]\]\]** is
+the sub-section of the sub-section. You can create sub-sections up to
+any depth. For more information on the formatting of the file, I
+recommend reading ConfigObj's documentation.
+
+Now we'll do the reverse and create the config file programmatically.
+
+``` {.sourceCode .python}
+import configobj
+
+def createConfig(path):
+    config = configobj.ConfigObj()
+    config.filename = path
+    config["Sony"] = {}
+    config["Sony"]["product"] = "Sony PS3"
+    config["Sony"]["accessories"] = ['controller', 'eye', 'memory stick']
+    config["Sony"]["retail price"] = "$400"
+    config.write()
+
+if __name__ == "__main__":
+    createConfig("config.ini")
+```
+
+As you can see, all it took was 13 lines of code. In the code above, we
+create a function and pass it the path for our config file. Then we
+create a ConfigObj object and set its filename property. To create the
+section, we create an empty dict with the name "Sony". Then we pre-pend
+each line of the sections contents in the same way. Finally, we call our
+config object's write method to write the data to the file.
+
+Using a configspec
+------------------
+
+ConfigObj also provides a way to validate your configuration files using
+a **configspec**. When I mentioned that I was going to write on this
+topic, Steven Sproat (creator of Whyteboard) volunteered his configspec
+code as an example. I took his specification and used it to create a
+default config file. In this example, we use Foord's validate module to
+do the validation. I don't think it's included in your ConfigObj
+download, so you may need to download it as well. Now, let's take a look
+at the code:
+
+``` {.sourceCode .python}
+import configobj, validate
+
+cfg = """
+bmp_select_transparent = boolean(default=False)
+canvas_border = integer(min=10, max=35, default=15)
+colour1 = list(min=3, max=3, default=list('280', '0', '0'))
+colour2 = list(min=3, max=3, default=list('255', '255', '0'))
+colour3 = list(min=3, max=3, default=list('0', '255', '0'))
+colour4 = list(min=3, max=3, default=list('255', '0', '0'))
+colour5 = list(min=3, max=3, default=list('0', '0', '255'))
+colour6 = list(min=3, max=3, default=list('160', '32', '240'))
+colour7 = list(min=3, max=3, default=list('0', '255', '255'))
+colour8 = list(min=3, max=3, default=list('255', '165', '0'))
+colour9 = list(min=3, max=3, default=list('211', '211', '211'))
+convert_quality = option('highest', 'high', 'normal', default='normal')
+default_font = string
+default_width = integer(min=1, max=12000, default=640)
+default_height = integer(min=1, max=12000, default=480)
+imagemagick_path = string
+handle_size = integer(min=3, max=15, default=6)
+language = option('English', 'English (United Kingdom)', 'Russian', 
+                  'Hindi', default='English')
+print_title = boolean(default=True)
+statusbar = boolean(default=True)
+toolbar = boolean(default=True)
+toolbox = option('icon', 'text', default='icon')
+undo_sheets = integer(min=5, max=50, default=10)
+"""
+
+def createConfig(path):
+    """
+    Create a config file using a configspec
+    and validate it against a Validator object
+    """
+    spec = cfg.split("\n")
+    config = configobj.ConfigObj(path, configspec=spec)
+    validator = validate.Validator()
+    config.validate(validator, copy=True)
+    config.filename = path
+    config.write()
+
+if __name__ == "__main__":
+    createConfig("config.ini")
+```
+
+The configspec allows the programmer the ability to specify what
+**types** are returned for each line in the configuration file. It also
+can be used to set a default value and a **min** and **max** values
+(among other things). If you run the code above, you will see a
+*config.ini* file generated in the current working directory that has
+just the default values. If the programmer didn't specify a default,
+then that line isn't even added to the configuration.
+
+Let's take a closer look at what's going on just to make sure you
+understand. In the **createConfig** function, we create a ConfigObj
+instance by passing in the file path and setting the configspec. Note
+that the configspec can also be a normal text file or a python file
+rather than the string that is in this example. Next, we create a
+Validator object. Normal usage is to just call
+config.validate(validator), but in this code I set the copy argument to
+True so that I could create a file. Otherwise, all it would do is
+validate that the file I passed in fit the configspec's rules. Finally I
+set the config's filename and write the data out.
+
+Wrapping Up
+-----------
+
+Now you know just enough to get you started on the ins and outs of
+ConfigObj. I hope you'll find it as helpful as I have. Be sure to go to
+the module's documentation and read more about what it and **validate**
+can do.

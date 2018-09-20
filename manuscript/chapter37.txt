@@ -1,0 +1,168 @@
+# Chapter 37 - How to Add Your Code to PyPI
+
+We created a package called **mymath** in the previous chapter. In this
+chapter, we will learn how to share it on the Python Packaging Index
+(PyPI). To do that, we will first need to learn how to create a
+**setup.py** file. Just to review, here is our current folder hierarchy:
+
+``` {.sourceCode .python}
+mymath/
+    __init__.py
+    adv/
+        __init__.py
+        sqrt.py
+    add.py
+    subtract.py
+    multiply.py
+    divide.py
+```
+
+This means that you have a **mymath** folder with the following files in
+it: **\_\_init\_\_.py, add.py, subtract.py, multiply.py** and
+**divide.py**. You will also have an **adv** folder inside the
+**mymath** folder. In the **adv** folder, you will have two files:
+**\_\_init\_\_.py** and **sqrt.py**.
+
+Creating a setup.py File
+------------------------
+
+We will start out by creating a super simple **setup.py** script. Here's
+a bare-bones one:
+
+``` {.sourceCode .python}
+from distutils.core import setup
+
+setup(name='mymath',
+      version='0.1',
+      packages=['mymath', 'mymath.adv'],
+      )
+```
+
+This is something you might write for a package internally. To upload to
+PyPI, you will need to include a little more information:
+
+``` {.sourceCode .python}
+from distutils.core import setup    
+
+setup(name='mymath',
+      version='0.1',
+      description='A silly math package',
+      author='Mike Driscoll',
+      author_email='mike@mymath.org',
+      url='http://www.mymath.org/',
+      packages=['mymath', 'mymath.adv'],
+     )
+```
+
+Now that we're done with that, we should test our script. You can create
+a virtual environment using the directions from chapter 35 or you can
+just install your code to your Python installation by calling the
+following command:
+
+``` {.sourceCode .python}
+python setup.py install
+```
+
+Alternatively, you can use the method at the end of the last chapter in
+which you created a special **setup.py** that you installed in
+**develop** mode. You will note that in the last chapter, we used
+**setuptools** whereas in this chapter we used **distutils**. The only
+reason we did this is that setuptools has the **develop** command and
+distutils does not.
+
+Now we need to register our package with PyPI!
+
+Registering Packages
+--------------------
+
+Registering you package is very easy. Since this is your first package,
+you will want to register with the Test PyPI server instead of the real
+one. You may need to create a **.pypirc** file and enter the Test PyPI
+server address. See the next section for more information. Once you have
+done that, you just need to run the following command:
+
+``` {.sourceCode .python}
+python setup.py register
+```
+
+You will receive a list of options that ask you to login, register, have
+the server send you a password or quit. If you have your username and
+password saved on your machine, you won't see that message. If you're
+already registered, you can login and your package's metadata will be
+uploaded.
+
+Uploading Packages to PyPI
+--------------------------
+
+You will probably want to start out by testing with PyPI's test server,
+which is at <https://testpypi.python.org/pypi>. You will have to
+register with that site too as it uses a different database than the
+main site. Once you've done that, you may want to create a **.pypirc**
+file somewhere on your operating system's path. On Linux, you can use
+**\$HOME** to find it and on Windows, you can use the **HOME** environ
+variable. This path is where you would save that file. Following is a
+sample of what could go in your pypirc file from
+<https://wiki.python.org/moin/TestPyPI>:
+
+``` {.sourceCode .python}
+[distutils]
+index-servers=
+    pypi
+    test
+
+[test]
+repository = https://testpypi.python.org/pypi
+username = richard
+password = <your password goes here>
+
+[pypi]
+repository = http://pypi.python.org/pypi
+username = richard
+password = <your password goes here>
+```
+
+I would highly recommend that you read the documentation in depth to
+understand all the options you can add to this configuration file.
+
+To upload some files to PyPI, you will need to create some
+distributions.
+
+``` {.sourceCode .python}
+python setup.py sdist bdist_wininst upload
+```
+
+When you run the command above, it will create a **dist** folder. The
+**sdist** command will create an archive file (a zip on Windows, a
+tarball on Linux). The **bdist\_wininst** will create a simple Windows
+installer executable. The **upload** command will then upload these two
+files to PyPI.
+
+In your **setup.py** file, you can add a **long\_description** field
+that will be used by PyPI to generate a home page for your package on
+PyPI. You can use reStructuredText to format your description. Or you
+can skip adding the description and accept PyPI's default formatting.
+
+If you would like a full listing of the commands you can use with
+**setup.py**, try running the following command:
+
+``` {.sourceCode .python}
+python setup.py --help-commands
+```
+
+You should also add a **README.txt** file that explains how to install
+and use your package. It can also contain a "Thank You" section if you
+have a lot of contributors.
+
+Wrapping Up
+-----------
+
+Now you know the basics for adding your package to the Python Packaging
+Index. If you want to add a Python egg to PyPI, you will need to use
+easy\_install instead of distutils. When you release your next version,
+you may want to add a **CHANGES.txt** file that lists the changes to
+your code. There is a great website called **The Hitchhiker's Guide to
+Packaging** which would be a great place for you to check out for
+additional information on this exciting topic. Alternatively, you may
+also want to check out this
+[tutorial](http://www.scotttorborg.com/python-packaging/index.html) by
+Scott Torborg to get a different take on the process.

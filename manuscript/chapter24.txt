@@ -1,0 +1,194 @@
+# Chapter 24 - The Python Debugger
+
+Python comes with its own debugger module that is named **pdb**. This
+module provides an interactive source code debugger for your Python
+programs. You can set breakpoints, step through your code, inspect stack
+frames and more. We will look at the following aspects of the module:
+
+> -   How to start the debugger
+> -   Stepping through your code
+> -   Setting breakpoints
+
+Let's start by creating a quick piece of code to attempt debugging with.
+Here's a silly example:
+
+``` {.sourceCode .python}
+# debug_test.py
+
+def doubler(a):
+    """"""
+    result = a*2
+    print(result)
+    return result
+
+def main():
+    """"""
+    for i in range(1,10):
+        doubler(i)
+
+if __name__ == "__main__":
+    main()
+```
+
+Now let's learn how to run the debugger against this piece of code.
+
+How to Start the Debugger
+-------------------------
+
+You can start the debugger three different ways. The first is to just
+import it and insert **pdb.set\_trace()** into your code to start the
+debugger. You can import the debugger in IDLE and have it run your
+module. Or you can call the debugger on the command line. We'll focus on
+the last two methods in this section. We will start with using it in the
+interpreter (IDLE). Open up a terminal (command line window) and
+navigate to where you save the above code example. Then start Python.
+Now do the following:
+
+``` {.sourceCode .python}
+>>> import debug_test
+>>> import pdb
+>>> pdb.run('debug_test.main()')
+> <string>(1)<module>()
+(Pdb) continue
+2
+4
+6
+8
+10
+12
+14
+16
+18
+>>>
+```
+
+Here we import our module and pdb. Then we execute pdb's **run** method
+and tell it to call our module's **main** method. This brings up the
+debugger's prompt. Here we typed **continue** to tell it to go ahead and
+run the script. You can also type the letter **c** as a shortcut for
+continue. When you **continue**, the debugger will continue execution
+until it reaches a breakpoint or the script ends.
+
+The other way to start the debugger is to execute the following command
+via your terminal session:
+
+``` {.sourceCode .python}
+python -m pdb debug_test.py
+```
+
+If you run it this way, you will see a slightly different result:
+
+``` {.sourceCode .python}
+-> def doubler(a):
+(Pdb) c
+2
+4
+6
+8
+10
+12
+14
+16
+18
+The program finished and will be restarted
+```
+
+You will note that in this example we used **c** instead of
+**continue**. You will also note that the debugger restarts at the end.
+This preserves the debugger's state (such as breakpoints) and can be
+more useful than having the debugger stop. Sometimes you'll need to go
+through the code several times to understand what's wrong with it.
+
+Let's dig a little deeper and learn how to step through the code.
+
+Stepping Through the Code
+-------------------------
+
+If you want to step through your code one line at a time, then you can
+use the **step** (or simply "s") command. Here's a session for your
+viewing pleasure:
+
+``` {.sourceCode .python}
+C:\Users\mike>cd c:\py101
+
+c:\py101>python -m pdb debug_test.py
+> c:\py101\debug_test.py(4)<module>()
+-> def doubler(a):
+(Pdb) step
+> c:\py101\debug_test.py(11)<module>()
+-> def main():
+(Pdb) s
+> c:\py101\debug_test.py(16)<module>()
+-> if __name__ == "__main__":
+(Pdb) s
+> c:\py101\debug_test.py(17)<module>()
+-> main()
+(Pdb) s
+--Call--
+> c:\py101\debug_test.py(11)main()
+-> def main():
+(Pdb) next
+> c:\py101\debug_test.py(13)main()
+-> for i in range(1,10):
+(Pdb) s
+> c:\py101\debug_test.py(14)main()
+-> doubler(i)
+(Pdb)
+```
+
+Here we start up the debugger and tell it to step into the code. It
+starts at the top and goes through the first two function definitions.
+Then it reaches the conditional and finds that it's supposed to execute
+the **main** function. We step into the main function and then use the
+**next** command. The **next** command will execute a called function if
+it encounters it without stepping into it. If you want to step into the
+called function, then you'll only want to just use the **step** command.
+
+When you see a line like **&gt; c:py101debug\_test.py(13)main()**, you
+will want to pay attention to the number that's in the parentheses. This
+number is the current line number in the code.
+
+You can use the **args** (or **a**) to print the current argument list
+to the screen. Another handy command is **jump** (or **j**) followed by
+a space and the line number that you want to "jump" to. This gives you
+the ability to skip a bunch of monotonous stepping to get to the line
+that you want to get to. This leads us to learning about breakpoints!
+
+Setting breakpoints
+-------------------
+
+A breakpoint is a line in the code where you want to pause execution.
+You can set a breakpoint by calling the **break** (or **b**) command
+followed by a space and the line number that you want to break on. You
+can also prefix the line number with a filename and colon to specify a
+breakpoint in a different file. The break command also allows you to set
+a breakpoint with the **function** argument. There is also a **tbreak**
+command which will set a temporary breakpoint which is automatically
+removed when it gets hit.
+
+Here's an example:
+
+``` {.sourceCode .python}
+c:\py101>python -m pdb debug_test.py
+> c:\py101\debug_test.py(4)<module>()
+-> def doubler(a):
+(Pdb) break 6
+Breakpoint 1 at c:\py101\debug_test.py:6
+(Pdb) c
+> c:\py101\debug_test.py(6)doubler()
+-> result = a*2
+```
+
+We start the debugger and then tell it to set a breakpoint on line 6.
+Then we continue and it stops on line 6 just like it's supposed to. Now
+would be a good time to check the argument list to see if it's what you
+expect. Give it a try by typing **args** now. Then do another
+**continue** and another **args** to see how it changed.
+
+Wrapping Up
+-----------
+
+There are a lot of other commands that you can use in the debugger. I
+recommend reading the documentation to learn about the others. However,
+at this point you should be able to use the debugger effectively to
+debug your own code.

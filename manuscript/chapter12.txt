@@ -1,0 +1,147 @@
+# Chapter 12 - Introspection
+
+Whether you're new to Python, been using it for a few years or you're an
+expert, knowing how to use Python's introspection capabilities can help
+your understanding of your code and that new package you just downloaded
+with the crappy documentation. Introspection is a fancy word that means
+to observe oneself and ponder one's thoughts, senses, and desires. In
+Python world, introspection is actually kind of similar. Introspection
+in this case is to use Python to figure out Python. In this chapter, you
+can learn how to use Python to give yourself a clue about the code
+you're working on or trying to learn. Some might even call it a form of
+debugging.
+
+Here's what we're going to cover:
+
+> -   type
+> -   dir
+> -   help
+
+The Python Type
+---------------
+
+You may not know this, but Python may just be your type. Yes, Python can
+tell you what type of variable you have or what type is returned from a
+function. It's a very handy little tool. Let's look at a few examples to
+make it all clear:
+
+``` {.sourceCode .python}
+>>> x = "test"
+>>> y = 7
+>>> z = None
+>>> type(x)
+<class 'str'>
+>>> type(y)
+<class 'int'>
+>>> type(z)
+<class 'NoneType'>
+```
+
+As you can see, Python has a keyword called **type** that can tell you
+what is what. In my real-life experiences, I've used **type** to help me
+figure out what is going on when my database data is corrupt or not what
+I expect. I just add a couple lines and print out each row's data along
+with its type. This has helped me a lot when I've been dumbfounded by
+some stupid code I wrote.
+
+The Python Dir
+--------------
+
+What is dir? Is it something you say when someone says or does something
+stupid? Not in this context! No, here on Planet Python, the dir keyword
+is used to tell the programmer what attributes and methods there are in
+the passed in object. If you forget to pass in an object, dir will
+return a list of names in the current scope. As usual, this is easier to
+understand with a few examples.
+
+``` {.sourceCode .python}
+>>> dir("test")
+['__add__', '__class__', '__contains__', '__delattr__',
+ '__doc__', '__eq__', '__ge__', '__getattribute__',
+ '__getitem__', '__getnewargs__', '__getslice__', '__gt__',
+ '__hash__', '__init__', '__le__', '__len__', '__lt__',
+ '__mod__', '__mul__', '__ne__', '__new__', '__reduce__',
+ '__reduce_ex__', '__repr__', '__rmod__', '__rmul__',
+ '__setattr__', '__str__', 'capitalize', 'center',
+ 'count', 'decode', 'encode', 'endswith', 'expandtabs',
+ 'find', 'index', 'isalnum', 'isalpha', 'isdigit', 'islower',
+ 'isspace', 'istitle', 'isupper', 'join', 'ljust', 'lower',
+ 'lstrip', 'replace', 'rfind', 'rindex', 'rjust', 'rsplit',
+ 'rstrip', 'split', 'splitlines', 'startswith', 'strip',
+ 'swapcase', 'title', 'translate', 'upper', 'zfill']
+```
+
+Since everything in Python is an object, we can pass a string to dir and
+find out what methods it has. Pretty neat, huh? Now let's try it with an
+imported module:
+
+``` {.sourceCode .python}
+>>> import sys
+>>> dir(sys)
+['__displayhook__', '__doc__', '__egginsert', '__excepthook__',
+ '__name__', '__plen', '__stderr__', '__stdin__', '__stdout__',
+ '_getframe', 'api_version', 'argv', 'builtin_module_names',
+ 'byteorder', 'call_tracing', 'callstats', 'copyright',
+ 'displayhook', 'dllhandle', 'exc_clear', 'exc_info',
+ 'exc_traceback', 'exc_type', 'exc_value', 'excepthook',
+ 'exec_prefix', 'executable', 'exit', 'exitfunc',
+ 'getcheckinterval', 'getdefaultencoding', 'getfilesystemencoding',
+ 'getrecursionlimit', 'getrefcount', 'getwindowsversion', 'hexversion',
+ 'maxint', 'maxunicode', 'meta_path', 'modules', 'path', 'path_hooks',
+ 'path_importer_cache', 'platform', 'prefix', 'setcheckinterval',
+ 'setprofile', 'setrecursionlimit', 'settrace', 'stderr', 'stdin',
+ 'stdout', 'version', 'version_info', 'warnoptions', 'winver']
+```
+
+Now, that's handy! If you haven't figured it out yet, the **dir**
+function is extremely handy for those 3rd party packages that you have
+downloaded (or will soon download) that have little to no documentation.
+How do you find out about what methods are available in these cases?
+Well, **dir** will help you figure it out. Of course, sometimes the
+documentation is in the code itself, which brings us to the builtin help
+utility.
+
+Python Help!
+------------
+
+Python comes with a handy help utility. Just type "help()" (minus the
+quotes) into a Python shell and you'll see the following directions
+(Python version may vary)
+
+``` {.sourceCode .python}
+>>> help()
+
+Welcome to Python 2.6!  This is the online help utility.
+
+If this is your first time using Python, you should definitely check out
+the tutorial on the Internet at http://www.python.org/doc/tut/.
+
+Enter the name of any module, keyword, or topic to get help on writing
+Python programs and using Python modules.  To quit this help utility and
+return to the interpreter, just type "quit".
+
+To get a list of available modules, keywords, or topics, type "modules",
+"keywords", or "topics".  Each module also comes with a one-line summary
+of what it does; to list the modules whose summaries contain a given word
+such as "spam", type "modules spam".
+
+help>
+```
+
+Note that you now have a "help&gt;" prompt instead of the
+"&gt;&gt;&gt;". When you are in help mode, you can explore the various
+modules, keywords and topics found in Python. Also note that when typing
+the word "modules", you will see a delay as Python searches its library
+folder to acquire a list. If you have installed a lot of 3rd party
+modules, this can take quite a while, so be prepared to go fix yourself
+a mocha while you wait. Once it's done, just follow the directions and
+play around with it and I think you'll get the gist.
+
+Wrapping Up
+-----------
+
+Now you know how to take an unknown module and learn a lot about it by
+just using some of Python's built-in functionality. You will find
+yourself using these commands over and over again to help you learn
+Python. As I mentioned earlier, you will find these tools especially
+helpful for the 3rd Party modules that don't believe in documentation.

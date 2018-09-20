@@ -1,0 +1,417 @@
+# Chapter 17 - The email / smtplib Module
+
+Python provides a couple of really nice modules that we can use to craft
+emails with. They are the **email** and **smtplib** modules. Instead of
+going over various methods in these two modules, we'll spend some time
+learning how to actually use these modules. Specifically, we'll be
+covering the following:
+
+> -   The basics of emailing
+> -   How to send to multiple addresses at once
+> -   How to send email using the TO, CC and BCC lines
+> -   How to add an attachment and a body using the email module
+
+|
+
+Let's get started!
+
+Email Basics - How to Send an Email with smtplib
+------------------------------------------------
+
+The **smtplib** module is very intuitive to use. Let's write a quick
+example that shows how to send an email. Save the following code to a
+file on your hard drive:
+
+``` {.sourceCode .python}
+import smtplib
+
+HOST = "mySMTP.server.com"
+SUBJECT = "Test email from Python"
+TO = "mike@someAddress.org"
+FROM = "python@mydomain.com"
+text = "Python 3.4 rules them all!"
+
+BODY = "\r\n".join((
+    "From: %s" % FROM,
+    "To: %s" % TO,
+    "Subject: %s" % SUBJECT ,
+    "",
+    text
+    ))
+
+server = smtplib.SMTP(HOST)
+server.sendmail(FROM, [TO], BODY)
+server.quit()
+```
+
+We imported two modules, **smtplib** and the **string** module. Two
+thirds of this code is used for setting up the email. Most of the
+variables are pretty self-explanatory, so we'll focus on the odd one
+only, which is **BODY**. Here we use the **string** module to combine
+all the previous variables into a single string where each lines ends
+with a carriage return ("/r") plus new line ("/n"). If you print BODY
+out, it would look like this:
+
+``` {.sourceCode .python}
+'From: python@mydomain.com\r\nTo: mike@mydomain.com\r\nSubject: Test email from Python\r\n\r\nblah blah blah'
+```
+
+After that, we set up a server connection to our host and then we call
+the smtplib module's **sendmail** method to send the email. Then we
+disconnect from the server. You will note that this code doesn't have a
+username or password in it. If your server requires authentication, then
+you'll need to add the following code:
+
+``` {.sourceCode .python}
+server.login(username, password)
+```
+
+This should be added right after you create the server object. Normally,
+you would want to put this code into a function and call it with some of
+these parameters. You might even want to put some of this information
+into a config file. Let's put this code into a function.
+
+``` {.sourceCode .python}
+import smtplib
+
+def send_email(host, subject, to_addr, from_addr, body_text):
+    """
+    Send an email
+    """
+    BODY = "\r\n".join((
+            "From: %s" % from_addr,
+            "To: %s" % to_addr,
+            "Subject: %s" % subject ,
+            "",
+            body_text
+            ))
+    server = smtplib.SMTP(host)
+    server.sendmail(from_addr, [to_addr], BODY)
+    server.quit()
+
+if __name__ == "__main__":
+    host = "mySMTP.server.com"
+    subject = "Test email from Python"
+    to_addr = "mike@someAddress.org"
+    from_addr = "python@mydomain.com"
+    body_text = "Python rules them all!"
+    send_email(host, subject, to_addr, from_addr, body_text)
+```
+
+Now you can see how small the actual code is by just looking at the
+function itself. That's 13 lines! And we could make it shorter if we
+didn't put every item in the BODY on its own line, but it wouldn't be as
+readable. Now we'll add a config file to hold the server information and
+the **from** address. Why? Well in the work I do, we might use different
+email servers to send email or if the email server gets upgraded and the
+name changes, then we only need to change the config file rather than
+the code. The same thing could apply to the **from** address if our
+company was bought and merged into another.
+
+Let's take a look at the config file (save it as **email.ini**):
+
+``` {.sourceCode .python}
+[smtp]
+server = some.server.com
+from_addr = python@mydomain.com
+```
+
+That is a very simple config file. In it we have a section labelled
+**smtp** in which we have two items: server and from\_addr. We'll use
+configObj to read this file and turn it into a Python dictionary. Here's
+the updated version of the code (save it as **smtp\_config.py**):
+
+``` {.sourceCode .python}
+import os
+import smtplib
+import sys
+
+from configparser import ConfigParser
+
+def send_email(subject, to_addr, body_text):
+    """
+    Send an email
+    """
+    base_path = os.path.dirname(os.path.abspath(__file__))
+    config_path = os.path.join(base_path, "email.ini")
+
+    if os.path.exists(config_path):
+        cfg = ConfigParser()
+        cfg.read(config_path)
+    else:
+        print("Config not found! Exiting!")
+        sys.exit(1)
+
+    host = cfg.get("smtp", "server")
+    from_addr = cfg.get("smtp", "from_addr")
+
+    BODY = "\r\n".join((
+        "From: %s" % from_addr,
+        "To: %s" % to_addr,
+        "Subject: %s" % subject ,
+        "",
+        body_text
+    ))
+    server = smtplib.SMTP(host)
+    server.sendmail(from_addr, [to_addr], BODY)
+    server.quit()
+
+if __name__ == "__main__":
+    subject = "Test email from Python"
+    to_addr = "mike@someAddress.org"
+    body_text = "Python rules them all!"
+    send_email(subject, to_addr, body_text)
+```
+
+We've added a little check to this code. We want to first grab the path
+that the script itself is in, which is what base\_path represents. Next
+we combine that path with the file name to get a fully qualified path to
+the config file. We then check for the existence of that file. If it's
+there, we create a **ConfigParser** and if it's not, we print a message
+and exit the script. We should add an exception handler around the
+**ConfigParser.read()** call just to be on the safe side though as the
+file could exist, but be corrupt or we might not have permission to open
+it and that will throw an exception. That will be a little project that
+you can attempt on your own. Anyway, let's say that everything goes well
+and the ConfigParser object is created successfully. Now we can extract
+the host and from\_addr information using the usual ConfigParser syntax.
+
+Now we're ready to learn how to send multiple emails at the same time!
+
+Sending Multiple Emails at Once
+-------------------------------
+
+Let's modify our last example a little so we send multiple emails!
+
+``` {.sourceCode .python}
+import os
+import smtplib
+import sys
+
+from configparser import ConfigParser
+
+def send_email(subject, body_text, emails):
+    """
+    Send an email
+    """
+    base_path = os.path.dirname(os.path.abspath(__file__))
+    config_path = os.path.join(base_path, "email.ini")
+
+    if os.path.exists(config_path):
+        cfg = ConfigParser()
+        cfg.read(config_path)
+    else:
+        print("Config not found! Exiting!")
+        sys.exit(1)
+
+    host = cfg.get("smtp", "server")
+    from_addr = cfg.get("smtp", "from_addr")
+
+    BODY = "\r\n".join((
+            "From: %s" % from_addr,
+            "To: %s" % ', '.join(emails),
+            "Subject: %s" % subject ,
+            "",
+            body_text
+            ))
+    server = smtplib.SMTP(host)
+    server.sendmail(from_addr, emails, BODY)
+    server.quit()
+
+if __name__ == "__main__":
+    emails = ["mike@someAddress.org", "someone@gmail.com"]
+    subject = "Test email from Python"
+    body_text = "Python rules them all!"
+    send_email(subject, body_text, emails)
+```
+
+You'll notice that in this example, we removed the to\_addr parameter
+and added an emails parameter, which is a list of email addresses. To
+make this work, we need to create a comma-separated string in the
+**To:** portion of the BODY and also pass the email **list** to the
+**sendmail** method. Thus we do the following to create a simple comma
+separated string: **', '.join(emails)**. Simple, huh?
+
+Send email using the TO, CC and BCC lines
+-----------------------------------------
+
+Now we just need to figure out how to send using the CC and BCC fields.
+Let's create a new version of this code that supports that
+functionality!
+
+``` {.sourceCode .python}
+import os
+import smtplib
+import sys
+
+from configparser import ConfigParser
+
+def send_email(subject, body_text, to_emails, cc_emails, bcc_emails):
+    """
+    Send an email
+    """
+    base_path = os.path.dirname(os.path.abspath(__file__))
+    config_path = os.path.join(base_path, "email.ini")
+
+    if os.path.exists(config_path):
+        cfg = ConfigParser()
+        cfg.read(config_path)
+    else:
+        print("Config not found! Exiting!")
+        sys.exit(1)
+
+    host = cfg.get("smtp", "server")
+    from_addr = cfg.get("smtp", "from_addr")
+
+    BODY = "\r\n".join((
+            "From: %s" % from_addr,
+            "To: %s" % ', '.join(to_emails),
+            "CC: %s" % ', '.join(cc_emails),
+            "BCC: %s" % ', '.join(bcc_emails),
+            "Subject: %s" % subject ,
+            "",
+            body_text
+            ))
+    emails = to_emails + cc_emails + bcc_emails
+
+    server = smtplib.SMTP(host)
+    server.sendmail(from_addr, emails, BODY)
+    server.quit()
+
+if __name__ == "__main__":
+    emails = ["mike@somewhere.org"]
+    cc_emails = ["someone@gmail.com"]
+    bcc_emails = ["schmuck@newtel.net"]
+
+    subject = "Test email from Python"
+    body_text = "Python rules them all!"
+    send_email(subject, body_text, emails, cc_emails, bcc_emails)
+```
+
+In this code, we pass in 3 lists, each with one email address a piece.
+We create the CC and BCC fields exactly the same as before, but we also
+need to combine the 3 lists into one so we can pass the combined list to
+the sendmail() method. There is some talk on forums like StackOverflow
+that some email clients may handle the BCC field in odd ways that allow
+the recipient to see the BCC list via the email headers. I am unable to
+confirm this behavior, but I do know that Gmail successfully strips the
+BCC information from the email header.
+
+Now we're ready to move on to using Python's email module!
+
+Add an attachment / body using the email module
+-----------------------------------------------
+
+Now we'll take what we learned from the previous section and mix it
+together with the Python email module so that we can send attachments.
+The email module makes adding attachments extremely easy. Here's the
+code:
+
+``` {.sourceCode .python}
+import os
+import smtplib
+import sys
+
+from configparser import ConfigParser
+from email import encoders
+from email.mime.text import MIMEText
+from email.mime.base import MIMEBase
+from email.mime.multipart import MIMEMultipart
+from email.utils import formatdate
+
+#----------------------------------------------------------------------
+def send_email_with_attachment(subject, body_text, to_emails,
+                               cc_emails, bcc_emails, file_to_attach):
+    """
+    Send an email with an attachment
+    """
+    base_path = os.path.dirname(os.path.abspath(__file__))
+    config_path = os.path.join(base_path, "email.ini")
+    header = 'Content-Disposition', 'attachment; filename="%s"' % file_to_attach
+
+    # get the config
+    if os.path.exists(config_path):
+        cfg = ConfigParser()
+        cfg.read(config_path)
+    else:
+        print("Config not found! Exiting!")
+        sys.exit(1)
+
+    # extract server and from_addr from config
+    host = cfg.get("smtp", "server")
+    from_addr = cfg.get("smtp", "from_addr")
+
+    # create the message
+    msg = MIMEMultipart()
+    msg["From"] = from_addr
+    msg["Subject"] = subject
+    msg["Date"] = formatdate(localtime=True)
+    if body_text:
+        msg.attach( MIMEText(body_text) )
+
+    msg["To"] = ', '.join(to_emails)
+    msg["cc"] = ', '.join(cc_emails)
+
+    attachment = MIMEBase('application', "octet-stream")
+    try:
+        with open(file_to_attach, "rb") as fh:
+            data = fh.read()
+        attachment.set_payload( data )
+        encoders.encode_base64(attachment)
+        attachment.add_header(*header)
+        msg.attach(attachment)
+    except IOError:
+        msg = "Error opening attachment file %s" % file_to_attach
+        print(msg)
+        sys.exit(1)
+
+    emails = to_emails + cc_emails
+
+    server = smtplib.SMTP(host)
+    server.sendmail(from_addr, emails, msg.as_string())
+    server.quit()
+
+if __name__ == "__main__":
+    emails = ["mike@someAddress.org", "nedry@jp.net"]
+    cc_emails = ["someone@gmail.com"]
+    bcc_emails = ["anonymous@circe.org"]
+
+    subject = "Test email with attachment from Python"
+    body_text = "This email contains an attachment!"
+    path = "/path/to/some/file"
+    send_email_with_attachment(subject, body_text, emails, 
+                               cc_emails, bcc_emails, path)
+```
+
+Here we have renamed our function and added a new argument,
+**file\_to\_attach**. We also need to add a header and create a
+**MIMEMultipart** object. The header could be created any time before we
+add the attachment. We add elements to the **MIMEMultipart** object
+(msg) like we would keys to a dictionary. You'll note that we have to
+use the email module's **formatdate** method to insert the properly
+formatted date. To add the body of the message, we need to create an
+instance of **MIMEText**. If you're paying attention, you'll see that we
+didn't add the BCC information, but you could easily do so by following
+the conventions in the code above. Next we add the attachment. We wrap
+it in an exception handler and use the **with** statement to extract the
+file and place it in our **MIMEBase** object. Finally we add it to the
+**msg** variable and we send it out. Notice that we have to convert the
+**msg** to a string in the **sendmail** method.
+
+Wrapping Up
+-----------
+
+Now you know how to send out emails with Python. For those of you that
+like mini projects, you should go back and add additional error handling
+around the **server.sendmail** portion of the code in case something odd
+happens during the process, such as an **SMTPAuthenticationError** or
+**SMTPConnectError**. We could also beef up the error handling during
+the attachment of the file to catch other errors. Finally, we may want
+to take those various lists of emails and create one normalized list
+that has removed duplicates. This is especially important if we are
+reading a list of email addresses from a file.
+
+Also note that our from address is fake. We can spoof emails using
+Python and other programming languages, but that is very bad etiquette
+and possibly illegal depending on where you live. You have been warned!
+Use your knowledge wisely and enjoy Python for fun and profit!

@@ -1,0 +1,480 @@
+# Chapter 16 - The os Module
+
+The **os** module has many uses. We won't be covering everything that it
+can do. Instead, we will get an overview of its uses and we'll also take
+a look at one of its sub-modules, known as **os.path**. Specifically, we
+will be covering the following:
+
+> -   os.name
+> -   os.environ
+> -   os.chdir()
+> -   os.getcwd()
+> -   os.getenv()
+> -   os.putenv()
+> -   os.mkdir()
+> -   os.makedirs()
+> -   os.remove()
+> -   os.rename()
+> -   os.rmdir()
+> -   os.startfile()
+> -   os.walk()
+> -   os.path
+
+That looks like a lot to cover, but there is at least ten times as many
+other actions that the os module can do. This chapter is just going to
+give you a little taste of what's available. To use any of the methods
+mentioned in this section, you will need to import the **os** module,
+like this:
+
+``` {.sourceCode .python}
+import os
+```
+
+Let's start learning how to use this module!
+
+os.name
+-------
+
+The os module has both callable functions and normal values. In the case
+of **os.name**, it is just a value. When you access os.name, you will
+get information about what platform you are running on. You will receive
+one of the following values: 'posix', 'nt', 'os2', 'ce', 'java',
+'riscos'. Let's see what we get when we run it on Windows 7:
+
+``` {.sourceCode .python}
+>>> import os
+>>> os.name
+'nt'
+```
+
+This tells us that our Python instance is running on a Windows box. How
+do we know this? Because Microsoft started calling its operating system
+NT many years ago. For example, Windows 7 is also known as Windows NT
+6.1.
+
+os.environ, os.getenv() and os.putenv()
+---------------------------------------
+
+The **os.environ** value is known as a **mapping** object that returns a
+dictionary of the user's environmental variables. You may not know this,
+but every time you use your computer, some environment variables are
+set. These can give you valuable information, such as number of
+processors, type of CPU, the computer name, etc. Let's see what we can
+find out about our machine:
+
+``` {.sourceCode .python}
+>>> import os
+>>> os.environ
+{'ALLUSERSPROFILE': 'C:\\ProgramData',
+ 'APPDATA': 'C:\\Users\\mike\\AppData\\Roaming',
+ 'CLASSPATH': '.;C:\\Program Files\\QuickTime\\QTSystem\\QTJava.zip',
+ 'COMMONPROGRAMFILES': 'C:\\Program Files\\Common Files',
+ 'COMPUTERNAME': 'MIKE-PC',
+ 'COMSPEC': 'C:\\Windows\\system32\\cmd.exe',
+ 'FP_NO_HOST_CHECK': 'NO',
+ 'HOMEDRIVE': 'C:',
+ 'HOMEPATH': '\\Users\\mike',
+ 'LOCALAPPDATA': 'C:\\Users\\mike\\AppData\\Local',
+ 'LOGONSERVER': '\\\\MIKE-PC',
+ 'NUMBER_OF_PROCESSORS': '2',
+ 'OS': 'Windows_NT',
+ 'PATHEXT': '.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC',
+ 'PROCESSOR_ARCHITECTURE': 'x86',
+ 'PROCESSOR_IDENTIFIER': 'x86 Family 6 Model 15 Stepping 13, GenuineIntel',
+ 'PROCESSOR_LEVEL': '6',
+ 'PROGRAMDATA': 'C:\\ProgramData',
+ 'PROGRAMFILES': 'C:\\Program Files',
+ 'PSMODULEPATH': 'C:\\Windows\\system32\\WindowsPowerShell\\v1.0\\Modules\\',
+ 'PUBLIC': 'C:\\Users\\Public',
+ 'PYTHONIOENCODING': 'cp437',
+ 'QTJAVA': 'C:\\Program Files\\QuickTime\\QTSystem\\QTJava.zip',
+ 'SESSIONNAME': 'Console',
+ 'SYSTEMDRIVE': 'C:',
+ 'SYSTEMROOT': 'C:\\Windows',
+ 'TEMP': 'C:\\Users\\mike\\AppData\\Local\\Temp',
+ 'TMP': 'C:\\Users\\mike\\AppData\\Local\\Temp',
+ 'USERDOMAIN': 'mike-PC',
+ 'USERNAME': 'mike',
+ 'USERPROFILE': 'C:\\Users\\mike',
+ 'VBOX_INSTALL_PATH': 'C:\\Program Files\\Oracle\\VirtualBox\\',
+ 'VS90COMNTOOLS': 'C:\\Program Files\\Microsoft Visual Studio 9.0\\Common7\\Tools\\',
+ 'WINDIR': 'C:\\Windows',
+ 'WINDOWS_TRACING_FLAGS': '3',
+ 'WINDOWS_TRACING_LOGFILE': 'C:\\BVTBin\\Tests\\installpackage\\csilogfile.log',
+ 'WINGDB_ACTIVE': '1',
+ 'WINGDB_PYTHON': 'c:\\python27\\python.exe',
+ 'WINGDB_SPAWNCOOKIE': 'rvlxwsGdD7SHYIJm'}
+```
+
+Your output won't be the same as mine as everyone's PC configuration is
+a little different, but you'll see something similar. As you may have
+noticed, this returned a dictionary. That means you can access the
+environmental variables using your normal dictionary methods. Here's an
+example:
+
+``` {.sourceCode .python}
+>>> print(os.environ["TMP"])
+'C:\\Users\\mike\\AppData\\Local\\Temp'
+```
+
+You could also use the **os.getenv** function to access this
+environmental variable:
+
+``` {.sourceCode .python}
+>>> os.getenv("TMP")
+'C:\\Users\\mike\\AppData\\Local\\Temp'
+```
+
+The benefit of using os.getenv() instead of the os.environ dictionary is
+that if you happen to try to access an environmental variable that
+doesn't exist, the getenv function will just return None. If you did the
+same thing with os.environ, you would receive an error. Let's give it a
+try so you can see what happens:
+
+``` {.sourceCode .python}
+>>> os.environ["TMP2"]
+Traceback (most recent call last):
+  File "<pyshell#1>", line 1, in <module>
+    os.environ["TMP2"]
+  File "C:\Python27\lib\os.py", line 423, in __getitem__
+    return self.data[key.upper()]
+KeyError: 'TMP2'
+
+>>> print(os.getenv("TMP2"))
+None
+```
+
+os.chdir() and os.getcwd()
+--------------------------
+
+The **os.chdir** function allows us to change the directory that we're
+currently running our Python session in. If you want to actually know
+what path you are currently in, then you would call **os.getcwd()**.
+Let's try them both out:
+
+``` {.sourceCode .python}
+>>> os.getcwd()
+'C:\\Python27'
+>>> os.chdir(r"c:\Users\mike\Documents")
+>>> os.getcwd()
+'c:\\Users\\mike\\Documents'
+```
+
+The code above shows us that we started out in the Python directory by
+default when we run this code in IDLE. Then we change folders using
+**os.chdir()**. Finally we call os.getcwd() a second time to make sure
+that we changed to the folder successfully.
+
+os.mkdir() and os.makedirs()
+----------------------------
+
+You might have guessed this already, but the two methods covered in this
+section are used for creating directories. The first one is
+**os.mkdir()**, which allows us to create a single folder. Let's try it
+out:
+
+``` {.sourceCode .python}
+>>> os.mkdir("test")
+>>> path = r'C:\Users\mike\Documents\pytest'
+>>> os.mkdir(path)
+```
+
+The first line of code will create a folder named **test** in the
+current directory. You can use the methods in the previous section to
+figure out where you just ran your code if you've forgotten. The second
+example assigns a path to a variable and then we pass the path to
+os.mkdir(). This allows you to create a folder anywhere on your system
+that you have permission to.
+
+The **os.makedirs()** function will create all the intermediate folders
+in a path if they don't already exist. Basically this means that you can
+created a path that has nested folders in it. I find myself doing this a
+lot when I create a log file that is in a dated folder structure, like
+Year/Month/Day. Let's look at an example:
+
+``` {.sourceCode .python}
+>>> path = r'C:\Users\mike\Documents\pytest\2014\02\19'
+>>> os.makedirs(path)
+```
+
+What happened here? This code just created a bunch of folders! If you
+still had the **pytest** folder in your system, then it just added a
+**2014** folder with another folder inside of it which also contained a
+folder. Try it out for yourself using a valid path on your system.
+
+os.remove() and os.rmdir()
+--------------------------
+
+The **os.remove()** and **os.rmdir()** functions are used for deleting
+files and directories respectively. Let's look at an example of
+**os.remove()**:
+
+``` {.sourceCode .python}
+>>> os.remove("test.txt")
+```
+
+This code snippet will attempt to remove a file named **test.txt** from
+your current working directory. If it cannot find the file, you will
+likely receive some sort of error. You will also receive an error if the
+file is in use (i.e. locked) or you don't have permission to delete the
+file. You might also want to check out **os.unlink**, which does the
+same thing. The term **unlink** is the traditional Unix name for this
+procedure.
+
+Now let's look at an example of **os.rmdir()**:
+
+``` {.sourceCode .python}
+>>> os.rmdir("pytest")
+```
+
+The code above will attempt to remove a directory named **pytest** from
+your current working directory. If it's successful, you will see that
+the directory no longer exists. An error will be raised if the directory
+does not exist, you do not have permission to remove it or if the
+directory is not empty. You might also want to take a look at
+**os.removedirs()** which can remove nested empty directories
+recursively.
+
+os.rename(src, dst)
+-------------------
+
+The **os.rename()** function will rename a file or folder. Let's take a
+look at an example where we rename a file:
+
+``` {.sourceCode .python}
+>>> os.rename("test.txt", "pytest.txt")
+```
+
+In this example, we tell **os.rename** to rename a file named
+**test.txt** to **pytest.txt**. This occurs in our current working
+directory. You will see an error occur if you try to rename a file that
+doesn't exist or that you don't have the proper permission to rename the
+file.
+
+There is also an **os.renames** function that recursively renames a
+directory or file.
+
+os.startfile()
+--------------
+
+The **os.startfile()** method allows us to "start" a file with its
+associated program. In other words, we can open a file with it's
+associated program, just like when you double-click a PDF and it opens
+in Adobe Reader. Let's give it a try!
+
+``` {.sourceCode .python}
+>>> os.startfile(r'C:\Users\mike\Documents\labels.pdf')
+```
+
+In the example above, I pass a fully qualified path to **os.startfile**
+that tells it to open a file called **labels.pdf**. On my machine, this
+will open the PDF in Adobe Reader. You should try opening your own PDFs,
+MP3s, and photos using this method to see how it works.
+
+os.walk()
+---------
+
+The **os.walk()** method gives us a way to iterate over a root level
+path. What this means is that we can pass a path to this function and
+get access to all its sub-directories and files. Let's use one of the
+Python folders that we have handy to test this function with. We'll use:
+C:\\Python27\\Tools
+
+``` {.sourceCode .python}
+>>> path = r'C:\Python27\Tools'
+>>> for root, dirs, files in os.walk(path):
+        print(root)
+
+C:\Python27\Tools
+C:\Python27\Tools\i18n
+C:\Python27\Tools\pynche
+C:\Python27\Tools\pynche\X
+C:\Python27\Tools\Scripts
+C:\Python27\Tools\versioncheck
+C:\Python27\Tools\webchecker
+```
+
+If you want, you can also loop over **dirs** and **files** too. Here's
+one way to do it:
+
+``` {.sourceCode .python}
+>>> for root, dirs, files in os.walk(path):
+        print(root)
+        for _dir in dirs:
+            print(_dir)
+        for _file in files:
+            print(_file)
+```
+
+This piece of code will print a lot of stuff out, so I won't be showing
+its output here, but feel free to give it a try. Now we're ready to
+learn about working with paths!
+
+os.path
+-------
+
+The **os.path** sub-module of the **os** module has lots of great
+functionality built into it. We'll be looking at the following
+functions:
+
+> -   basename
+> -   dirname
+> -   exists
+> -   isdir and isfile
+> -   join
+> -   split
+
+There are lots of other functions in this sub-module. You are welcome to
+go read about them in the Python documentation, section 10.1.
+
+os.path.basename
+----------------
+
+The **basename** function will return just the filename of a path. Here
+is an example:
+
+``` {.sourceCode .python}
+>>> os.path.basename(r'C:\Python27\Tools\pynche\ChipViewer.py')
+'ChipViewer.py'
+```
+
+I have found this useful whenever I need to use a filename for naming
+some related file, such as a log file. This happens a lot when I'm
+processing a data file.
+
+os.path.dirname
+---------------
+
+The **dirname** function will return just the directory portion of the
+path. It's easier to understand if we take a look at some code:
+
+``` {.sourceCode .python}
+>>> os.path.dirname(r'C:\Python27\Tools\pynche\ChipViewer.py')
+'C:\\Python27\\Tools\\pynche'
+```
+
+In this example, we just get the directory path back. This is also
+useful when you want to store other files next to the file you're
+processing, like the aforementioned log file.
+
+os.path.exists
+--------------
+
+The **exists** function will tell you if a path exists or not. All you
+have to do is pass it a path. Let's take a look:
+
+``` {.sourceCode .python}
+>>> os.path.exists(r'C:\Python27\Tools\pynche\ChipViewer.py')
+True
+>>> os.path.exists(r'C:\Python27\Tools\pynche\fake.py')
+False
+```
+
+In the first example, we pass the **exists** function a real path and it
+returns **True**, which means that the path exists. In the second
+example, we passed it a bad path and it told us that the path did not
+exist by returning **False**.
+
+os.path.isdir / os.path.isfile
+------------------------------
+
+The **isdir** and **isfile** methods are closely related to the
+**exists** method in that they also test for existence. However,
+**isdir** only checks if the path is a directory and **isfile** only
+checks if the path is a file. If you want to check if a path exists
+regardless of whether it is a file or a directory, then you'll want to
+use the **exists** method. Anyway, let's study some examples:
+
+``` {.sourceCode .python}
+>>> os.path.isfile(r'C:\Python27\Tools\pynche\ChipViewer.py')
+True
+>>> os.path.isdir(r'C:\Python27\Tools\pynche\ChipViewer.py')
+False
+>>> os.path.isdir(r'C:\Python27\Tools\pynche')
+True
+>>> os.path.isfile(r'C:\Python27\Tools\pynche')
+False
+```
+
+Take a moment to study this set of examples. In the first one we pass a
+path to a file and check if the path is really a file. Then the second
+example checks the same path to see if it's a directory. You can see for
+yourself how that turned out. Then in the last two examples, we switched
+things up a bit by passing a path to a directory to the same two
+functions. These examples demonstrate how these two functions work.
+
+os.path.join
+------------
+
+The **join** method give you the ability to join one or more path
+components together using the appropriate separator. For example, on
+Windows, the separator is the backslash, but on Linux, the separator is
+the forward slash. Here's how it works:
+
+``` {.sourceCode .python}
+>>> os.path.join(r'C:\Python27\Tools\pynche', 'ChipViewer.py')
+'C:\\Python27\\Tools\\pynche\\ChipViewer.py'
+```
+
+In this example, we joined a directory path and a file path together to
+get a fully qualified path. Note however that the **join** method does
+**not** check if the result actually exists!
+
+os.path.split
+-------------
+
+The **split** method will split a path into a tuple that contains the
+directory and the file. Let's take a look:
+
+``` {.sourceCode .python}
+>>> os.path.split(r'C:\Python27\Tools\pynche\ChipViewer.py')
+('C:\\Python27\\Tools\\pynche', 'ChipViewer.py')    
+```
+
+This example shows what happens when we path in a path with a file.
+Let's see what happens if the path doesn't have a filename on the end:
+
+``` {.sourceCode .python}
+>>> os.path.split(r'C:\Python27\Tools\pynche')
+```
+
+> ('C:\\Python27\\Tools', 'pynche')
+
+As you can see, it took the path and split it in such a way that the
+last sub-folder became the second element of the tuple with the rest of
+the path in the first element.
+
+For our final example, I thought you might like to see a commmon use
+case of the **split**:
+
+``` {.sourceCode .python}
+>>> dirname, fname = os.path.split(r'C:\Python27\Tools\pynche\ChipViewer.py')
+>>> dirname
+'C:\\Python27\\Tools\\pynche'
+>>> fname
+'ChipViewer.py'
+```
+
+This shows how to do multiple assignment. When you split the path, it
+returns a two-element tuple. Since we have two variables on the left,
+the first element of the tuple is assigned to the first variable and the
+second element to the second variable.
+
+Wrapping Up
+-----------
+
+At this point you should be pretty familiar with the **os** module. In
+this chapter you learned the following:
+
+> -   how to work with environment variables
+> -   change directories and discover your current working directory
+> -   create and remove folders and files
+> -   rename files / folders
+> -   start a file with its associated application
+> -   walk a directory
+> -   work with paths
+
+There are a lot of other functions in the **os** module that are not
+covered here. Be sure to read the documentation to see what else you can
+do. In the next chapter, we will be learning about the **email** and
+**smtplib** modules.

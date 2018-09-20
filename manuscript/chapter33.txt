@@ -1,0 +1,121 @@
+# Chapter 33 - The requests package
+
+The **requests** package is a more Pythonic replacement for Python's own
+**urllib**. You will find that requests package's API is quite a bit
+simpler to work with. You can install the requests library by using pip
+or easy\_install or from source.
+
+Using requests
+--------------
+
+Let's take a look at a few examples of how to use the requests package.
+We will use a series of small code snippets to help explain how to use
+this library.
+
+``` {.sourceCode .python}
+>>> r = requests.get("http://www.google.com")
+```
+
+This example returns a **Response** object. You can use the Response
+object's methods to learn a lot about how you can use requests. Let's
+use Python's **dir** function to find out what methods we have
+available:
+
+``` {.sourceCode .python}
+>>> dir(r)
+['__attrs__', '__bool__', '__class__', '__delattr__', '__dict__', 
+'__dir__', '__doc__', '__eq__', '__format__', '__ge__', '__getattribute__', 
+'__getstate__', '__gt__', '__hash__', '__init__', '__iter__', '__le__', '__lt__',
+'__module__', '__ne__', '__new__', '__nonzero__', '__reduce__', '__reduce_ex__', 
+'__repr__', '__setattr__', '__setstate__', '__sizeof__', '__str__', '__subclasshook__', 
+'__weakref__', '_content', '_content_consumed', 'apparent_encoding', 'close', 
+'connection', 'content', 'cookies', 'elapsed', 'encoding', 'headers', 'history',
+'iter_content', 'iter_lines', 'json', 'links', 'ok', 'raise_for_status', 'raw', 
+'reason', 'request', 'status_code', 'text', 'url']
+```
+
+If you run the following method, you can see the web page's source code:
+
+``` {.sourceCode .python}
+>>> r.content()
+```
+
+The output from this command is way too long to include in the book, so
+be sure to try it out yourself. If you'd like to take a look at the web
+pages headers, you can run the following:
+
+``` {.sourceCode .python}
+>>> r.headers
+```
+
+Note that the **headers** attribute returns a dict-like object and isn't
+a function call. We're not showing the output as web page headers tend
+to be too wide to show correctly in a book. There are a bunch of other
+great functions and attributes in the Response object. For example, you
+can get the cookies, the links in the page, and the status\_code that
+the page returned.
+
+The requests package supports the following HTTP request types: POST,
+GET, PUT, DELETE, HEAD and OPTIONS. If the page returns json, you can
+access it by calling the Response object's **json** method. Let's take a
+look at a practical example.
+
+How to Submit a Web Form
+------------------------
+
+In this section, we will compare how to submit a web form with requests
+versus urllib. Let's start by learning how to submit a web form. We will
+be doing a web search with **duckduckgo.com** searching on the term
+*python* and saving the result as an HTML file. We'll start with an
+example that uses urllib:
+
+``` {.sourceCode .python}
+import urllib.request
+import urllib.parse
+import webbrowser
+
+data = urllib.parse.urlencode({'q': 'Python'})
+url = 'http://duckduckgo.com/html/'
+full_url = url + '?' + data
+response = urllib.request.urlopen(full_url)
+with open("results.html", "wb") as f:
+    f.write(response.read())
+
+webbrowser.open("results.html")
+```
+
+The first thing you have to do when you want to submit a web form is
+figure out what the form is called and what the url is that you will be
+posting to. If you go to duckduckgo's website and view the source,
+you'll notice that its action is pointing to a relative link, "/html".
+So our url is "<http://duckduckgo.com/html>". The input field is named
+"q", so to pass duckduckgo a search term, we have to concatenate the url
+to the "q" field. The results are read and written to disk. Now let's
+find out how this process differs when using the requests package.
+
+The requests package does form submissions a little bit more elegantly.
+Let's take a look:
+
+``` {.sourceCode .python}
+import requests
+
+url = 'https://duckduckgo.com/html/'
+payload = {'q':'python'}
+r = requests.get(url, params=payload)
+with open("requests_results.html", "wb") as f:
+    f.write(r.content)
+```
+
+With requests, you just need to create a dictionary with the field name
+as the key and the search term as the value. Then you use
+**requests.get** to do the search. Finally you use the resulting
+requests object, "r", and access its content property which you save to
+disk.
+
+Wrapping Up
+-----------
+
+Now you know the basics of the **requests** package. I would recommend
+reading the package's online documentation as it has many additional
+examples that you may find useful. I personally think this module is
+more intuitive to use than the standard library's equivalent.

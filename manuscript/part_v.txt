@@ -1,0 +1,35 @@
+Part V - Packaging and Distribution
+===================================
+
+In Part V you will learn about Python packaging and the various methods
+to distribute your code. You will learn about the following:
+
+> -   How to create a module and package
+> -   Publishing your Packages to the Python Packaging Index (PyPI)
+> -   Python eggs
+> -   Python wheels
+> -   py2exe
+> -   bb\_freeze
+> -   cx\_Freeze
+> -   PyInstaller
+> -   GUI2Exe
+> -   How to Create an Installer with InnoSetup
+
+The first chapter of this section describes how to create a module or
+package. Then in the following chapter, we will go over publishing our
+package to PyPI. Next up, we will learn how to create and install a
+Python egg and the Python wheel.
+
+The next four chapters will cover how to create binaries using the
+following 3rd party packages: py2exe, bb\_freeze, cx\_Freeze and
+PyInstaller. The only package in this list that is actually compatible
+with Python 3 is cx\_Freeze. Because of this fact, we will be showing
+Python 2 examples in these four chapters so that we can easily compare
+all 4 packages and their capabilities.
+
+The next to last chapter will show you how to use GUI2Exe, a neat little
+user interface that was created to go on top of py2exe, bb\_freeze, etc.
+GUI2Exe makes creating binaries even easier!
+
+The last chapter of this section will show how to create an installer
+using InnoSetup. Let's get started!

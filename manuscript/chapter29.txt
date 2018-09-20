@@ -1,0 +1,169 @@
+# Chapter 29 - Installing Modules
+
+When you're first starting out as a Python programmer, you don't think
+about how you might need to install an external package or module. But
+when that need appears, you'll want to know how to in a hurry! Python
+packages can be found all over the internet. Most of the popular ones
+can be found on the Python Package Index (PyPI). You will also find a
+lot of Python packages on github, bitbucket, and Google code. In this
+article, we will be covering the following methods of installing Python
+packages:
+
+> -   Install from source
+> -   easy\_install
+> -   pip
+> -   Other ways to install packages
+
+Installing from Source
+----------------------
+
+Installing from source is a great skill to have. There are easier ways,
+which we'll be getting to later on in the article. However, there are
+some packages that you have to install from source. For example, to use
+**easy\_install**, you will need to first install **setuptools**. To do
+that, you will want to download the tar or zip file from the Python
+Package Index and extract it somewhere on your system. Then look for the
+**setup.py** file. Open up a terminal session and change directories to
+the folder that contains the setup file. Then run the following command:
+
+``` {.sourceCode .python}
+python setup.py install
+```
+
+If Python isn't on your system path, you will receive an error message
+stating that the *python* command wasn't found or is an unknown
+application. You can call this command by using the full path to Python
+instead. Here's how you might do it if you were on Windows:
+
+``` {.sourceCode .python}
+c:\python34\python.exe setup.py install
+```
+
+This method is especially handy if you have multiple versions of Python
+installed and you need to install the package to different ones. All you
+need to do is type the full path to the right Python version and install
+the package against it.
+
+Some packages contain C code, such as C header files that will need to
+be compiled for the package to install correctly. On Linux, you will
+normally already have a C/C++ compiler installed and you can get the
+package installed with minimal headaches. On Windows, you will need to
+have the correct version of Visual Studio installed to compile the
+package correctly. Some people say you can use MingW too, but I have yet
+to find a way to make that work. If the package has a Windows installer
+already pre-made, use it. Then you don't have to mess with compiling at
+all.
+
+Using easy\_install
+-------------------
+
+Once you have **setuptools** installed, you can use **easy\_install**.
+You can find it installed in your Python installation's **Scripts**
+folder. Be sure to add the Scripts folder to your system path so you can
+call easy\_install on the command line without specifying its full path.
+Try running the following command to learn about all of easy\_install's
+options:
+
+``` {.sourceCode .python}
+easy_install -h
+```
+
+When you want to install a package with easy\_install, all you have to
+do is this:
+
+``` {.sourceCode .python}
+easy_install package_name
+```
+
+easy\_install will attempt to download the package from PyPI, compile it
+(if necessary) and install it. If you go into your Python's
+**site-packages** directory, you will find a file named
+**easy-install.pth** that will contain an entry for all packages
+installed with easy\_install. This file is used by Python to help in
+importing the module or package.
+
+You can also tell easy\_install to install from a URL or from a path on
+your computer. It can also install packages directly from a tar file.
+You can use easy\_install to upgrade a package by using **-upgrade** (or
+**-U**). Finally, you can use easy\_install to install Python eggs. You
+can find egg files on PyPI and other locations. An egg is basically a
+special zip file. In fact, if you change the extension to .zip, you can
+unzip the egg file.
+
+Here are some examples:
+
+``` {.sourceCode .python}
+easy_install -U SQLAlchemy
+easy_install http://example.com/path/to/MyPackage-1.2.3.tgz
+easy_install /path/to/downloaded/package
+```
+
+There are some issues with easy\_install. It will try to install a
+package before it's finished downloading. There is no way to uninstall a
+package using easy\_install. You will have to delete the package
+yourself and update the easy-install.pth file by removing the entry to
+the package. For these reasons and others, there was movement in the
+Python community to create something different, which caused **pip** to
+be born.
+
+Using pip
+---------
+
+The pip program actually comes with Python 3.4. If you have an older
+version of Python, then you will need to install pip manually.
+Installing pip is a little bit different than what we have previously
+discussed. You still go to PyPI, but instead of downloading the package
+and running its setup.py script, you will be asked to download a single
+script called **get-pip.py**. Then you will need to execute it by doing
+the following:
+
+``` {.sourceCode .python}
+python get-pip.py
+```
+
+This will install **setuptools** or an alternative to setuptools called
+**distribute** if one of them is not already installed. It will also
+install pip. pip works with CPython versions 2.6, 2.7, 3.1, 3.2, 3.3,
+3.4 and also pypy. You can use pip to install anything that
+easy\_install can install, but the invocation is a bit different. To
+install a package, do the following:
+
+``` {.sourceCode .python}
+pip install package_name
+```
+
+To upgrade a package, you would do this:
+
+``` {.sourceCode .python}
+pip install -U PackageName
+```
+
+You may want to call **pip -h** to get a full listing of everything pip
+can do. One thing that pip can install that easy\_install cannot is the
+Python **wheel** format. A wheel is a ZIP-format archive with a
+specially formatted filename and the **.whl** extension. You can also
+install wheels via its own command line utility. On the other hand, pip
+cannot install an egg. If you need to install an egg, you will want to
+use easy\_install.
+
+A Note on Dependencies
+----------------------
+
+One of the many benefits of using **easy\_install** and **pip** is that
+if the package has dependencies specified in their **setup.py** script,
+both **easy\_install** and **pip** will attempt to download and install
+them too. This can alleviate a lot of frustration when you're trying new
+packages and you didn't realize that package A depended on Packages B, C
+and D. With **easy\_install** or **pip**, you don't need to worry about
+that any more.
+
+Wrapping Up
+-----------
+
+At this point, you should be able to install just about any package that
+you need, assuming the package supports your version of Python. There
+are a lot of tools available to the Python programmer. While packaging
+in Python is a bit confusing right now, once you know how to use the
+proper tools, you can usually get what you want installed or packaged
+up. We will be looking more at creating our own packages, eggs and
+wheels in Part V.
