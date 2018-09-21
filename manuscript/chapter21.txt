@@ -14,7 +14,7 @@ We will start with a simple example that just demonstrates how threads
 work. We will sub-class the **Thread** class and make it print out its
 name to stdout. Let's get coding!
 
-``` {.sourceCode .python}
+```python
 import random
 import time
 
@@ -66,7 +66,7 @@ the thread has finished.
 The create\_threads function will create 5 threads, giving each of them
 a unique name. If you run this code, you should see something like this:
 
-``` {.sourceCode .python}
+```python
 Thread #2 is running
 Thread #3 is running
 Thread #1 is running
@@ -87,7 +87,7 @@ can download files from the internet. The U.S. Internal Revenue Service
 has lots of PDF forms that it has its citizens use for taxes. We will
 use this free resource for our demo. Here's the code:
 
-``` {.sourceCode .python}
+```python
 # Python 2 version
 
 import os
@@ -156,7 +156,7 @@ import **urllib** instead of **urllib2** and use
 **urllib.request.urlopen** instead of **urllib2.urlopen**. Here's the
 code so you can see the difference:
 
-``` {.sourceCode .python}
+```python
 # Python 3 version
 
 import os
@@ -219,7 +219,7 @@ concurrency.
 To help explain how Queues work, we will rewrite the downloading script
 from the previous section to use Queues. Let's get started!
 
-``` {.sourceCode .python}
+```python
 import os    
 import threading
 import urllib.request

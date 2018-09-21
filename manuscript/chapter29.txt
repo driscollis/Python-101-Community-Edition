@@ -26,7 +26,7 @@ Package Index and extract it somewhere on your system. Then look for the
 **setup.py** file. Open up a terminal session and change directories to
 the folder that contains the setup file. Then run the following command:
 
-``` {.sourceCode .python}
+```python
 python setup.py install
 ```
 
@@ -35,7 +35,7 @@ stating that the *python* command wasn't found or is an unknown
 application. You can call this command by using the full path to Python
 instead. Here's how you might do it if you were on Windows:
 
-``` {.sourceCode .python}
+```python
 c:\python34\python.exe setup.py install
 ```
 
@@ -64,14 +64,14 @@ call easy\_install on the command line without specifying its full path.
 Try running the following command to learn about all of easy\_install's
 options:
 
-``` {.sourceCode .python}
+```python
 easy_install -h
 ```
 
 When you want to install a package with easy\_install, all you have to
 do is this:
 
-``` {.sourceCode .python}
+```python
 easy_install package_name
 ```
 
@@ -92,7 +92,7 @@ unzip the egg file.
 
 Here are some examples:
 
-``` {.sourceCode .python}
+```python
 easy_install -U SQLAlchemy
 easy_install http://example.com/path/to/MyPackage-1.2.3.tgz
 easy_install /path/to/downloaded/package
@@ -117,7 +117,7 @@ and running its setup.py script, you will be asked to download a single
 script called **get-pip.py**. Then you will need to execute it by doing
 the following:
 
-``` {.sourceCode .python}
+```python
 python get-pip.py
 ```
 
@@ -128,13 +128,13 @@ install pip. pip works with CPython versions 2.6, 2.7, 3.1, 3.2, 3.3,
 easy\_install can install, but the invocation is a bit different. To
 install a package, do the following:
 
-``` {.sourceCode .python}
+```python
 pip install package_name
 ```
 
 To upgrade a package, you would do this:
 
-``` {.sourceCode .python}
+```python
 pip install -U PackageName
 ```
 

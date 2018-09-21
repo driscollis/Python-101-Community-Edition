@@ -175,7 +175,7 @@ As with most technical books, this one includes a few conventions that
 you need to be aware of. New topics and terminology will be in **bold**.
 You will also see some examples that look like the following:
 
-``` {.sourceCode .python}
+```python
 >>> myString = "Welcome to Python!"
 ```
 

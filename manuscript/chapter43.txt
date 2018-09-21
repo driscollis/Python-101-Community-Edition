@@ -17,14 +17,14 @@ Getting Started with PyInstaller
 To install PyInstaller, you can download the source code in a tarball or
 zip archive, decompress it and run its **setup.py** file:
 
-``` {.sourceCode .python}
+```python
 python setup.py install
 ```
 
 You can also install PyInstaller using pip. We will start with our
 little piece of config creation code:
 
-``` {.sourceCode .python}
+```python
 # config_1.py
 import configobj
 
@@ -66,13 +66,13 @@ if __name__ == "__main__":
 Now let's try to create an executable! You should be able to just do
 this to get PyInstaller to work:
 
-``` {.sourceCode .python}
+```python
 pyinstaller config_1.py
 ```
 
 When I ran this, I got the following error:
 
-``` {.sourceCode .python}
+```python
 Error: PyInstaller for Python 2.6+ on Windows needs pywin32.
 Please install from http://sourceforge.net/projects/pywin32/
 ```
@@ -96,7 +96,7 @@ PyInstaller and wxPython
 Now let's try creating a binary from a simple wxPython script. Here's
 the wxPython code that we've been using in previous chapters:
 
-``` {.sourceCode .python}
+```python
 import wx
 
 class DemoPanel(wx.Panel):
@@ -165,7 +165,7 @@ which is not what we want. The simplest way to fix that is to call
 PyInstaller with the **-w** command which tells PyInstaller to suppress
 the console window:
 
-``` {.sourceCode .python}
+```python
 pyinstaller -w sampleApp.py
 ```
 
@@ -176,7 +176,7 @@ program. If you'd like to save a copy of the spec file to help you
 better understand what PyInstaller is doing, you can do so using the
 following command:
 
-``` {.sourceCode .python}
+```python
 pyi-makespec sampleApp.py
 ```
 
@@ -184,7 +184,7 @@ You can pass the same commands to **pyi-makespec** as you do to
 PyInstaller, which will change the spec appropriately. Here's the
 contents of the spec that was created with the previous command:
 
-``` {.sourceCode .python}
+```python
 # -*- mode: python -*-
 a = Analysis(['sampleApp.py'],
              pathex=['c:\\py101\\wxpy'],

@@ -27,7 +27,7 @@ Python can represent dates several different ways. We're going to look
 at the **datetime.date** format first as it happens to be one of the
 simpler date objects.
 
-``` {.sourceCode .python}
+```python
 >>> datetime.date(2012, 13, 14)
 Traceback (most recent call last):
   File "<string>", line 1, in <fragment>
@@ -42,7 +42,7 @@ an invalid value, you will see a **ValueError**, like the one above.
 Otherwise you will see a **datetime.date** object returned. Let's take a
 look at another example:
 
-``` {.sourceCode .python}
+```python
 >>> import datetime
 >>> d = datetime.date(2012, 12, 14)
 >>> d.year
@@ -57,7 +57,7 @@ Here we assign the date object to the variable **d**. Now we can access
 the various date components by name, such as **d.year** or **d.month**.
 Now let's find out what day it is:
 
-``` {.sourceCode .python}
+```python
 >>> datetime.date.today()
 datetime.date(2014, 3, 5)
 ```
@@ -74,7 +74,7 @@ datetime.date plus a datetime.time object. Let's create a couple of
 examples so we can better understand the difference between this object
 and the datetime.date object.
 
-``` {.sourceCode .python}
+```python
 >>> datetime.datetime(2014, 3, 5)
 datetime.datetime(2014, 3, 5, 0, 0)
 >>> datetime.datetime(2014, 3, 5, 12, 30, 10)
@@ -96,7 +96,7 @@ Most of the time, you will need to convert from the Python date or
 datetime format to the SQL datetime or timestamp format. You can find
 out what today is with datetime.datetime using two different methods:
 
-``` {.sourceCode .python}
+```python
 >>> datetime.datetime.today()
 datetime.datetime(2014, 3, 5, 17, 56, 10, 737000)
 >>> datetime.datetime.now()
@@ -110,7 +110,7 @@ entire table of formatting options that you should go read in the Python
 documentation, section 8.1.7. We're going to look at a couple of
 examples to show you the power of this method:
 
-``` {.sourceCode .python}
+```python
 >>> datetime.datetime.today().strftime("%Y%m%d")
 '20140305'
 >>> today = datetime.datetime.today()
@@ -137,7 +137,7 @@ The **datetime.timedelta** object represents a time duration. In other
 words, it is the difference between two dates or times. Let's take a
 look at a simple example:
 
-``` {.sourceCode .python}
+```python
 >>> now = datetime.datetime.now()
 >>> now
 datetime.datetime(2014, 3, 5, 18, 13, 51, 230000)
@@ -158,7 +158,7 @@ between the two dates. If you need to know the number of hours or
 minutes between the two, you'll have to use some math to figure it out.
 Here's one way to do it:
 
-``` {.sourceCode .python}
+```python
 >>> seconds = delta.total_seconds()
 >>> hours = seconds // 3600
 >>> hours
@@ -183,7 +183,7 @@ an **epoch**, the point when time starts. For Unix systems, the epoch
 was in 1970. To find out what the epoch is on your system, try running
 the following:
 
-``` {.sourceCode .python}
+```python
 >>> import time
 >>> time.gmtime(0)
 time.struct_time(tm_year=1970, tm_mon=1, tm_mday=1, tm_hour=0, tm_min=0, tm_sec=0, tm_wday=3, tm_yday=1, tm_isdst=0)
@@ -208,7 +208,7 @@ epoch to a string representing local time. If you don't pass it
 anything, then the current time is returned. Let's try out a couple of
 examples:
 
-``` {.sourceCode .python}
+```python
 >>> import time
 >>> time.ctime()
 'Thu Mar 06 07:28:48 2014'
@@ -235,7 +235,7 @@ to wait a second for a file to finish closing or a database commit to
 finish committing. Let's take a look at an example. Open a new window in
 IDLE and save the following code:
 
-``` {.sourceCode .python}
+```python
 import time
 
 for x in range(5):
@@ -257,7 +257,7 @@ in what it accepts for input: a tuple or a **struct\_time** object, like
 those that are returned when you call **time.gmtime()** or
 **time.localtime()**. Here's a little example:
 
-``` {.sourceCode .python}
+```python
 >>> time.strftime("%Y-%m-%d-%H.%M.%S",
                   time.localtime())
 '2014-03-06-20.35.56'
@@ -276,7 +276,7 @@ time.time
 The **time.time** function will return the time in seconds since the
 epoch as a floating point number. Let's take a look:
 
-``` {.sourceCode .python}
+```python
 >>> time.time()
 1394199262.318
 ```
@@ -287,7 +287,7 @@ to the database's datetime method. You might also recall that the
 **ctime** method accepts the time in seconds, so we could use
 **time.time** to get the number of seconds to pass to ctime, like this:
 
-``` {.sourceCode .python}
+```python
 >>> time.ctime(time.time())
 'Fri Mar 07 07:36:38 2014'
 ```

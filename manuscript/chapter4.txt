@@ -22,7 +22,7 @@ Python's if statement is pretty easy to use. Let's spend a few minutes
 looking at some examples to better acquaint ourselves with this
 construct.
 
-``` {.sourceCode .python}
+```python
 >>> if 2 > 1:
         print("This is a True statement!")
     This is a True Statement!
@@ -54,7 +54,7 @@ line in the example to print to the screen or **standard out** (stdout).
 
 Let's look at another example:
 
-``` {.sourceCode .python}
+```python
 >>> var1 = 1
 >>> var2 = 3
 >>> if var1 > var2:
@@ -67,7 +67,7 @@ anything. But what is we wanted it to print something? That's where the
 **else** statement comes in. Let's modify the conditional to add that
 piece:
 
-``` {.sourceCode .python}
+```python
 if var1 > var2:
     print("This is also True")
 else:
@@ -85,7 +85,7 @@ well; however it tries to execute what is entered as a Python expression
 whereas raw\_input returns a string. Anyway, we'll be using Python 2.x's
 **raw\_input** for this example to get the user's age.
 
-``` {.sourceCode .python}
+```python
 # Python 2.x code
 value = raw_input("How much is that doggy in the window? ")
 value = int(value)
@@ -133,7 +133,7 @@ According to the Python documentation, their order of priority is first
 Let's take a look at some examples of each of these. We will start with
 **or**.
 
-``` {.sourceCode .python}
+```python
 x = 10
 y = 20
 
@@ -147,7 +147,7 @@ the print statement executes. As you can see, if one or both of the
 statements are True, it will execute the statement. Let's take a look at
 how **and** works:
 
-``` {.sourceCode .python}
+```python
 x = 10
 y = 10
 if x == 10 and y == 15:
@@ -174,7 +174,7 @@ you do that too, the harder it can be to understand and debug.
 
 Now we're ready to take a look at the **not** operation.
 
-``` {.sourceCode .python}
+```python
 my_list = [1, 2, 3, 4]
 x = 10
 if x not in my_list:
@@ -187,7 +187,7 @@ write a test that asks if "x" is not in that list. Because "x" equals
 screen. Another way to test for **not** is by using the exclamation
 point, like this:
 
-``` {.sourceCode .python}
+```python
 x = 10
 if x != 11:
     print("x is not equal to 11!")
@@ -196,7 +196,7 @@ if x != 11:
 If you want to, you can combine the **not** operation with the other two
 to create more complex conditional statements. Here is a simple example:
 
-``` {.sourceCode .python}
+```python
 my_list = [1, 2, 3, 4]
 x = 10
 z = 11
@@ -216,7 +216,7 @@ value is used to represent the absence of value. It's kind of analogous
 to Null, which you find in databases. Let's take a look at some code to
 help us better understand how this all works:
 
-``` {.sourceCode .python}
+```python
 empty_list = []
 empty_tuple = ()
 empty_string = ""
@@ -249,7 +249,7 @@ meaning. In other words, we are checking if the value is NOT True. So in
 the third example, we check if the empty string is REALLY empty. Here's
 another way to write the same thing:
 
-``` {.sourceCode .python}
+```python
 if empty_string == "":
     print("This is an empty string!")
 ```
@@ -257,7 +257,7 @@ if empty_string == "":
 To really nail this down, let's set the **empty\_string** variable to
 actually contain something:
 
-``` {.sourceCode .python}
+```python
 >>> empty_string = "something"
 >>> if empty_string == "":
         print("This is an empty string!")        
@@ -270,7 +270,7 @@ Please note that none of these variables equals the other. They just
 evaluate the same way. To prove this, we'll take a look at a couple of
 quick examples:
 
-``` {.sourceCode .python}
+```python
 >>> empty_list == empty_string
 False
 >>> empty_string == nothing
@@ -297,7 +297,7 @@ For example, the new line character is defined as "n", while the tab
 character is defined as "t". Let's see a couple of examples so you will
 better understand what these do:
 
-``` {.sourceCode .python}
+```python
 >>> print("I have a \n new line in the middle")
 I have a 
  new line in the middle
@@ -316,7 +316,7 @@ backslash. To use escape characters, you have to actually use a
 backslash, so in the case of a backslash, you would actually type two
 backslashes. Let's take a look:
 
-``` {.sourceCode .python}
+```python
 >>> print("This is a backslash \")
 Traceback (most recent call last):
   File "<string>", line 1, in <fragment>
@@ -336,7 +336,7 @@ if \_\_name\_\_ == "\_\_main\_\_"
 You will see a very common conditional statement used in many Python
 examples. This is what it looks like:
 
-``` {.sourceCode .python}
+```python
 if __name__ == "__main__":
     # do something!
 ```

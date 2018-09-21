@@ -27,7 +27,7 @@ can save for future use; and the third is to work with the internals of
 cxfreeze. We will focus on the first two ways of using cx\_Freeze. We'll
 begin with the console script:
 
-``` {.sourceCode .python}
+```python
 # config_1.py
 import configobj
 
@@ -73,7 +73,7 @@ build a binary with cx\_Freeze! According to the documentation, all it
 should take is the following string on the command line (assuming you
 are in the correct directory):
 
-``` {.sourceCode .python}
+```python
 cxfreeze config_1.py --target-dir dirName
 ```
 
@@ -99,7 +99,7 @@ Advanced cx\_Freeze - Using a setup.py File
 First off we need a script to use. We will use the wxPython form example
 from the previous chapters.
 
-``` {.sourceCode .python}
+```python
 import wx
 
 class DemoPanel(wx.Panel):
@@ -162,7 +162,7 @@ if __name__ == "__main__":
 
 Now let's create a **setup.py** file in the cx\_Freeze style:
 
-``` {.sourceCode .python}
+```python
 # setup.py
 from cx_Freeze import setup, Executable
 
@@ -189,7 +189,7 @@ folder as your code:
 > To get the setup.py to build the binary, you need to do the following
 > on the command line:
 
-``` {.sourceCode .python}
+```python
 python setup.py build
 ```
 
@@ -200,7 +200,7 @@ that we've screwed something up. There's a console window loading in
 addition to our GUI! To rectify this, we'll need to change our setup
 file slightly. Take a look at our new one:
 
-``` {.sourceCode .python}
+```python
 from cx_Freeze import setup, Executable
 
 exe = Executable(

@@ -36,7 +36,7 @@ Creating a Virtual Environment
 Creating a virtual sandbox with the virtualenv package is quite easy.
 All you need to do is the following:
 
-``` {.sourceCode .python}
+```python
 python virtualenv.py FOLDER_NAME
 ```
 
@@ -54,7 +54,7 @@ actually go through these steps. We'll create the sandbox folder on our
 desktop so you can see an example. Here's what it looks like on my
 machine:
 
-``` {.sourceCode .python}
+```python
 C:\Users\mdriscoll\Desktop>virtualenv sandbox
 New python executable in sandbox\Scripts\python.exe
 Installing setuptools................done.

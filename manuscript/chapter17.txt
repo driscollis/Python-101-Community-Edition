@@ -22,7 +22,7 @@ The **smtplib** module is very intuitive to use. Let's write a quick
 example that shows how to send an email. Save the following code to a
 file on your hard drive:
 
-``` {.sourceCode .python}
+```python
 import smtplib
 
 HOST = "mySMTP.server.com"
@@ -52,7 +52,7 @@ all the previous variables into a single string where each lines ends
 with a carriage return ("/r") plus new line ("/n"). If you print BODY
 out, it would look like this:
 
-``` {.sourceCode .python}
+```python
 'From: python@mydomain.com\r\nTo: mike@mydomain.com\r\nSubject: Test email from Python\r\n\r\nblah blah blah'
 ```
 
@@ -62,7 +62,7 @@ disconnect from the server. You will note that this code doesn't have a
 username or password in it. If your server requires authentication, then
 you'll need to add the following code:
 
-``` {.sourceCode .python}
+```python
 server.login(username, password)
 ```
 
@@ -71,7 +71,7 @@ you would want to put this code into a function and call it with some of
 these parameters. You might even want to put some of this information
 into a config file. Let's put this code into a function.
 
-``` {.sourceCode .python}
+```python
 import smtplib
 
 def send_email(host, subject, to_addr, from_addr, body_text):
@@ -110,7 +110,7 @@ company was bought and merged into another.
 
 Let's take a look at the config file (save it as **email.ini**):
 
-``` {.sourceCode .python}
+```python
 [smtp]
 server = some.server.com
 from_addr = python@mydomain.com
@@ -121,7 +121,7 @@ That is a very simple config file. In it we have a section labelled
 configObj to read this file and turn it into a Python dictionary. Here's
 the updated version of the code (save it as **smtp\_config.py**):
 
-``` {.sourceCode .python}
+```python
 import os
 import smtplib
 import sys
@@ -183,7 +183,7 @@ Sending Multiple Emails at Once
 
 Let's modify our last example a little so we send multiple emails!
 
-``` {.sourceCode .python}
+```python
 import os
 import smtplib
 import sys
@@ -239,7 +239,7 @@ Now we just need to figure out how to send using the CC and BCC fields.
 Let's create a new version of this code that supports that
 functionality!
 
-``` {.sourceCode .python}
+```python
 import os
 import smtplib
 import sys
@@ -307,7 +307,7 @@ together with the Python email module so that we can send attachments.
 The email module makes adding attachments extremely easy. Here's the
 code:
 
-``` {.sourceCode .python}
+```python
 import os
 import smtplib
 import sys

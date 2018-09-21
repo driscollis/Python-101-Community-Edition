@@ -28,7 +28,7 @@ compiling of the code as Python is an interpretive language and runs in
 the Python interpreter. Let's write your first program now. Type the
 following after the command prompt (&gt;&gt;&gt;) in IDLE:
 
-``` {.sourceCode .python}
+```python
 print("Hello from Python!")
 ```
 
@@ -37,7 +37,7 @@ a string to the screen, but you'll find that very helpful later on.
 Please note that the **print** statement has changed in Python 3.x. In
 Python 2.x, you would have written the above like this:
 
-``` {.sourceCode .python}
+```python
 print "Hello from Python!"
 ```
 
@@ -120,7 +120,7 @@ different IDE or try Python's debugger found in the **pdb** library.
 > octothorpe (i.e. a hash or pound sign). The following is an example of
 > some comments in action:
 >
-> ``` {.sourceCode .python}
+> ```python
 > # This is a comment before some code
 > print("Hello from Python!")
 > print("Winter is coming") # this is an in-line comment
@@ -196,7 +196,7 @@ highlighting is important in my mind in that it helps prevent me from
 using one of Python's keywords (or built-ins) for a variable name. In
 case you're wondering, here is a list of those key words:
 
-``` {.sourceCode .python}
+```python
 and       del       from      not       while
 as        elif      global    or        with
 assert    else      if        pass      yield

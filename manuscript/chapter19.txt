@@ -25,7 +25,7 @@ stdout=None, stderr=None, shell=False.
 
 Let's look at a simple example:
 
-``` {.sourceCode .python}
+```python
 >>> import subprocess
 >>> subprocess.call("notepad.exe")
 0
@@ -41,7 +41,7 @@ Normally when you call this function, you would want to assign the
 resulting return code to a variable so you can check to see if it was
 the result you expected. Let's do that:
 
-``` {.sourceCode .python}
+```python
 >>> code = subprocess.call("notepad.exe")
 >>> if code == 0:
         print("Success!")
@@ -54,7 +54,7 @@ If you run this code, you will see that it prints out **Success!** to
 the screen. The **call** method also accepts arguments to be passed to
 the program that you're executing. Let's see how that works:
 
-``` {.sourceCode .python}
+```python
 >>> code = subprocess.call(["ping", "www.yahoo.com"])
 
 Pinging ds-any-fp3-real.wa1.b.yahoo.com [98.139.180.149] with 32 bytes of data:
@@ -101,7 +101,7 @@ the **call** method, it does not wait for the called process to end
 unless you tell it to using by using the **wait** method. Let's try
 running Notepad through Popen and see if we can detect a difference:
 
-``` {.sourceCode .python}
+```python
 >>> program = "notepad.exe"
 >>> subprocess.Popen(program)
 <subprocess.Popen object at 0x01EE0430>
@@ -113,7 +113,7 @@ you will see that it immediately returns the **subprocess.Popen object**
 and the application that was called executes. Let's make Popen wait for
 the program to finish:
 
-``` {.sourceCode .python}
+```python
 >>> program = "notepad.exe"
 >>> process = subprocess.Popen(program)
 >>> code = process.wait()
@@ -136,7 +136,7 @@ that method in the next section.
 
 Now let's try running Popen using multiple arguments:
 
-``` {.sourceCode .python}
+```python
 >>> subprocess.Popen(["ls", "-l"])
 <subprocess.Popen object at 0xb7451001>
 ```
@@ -153,7 +153,7 @@ There are several ways to communicate with the process you have invoked.
 We're just going to focus on how to use the subprocess module's
 **communicate** method. Let's take a look:
 
-``` {.sourceCode .python}
+```python
 args = ["ping", "www.yahoo.com"]
 process = subprocess.Popen(args,
                            stdout=subprocess.PIPE)
@@ -172,7 +172,7 @@ code that communicate will wait for the process to finish and then
 returns a two-element tuple that contains what was in stdout and stderr.
 Here is the result from my run:
 
-``` {.sourceCode .python}
+```python
 ('Pinging ds-any-fp3-real.wa1.b.yahoo.com [98.139.180.149] with 32 bytes of data:
 Reply from 98.139.180.149: bytes=32 time=139ms TTL=45
 Reply from 98.139.180.149: bytes=32 time=162ms TTL=45
@@ -188,7 +188,7 @@ Minimum = 110ms, Maximum = 164ms, Average = 143ms
 That's kind of ugly. Let's make it print out the result in a more
 readable format, shall we?
 
-``` {.sourceCode .python}
+```python
 import subprocess
 
 args = ["ping", "www.yahoo.com"]
@@ -202,7 +202,7 @@ for line in data:
 If you run this code, you should see something like the following
 printed to your screen:
 
-``` {.sourceCode .python}
+```python
 Pinging ds-any-fp3-real.wa1.b.yahoo.com [98.139.180.149] with 32 bytes of data:
 Reply from 98.139.180.149: bytes=32 time=67ms TTL=45
 Reply from 98.139.180.149: bytes=32 time=68ms TTL=45

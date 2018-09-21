@@ -8,7 +8,7 @@ doubling function. Just to be contrary, our simple example will show how
 to find the square root. First we'll show a normal function and then the
 lambda equivalent:
 
-``` {.sourceCode .python}
+```python
 import math
 
 def sqroot(x):
@@ -23,7 +23,7 @@ square_rt = lambda x: math.sqrt(x)
 If you try each of these functions, you'll end up with a float. Here are
 a couple examples:
 
-``` {.sourceCode .python}
+```python
 >>> sqroot(49)
 7.0
 >>> square_rt(64)
@@ -44,7 +44,7 @@ We'll start with Tkinter since it's included with the standard Python
 package. Here's a really simple script with three buttons, two of which
 are bound to their event handler using a lambda:
 
-``` {.sourceCode .python}
+```python
 import Tkinter as tk
 
 class App:

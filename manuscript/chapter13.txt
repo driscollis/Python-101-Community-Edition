@@ -21,7 +21,7 @@ Tuberculosis. You can go here to get it:
 <http://www.who.int/tb/country/data/download/en/>. Once you have the
 file, we'll be ready to start. Ready? Then let's look at some code!
 
-``` {.sourceCode .python}
+```python
 import csv
 
 def csv_reader(file_obj):
@@ -51,7 +51,7 @@ list together, forming one long string.
 Now let's create our own CSV file and feed it into the **DictReader**
 class. Here's a really simple one:
 
-``` {.sourceCode .python}
+```python
 first_name,last_name,address,city,state,zip_code
 Tyrese,Hirthe,1404 Turner Ville,Strackeport,NY,19106-8813
 Jules,Dicki,2410 Estella Cape Suite 061,Lake Nickolasville,ME,00621-7435
@@ -61,7 +61,7 @@ Dedric,Medhurst,6912 Dayna Shoal,Stiedemannberg,SC,43259-2273
 Let's save this in a file named **data.csv**. Now we're ready to parse
 the file using the DictReader class. Let's try it out:
 
-``` {.sourceCode .python}
+```python
 import csv
 
 def csv_dict_reader(file_obj):
@@ -97,7 +97,7 @@ file. You can use the **writer** function or the DictWriter class. We'll
 look at both of these as well. We will be with the writer function.
 Let's look at a simple example:
 
-``` {.sourceCode .python}
+```python
 import csv
 
 def csv_writer(data, path):
@@ -125,7 +125,7 @@ the bottom of the script. We use a shortened version of the data from
 the previous example and split the strings on the comma. This returns a
 list. So we end up with a nested list that looks like this:
 
-``` {.sourceCode .python}
+```python
 [['first_name', 'last_name', 'city'],
  ['Tyrese', 'Hirthe', 'Strackeport'],
  ['Jules', 'Dicki', 'Lake Nickolasville'],
@@ -143,7 +143,7 @@ Now we're ready to learn how to write a CSV file using the
 version and transform it into a list of dictionaries that we can feed to
 our hungry DictWriter. Let's take a look:
 
-``` {.sourceCode .python}
+```python
 import csv
 
 def csv_dict_writer(path, fieldnames, data):
@@ -179,7 +179,7 @@ the first list inside the nested list. Remember, lists are zero-based,
 so the first element in a list starts at zero! Next we loop over the
 nested list construct, starting with the second element:
 
-``` {.sourceCode .python}
+```python
 for values in data[1:]:
     inner_dict = dict(zip(fieldnames, values))
     my_list.append(inner_dict)
@@ -189,7 +189,7 @@ Inside the **for** loop, we use Python builtins to create dictionary.
 The **zip** method will take two iterators (lists in this case) and turn
 them into a list of tuples. Here's an example:
 
-``` {.sourceCode .python}
+```python
 zip(fieldnames, values)
 [('first_name', 'Dedric'), ('last_name', 'Medhurst'), ('city', 'Stiedemannberg')]
 ```

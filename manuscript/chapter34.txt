@@ -18,7 +18,7 @@ few other things we'll be learning:
 > begin our journey. You will need to install SQLAlchemy to follow along
 > in this tutorial. We'll use pip to get this job done:
 
-``` {.sourceCode .python}
+```python
 pip install sqlalchemy
 ```
 
@@ -34,7 +34,7 @@ want a way to view your SQLite database, I would recommend the SQLite
 Manager plugin for Firefox. Here's some code to create our database
 tables:
 
-``` {.sourceCode .python}
+```python
 # table_def.py
 from sqlalchemy import create_engine, ForeignKey
 from sqlalchemy import Column, Date, Integer, String
@@ -71,7 +71,7 @@ Base.metadata.create_all(engine)
 If you run this code, then you should see something similar to the
 following output:
 
-``` {.sourceCode .python}
+```python
 2014-04-03 09:43:57,541 INFO sqlalchemy.engine.base.Engine SELECT CAST('test plain returns' AS VARCHAR(60)) AS anon_1
 2014-04-03 09:43:57,551 INFO sqlalchemy.engine.base.Engine ()
 2014-04-03 09:43:57,551 INFO sqlalchemy.engine.base.Engine SELECT CAST('test unicode returns' AS VARCHAR(60)) AS anon_1
@@ -117,7 +117,7 @@ database, then you'll need to edit the connection string. Just in case
 you're confused about what we're talking about, here is the code in
 question:
 
-``` {.sourceCode .python}
+```python
 engine = create_engine('sqlite:///mymusic.db', echo=True)
 ```
 
@@ -152,7 +152,7 @@ section we'll show you how to connect to your database and add some data
 to the two tables. It's much easier to take a look at some code and then
 explain it, so let's do that!
 
-``` {.sourceCode .python}
+```python
 # add_data.py
 import datetime
 from sqlalchemy import create_engine
@@ -223,7 +223,7 @@ SQLAlchemy queries as you need to find the record that you need to
 change and that means you need to write a query for it. Here's some code
 that shows us the way:
 
-``` {.sourceCode .python}
+```python
 # modify_data.py
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -277,7 +277,7 @@ evidence. In this section, we'll show you how to do just that!
 Fortunately for us, SQLAlchemy makes deleting records really easy. Just
 take a look at the following code!
 
-``` {.sourceCode .python}
+```python
 # deleting_data.py
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -311,7 +311,7 @@ such as a couple simple SELECTs, a JOINed SELECT and using the LIKE
 query. You'll also learn where to go for information on other types of
 queries. For now, let's look at some code:
 
-``` {.sourceCode .python}
+```python
 # queries.py
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker

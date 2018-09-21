@@ -15,7 +15,7 @@ installed the latest copy of pip as older versions did not support the
 wheel format. If you're not sure if you have the latest pip, you can run
 the following command:
 
-``` {.sourceCode .python}
+```python
 pip install --upgrade pip
 ```
 
@@ -27,7 +27,7 @@ Creating a wheel
 
 First of all, you will need to install the wheel package:
 
-``` {.sourceCode .python}
+```python
 pip install wheel
 ```
 
@@ -39,7 +39,7 @@ unicode with its ASCII equivalent. This is extremely handy for when you
 have to scrub user provided data of weird anomalies. Here's the command
 you should run to create a wheel for this package:
 
-``` {.sourceCode .python}
+```python
 pip wheel --wheel-dir=my_wheels Unidecode
 ```
 
@@ -57,7 +57,7 @@ Installing a Python wheel
 Let's create a virtualenv to test with. We will use the following
 command to create our virtual testing environment:
 
-``` {.sourceCode .python}
+```python
 virtualenv test
 ```
 
@@ -70,14 +70,14 @@ Scripts folder to enable the virtuanenv before continuing. Your
 virtualenv does not include wheel, so you'll have to install wheel
 again:
 
-``` {.sourceCode .python}
+```python
 pip install wheel
 ```
 
 Once that is installed, we can install our wheel with the following
 command:
 
-``` {.sourceCode .python}
+```python
 pip install --use-wheel --no-index --find-links=path/to/my_wheels Unidecode
 ```
 
