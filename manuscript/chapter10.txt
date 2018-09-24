@@ -6,7 +6,7 @@ arguments too. A function is a block of code that starts with the
 **def** keyword, a name for the function and a colon. Here's a simple
 example:
 
-``` {.sourceCode .python}
+```python
 >>> def a_function():
         print("You just created a function!")
 ```
@@ -15,7 +15,7 @@ This function doesn't do anything except print out some text. To call a
 function, you need to type out the name of the function followed by an
 open and close parentheses:
 
-``` {.sourceCode .python}
+```python
 >>> a_function()
 You just created a function!
 ```
@@ -30,7 +30,7 @@ function definitions without putting any code in them. I've done this as
 kind of an outline. It helps you to see how your application is going to
 be laid out. Here's an example:
 
-``` {.sourceCode .python}
+```python
 >>> def empty_function():
         pass
 ```
@@ -45,7 +45,7 @@ Now we're ready to learn about how to create a function that can accept
 arguments and also learn how to pass said arguments to the function.
 Let's create a simple function that can add two numbers together:
 
-``` {.sourceCode .python}
+```python
 >>> def add(a, b):
         return a + b
 
@@ -59,7 +59,7 @@ something, then it will return None. In this case, we tell it to return
 values. If you don't pass enough or you pass too many arguments, then
 you'll get an error:
 
-``` {.sourceCode .python}
+```python
 >>> add(1)
 Traceback (most recent call last):
   File "<string>", line 1, in <fragment>
@@ -68,7 +68,7 @@ TypeError: add() takes exactly 2 arguments (1 given)
 
 You can also call the function by passing the name of the arguments:
 
-``` {.sourceCode .python}
+```python
 >>> add(a=2, b=3)
 5
 >>> total = add(b=4, a=5)
@@ -84,7 +84,7 @@ do something with the result. You are probably wondering what would
 happen if we passed in arguments with the wrong names attached. Would it
 work? Let's find out:
 
-``` {.sourceCode .python}
+```python
 >>> add(c=5, d=2)
 Traceback (most recent call last):
   File "<string>", line 1, in <fragment>
@@ -103,7 +103,7 @@ both regular arguments and keyword arguments. What this means is that
 you can specify which keywords are which and pass them in. You saw this
 behavior in a previous example.
 
-``` {.sourceCode .python}
+```python
 >>> def keyword_function(a=1, b=2):
         return a+b
 
@@ -116,7 +116,7 @@ keywords. This function also demonstrates the concept of default
 arguments. How? Well, try calling the function without any arguments at
 all!
 
-``` {.sourceCode .python}
+```python
 >>> keyword_function()
 3
 ```
@@ -126,7 +126,7 @@ The function returned the number 3! Why? The reason is that **a** and
 function that has both a regular argument and a couple keyword
 arguments:
 
-``` {.sourceCode .python}
+```python
 >>> def mixed_function(a, b=2, c=3):
         return a+b+c
 
@@ -170,7 +170,7 @@ also see *a andkw from time to time.*
 
 Let's take a look at a quick example:
 
-``` {.sourceCode .python}
+```python
 >>> def many(*args, **kwargs):
         print(args)
         print(kwargs)
@@ -197,7 +197,7 @@ can only be used inside that function. Once that function ends, they can
 no longer be used because they are **out of scope**. Let's take a look
 at an example:
 
-``` {.sourceCode .python}
+```python
 def function_a():
     a = 1
     b = 2
@@ -213,7 +213,7 @@ print( function_b() )
 
 If you run this code, you will receive the following error:
 
-``` {.sourceCode .python}
+```python
 NameError: global name 'a' is not defined
 ```
 
@@ -222,7 +222,7 @@ function and is not available in the second. You can get around this by
 telling Python that **a** is a **global** variable. Let's take a look at
 how that's done:
 
-``` {.sourceCode .python}
+```python
 def function_a():
     global a
     a = 1

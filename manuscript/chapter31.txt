@@ -51,7 +51,7 @@ but should be less than the beginning time; and the state is whether or
 not the appointment has been snoozed, dismissed or not. The rest of the
 XML is pretty self-explanatory. Now let's see how to parse it.
 
-``` {.sourceCode .python}
+```python
 from lxml import etree
 
 def parseXML(xmlFile):
@@ -135,7 +135,7 @@ earlier chapter again. Save the following XML as *example.xml*
 
 Now let's parse this XML and put it in our data structure!
 
-``` {.sourceCode .python}
+```python
 from lxml import etree
 
 def parseBookXML(xmlFile):
@@ -169,7 +169,7 @@ the differences present here. Right before we start iterating over the
 context, we create an empty dictionary object and an empty list. Then
 inside the loop, we create our dictionary like this:
 
-``` {.sourceCode .python}
+```python
 book_dict[elem.tag] = text
 ```
 
@@ -225,7 +225,7 @@ Now we need to write some code that can parse and modify the XML. Let's
 take a look at this little demo that shows a bunch of the neat abilities
 that objectify provides.
 
-``` {.sourceCode .python}
+```python
 from lxml import etree, objectify
 
 def parseXML(xmlFile):
@@ -277,7 +277,7 @@ property. It will return a dictionary of the attributes of the tag. To
 get to sub-tag elements, you just use dot notation. As you can see, to
 get to the **begin** tag's value, we can just do something like this:
 
-``` {.sourceCode .python}
+```python
 begin = root.appointment.begin
 ```
 
@@ -285,7 +285,7 @@ One thing to be aware of is if the value happens to have leading zeroes,
 the returned value may have them truncated. If that is important to you,
 then you should use the following syntax instead:
 
-``` {.sourceCode .python}
+```python
 begin = root.appointment.begin.text
 ```
 
@@ -294,7 +294,7 @@ If you need to iterate over the children elements, you can use the
 to get everything. Changing an element's value is as simple as just
 assigning it a new value.
 
-``` {.sourceCode .python}
+```python
 root.appointment.new_element = "new data"
 ```
 
@@ -335,7 +335,7 @@ We will continue using the following XML for our example:
 
 Let's see how we can use lxml.objectify to recreate this XML:
 
-``` {.sourceCode .python}
+```python
 from lxml import etree, objectify
 
 def create_appt(data):
@@ -447,7 +447,7 @@ following:
 To remove all that unwanted annotation, we call the following two
 functions:
 
-``` {.sourceCode .python}
+```python
 objectify.deannotate(root)
 etree.cleanup_namespaces(root)
 ```
@@ -455,7 +455,7 @@ etree.cleanup_namespaces(root)
 The last piece of the puzzle is to get lxml to generate the XML itself.
 Here we use lxml's **etree** module to do the hard work:
 
-``` {.sourceCode .python}
+```python
 obj_xml = etree.tostring(root, 
                          pretty_print=True,
                          xml_declaration=True)

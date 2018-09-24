@@ -29,7 +29,7 @@ create a new folder and put the **mymath** folder inside it. Then create
 a **setup.py** file in the parent directory to mymath with the following
 contents:
 
-``` {.sourceCode .python}
+```python
 from setuptools import setup, find_packages
 
 setup(
@@ -46,7 +46,7 @@ setuptools' **find\_packages** function which will automatically look
 for any packages in the current directory and add them to the egg. To
 create said egg, you'll need to run the following from the command line:
 
-``` {.sourceCode .python}
+```python
 c:\Python34\python.exe setup.py bdist_egg
 ```
 

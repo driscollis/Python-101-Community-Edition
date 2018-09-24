@@ -17,14 +17,14 @@ First of all, you need to go and get ConfigObj. This is a good time to
 use your knowledge from the last chapter on installing packages. Here is
 how you would get ConfigObj with pip:
 
-``` {.sourceCode .python}
+```python
 pip install configobj
 ```
 
 Once you have it installed, we can move on. To start off, open a text
 editor and create a file with some contents like this:
 
-``` {.sourceCode .python}
+```python
 product = Sony PS3
 accessories = controller, eye, memory stick
 # This is a comment that will be ignored
@@ -34,7 +34,7 @@ retail_price = $400
 Save it where ever you like. I'm going to call mine *config.ini*. Now
 let's see how ConfigObj can be used to extract that information:
 
-``` {.sourceCode .python}
+```python
 >>> from configobj import ConfigObj
 >>> config = ConfigObj(r"path to config.ini")
 >>> config["product"]
@@ -65,7 +65,7 @@ recommend reading ConfigObj's documentation.
 
 Now we'll do the reverse and create the config file programmatically.
 
-``` {.sourceCode .python}
+```python
 import configobj
 
 def createConfig(path):
@@ -100,7 +100,7 @@ do the validation. I don't think it's included in your ConfigObj
 download, so you may need to download it as well. Now, let's take a look
 at the code:
 
-``` {.sourceCode .python}
+```python
 import configobj, validate
 
 cfg = """

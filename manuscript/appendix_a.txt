@@ -68,7 +68,7 @@ order.
 
 Let's take a look at a simple example of what I did:
 
-``` {.sourceCode .python}
+```python
 import os
 import subprocess
 
@@ -156,7 +156,7 @@ quest back in Chapter 13. It's the **csv** module, of course! I won't
 reveal exactly what information Kickstarter has in their files, but we
 can create our own pretend version. Let's say it's something like this:
 
-``` {.sourceCode .python}
+```python
 Mike Driscoll,test@py.com
 Andy Hunter,andwa@hunter.org
 Toby Mac,macdaddy@gotee.com
@@ -165,7 +165,7 @@ Toby Mac,macdaddy@gotee.com
 Let's create a quick function that can extract the name and email
 address from this file.
 
-``` {.sourceCode .python}
+```python
 import csv
 
 def read_csv(path):
@@ -190,7 +190,7 @@ All this script does is read the CSV file and print out the name and
 email address. Let's rename the function to **main** and have it call
 our **make\_book** function:
 
-``` {.sourceCode .python}
+```python
 def main(path):
     """"""
     try:
@@ -221,7 +221,7 @@ Emailing the PDF
 Let's spend a few minutes putting together a simple program that can
 email PDFs. Here's a fairly simple example:
 
-``` {.sourceCode .python}
+```python
 import os
 import smtplib
 
@@ -287,7 +287,7 @@ Putting it all Together
 Now we get to put all the code together and see it as a whole. Here it
 is:
 
-``` {.sourceCode .python}
+```python
 import csv
 import os
 import smtplib

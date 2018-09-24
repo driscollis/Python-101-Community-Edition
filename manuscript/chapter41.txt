@@ -22,7 +22,7 @@ wxPython program from the py2exe chapter.
 *Note: I tested on Windows 7 using Python 2.7.3, wxPython 2.9.4.0
 (classic) and bbfreeze 1.1.3*
 
-``` {.sourceCode .python}
+```python
 # config_1.py
 import configobj
 
@@ -66,7 +66,7 @@ we'll leave them in for illustrative purposes. According to the bbfreeze
 documentation, we should be able to create a binary with the following
 string typed into the command line:
 
-``` {.sourceCode .python}
+```python
 bb-freeze config_1.py
 ```
 
@@ -94,7 +94,7 @@ documentation. However, the page does say that the preferred way to use
 bbfreeze is with little scripts. We're going to try creating a binary
 with the wxPython example, mentioned earlier. Here's the wx code:
 
-``` {.sourceCode .python}
+```python
 import wx
 
 class DemoPanel(wx.Panel):
@@ -157,7 +157,7 @@ if __name__ == "__main__":
 
 Now let's create a simple freezing script!
 
-``` {.sourceCode .python}
+```python
 # bb_setup.py
 from bbfreeze import Freezer
 
@@ -183,7 +183,7 @@ later chapter.**
 
 To run this script, you just have to do something like this:
 
-``` {.sourceCode .python}
+```python
 python bb_setup.py
 ```
 
@@ -193,7 +193,7 @@ contained 19 files that weighed in at 17.2 MB. When I ran the
 however it also had a console screen. We'll have to edit our script a
 bit to fix that:
 
-``` {.sourceCode .python}
+```python
 # bb_setup2.py
 from bbfreeze import Freezer
 

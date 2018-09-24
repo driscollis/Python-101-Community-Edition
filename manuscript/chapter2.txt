@@ -20,7 +20,7 @@ How to Create a String
 Strings are usually created in one of three ways. You can use single,
 double or triple quotes. Let's take a look!
 
-``` {.sourceCode .python}
+```python
 >>> my_string = "Welcome to Python!"
 >>> another_string = 'The bright red fox jumped the fence.'
 >>> a_long_string = '''This is a
@@ -34,7 +34,7 @@ over multiple lines. If you print it out, you will notice that the
 output retains the line breaks. If you need to use single quotes in your
 string, then wrap it in double quotes. See the following example.
 
-``` {.sourceCode .python}
+```python
 >>> my_string = "I'm a Python programmer!"
 >>> otherString = 'The word "python" usually refers to a snake'
 >>> tripleString = """Here's another way to embed "quotes" in a string"""
@@ -44,7 +44,7 @@ The code above demonstrates how you could put single quotes or double
 quotes into a string. There's actually one other way to create a string
 and that is by using the **str** method. Here's how it works:
 
-``` {.sourceCode .python}
+```python
 >>> my_number = 123
 >>> my_string = str(my_number)
 ```
@@ -57,7 +57,7 @@ you'll also find that you can't always do the reverse, such as casting a
 string like 'ABC' into an integer. If you do that, you'll end up with an
 error like the one in the following example:
 
-``` {.sourceCode .python}
+```python
 >>> int('ABC')
 Traceback (most recent call last):
   File "<string>", line 1, in <fragment>
@@ -68,7 +68,7 @@ We will look at exception handling in a later chapter, but as you may
 have guessed from the message, this means that you cannot convert a
 literal into an integer. However, if you had done
 
-``` {.sourceCode .python}
+```python
 >>> x = int("123")
 ```
 
@@ -78,7 +78,7 @@ It should be noted that a string is one of Python immutable types. What
 this means is that you cannot change a string's content after creation.
 Let's try to change one to see what happens:
 
-``` {.sourceCode .python}
+```python
 >>> my_string = "abc"
 >>> my_string[0] = "d"
 Traceback (most recent call last):
@@ -91,7 +91,7 @@ this raises a TypeError that stops us from doing so. Now you may think
 that by assigning a new string to the same variable that you've changed
 the string. Let's see if that's true:
 
-``` {.sourceCode .python}
+```python
 >>> my_string = "abc"
 >>> id(my_string)
 19397208
@@ -110,7 +110,7 @@ Note that in Python 2.x, strings can only contain **ASCII** characters.
 If you require **unicode** in Python 2.x, then you will need to precede
 your string with a **u**. Here's an example:
 
-``` {.sourceCode .python}
+```python
 my_unicode_string = u"This is unicode!"
 ```
 
@@ -124,7 +124,7 @@ Concatenation is a big word that means to combine or add two things
 together. In this case, we want to know how to add two strings together.
 As you might suspect, this operation is very easy in Python:
 
-``` {.sourceCode .python}
+```python
 >>> string_one = "My dog ate "
 >>> string_two = "my homework!"
 >>> string_three = string_one + string_two
@@ -142,21 +142,21 @@ you'll need to skip to that chapter. In the meantime, it's enough to
 know that strings have their very own methods built into them. For
 example, let's say you have the following string:
 
-``` {.sourceCode .python}
+```python
 >>> my_string = "This is a string!"
 ```
 
 Now you want to cause this string to be entirely in uppercase. To do
 that, all you need to do is call its **upper()** method, like this:
 
-``` {.sourceCode .python}
+```python
 >>> my_string.upper()
 ```
 
 If you have your interpreter open, you can also do the same thing like
 this:
 
-``` {.sourceCode .python}
+```python
 >>> "This is a string!".upper()
 ```
 
@@ -166,7 +166,7 @@ wanted to remove all the leading and trailing white space, you would use
 **strip()**. To get a list of all the string methods, type the following
 command into your interpreter:
 
-``` {.sourceCode .python}
+```python
 >>> dir(my_string)
 ```
 
@@ -196,7 +196,7 @@ day Python coding. Focus on the other ones instead. If you'd like to
 know what one of them does, just ask for **help**. For example, say you
 want to learn what **capitalize** is for. To find out, you would type
 
-``` {.sourceCode .python}
+```python
 >>> help(my_string.capitalize)
 ```
 
@@ -218,7 +218,7 @@ ask Python about itself. In an earlier section, you learned about
 casting. You may have wondered how to tell what type the variable was
 (i.e. an int or a string). You can ask Python to tell you that!
 
-``` {.sourceCode .python}
+```python
 >>> type(my_string)
 <type 'str'>
 ```
@@ -233,14 +233,14 @@ is string slicing. I have been surprised how often I have needed to know
 how to do this in my day-to-day job. Let's take a look at how slicing
 works with the following string:
 
-``` {.sourceCode .python}
+```python
 >>> my_string = "I like Python!"
 ```
 
 Each character in a string can be accessed using slicing. For example,
 if I want to grab just the first character, I could do this:
 
-``` {.sourceCode .python}
+```python
 >>> my_string[0:1]
 ```
 
@@ -256,7 +256,7 @@ Thus we have a string that is 14 characters long, starting at zero and
 going through thirteen. Let's do a few more examples to get these
 concepts into our heads better.
 
-``` {.sourceCode .python}
+```python
 >>> my_string[:1]
 'I'
 >>> my_string[0:12]
@@ -290,7 +290,7 @@ understand slicing and how to use it effectively.
 You can also access individual characters in a string via indexing. Here
 is an example:
 
-``` {.sourceCode .python}
+```python
 >>> print(my_string[0])
 ```
 
@@ -311,7 +311,7 @@ things and then move on to the new.
 The easiest way to learn how to do this is to see a few examples. So
 here we go:
 
-``` {.sourceCode .python}
+```python
 >>> my_string = "I like %s" % "Python"
 >>> my_string
 'I like Python'
@@ -335,7 +335,7 @@ going to insert with parentheses.
 
 Now let's see what happens if we don't insert enough strings:
 
-``` {.sourceCode .python}
+```python
 >>> another_string = "I like %s and %s" % "Python"
 Traceback (most recent call last):
   File "<string>", line 1, in <fragment>
@@ -348,7 +348,7 @@ carefully at the example above, you'll notice it has two instances of
 strings! Now we're ready to learn about inserting integers and floats.
 Let's take a look!
 
-``` {.sourceCode .python}
+```python
 >>> my_string = "%i + %i = %i" % (1,2,3)
 >>> my_string
 '1 + 2 = 3'
@@ -374,7 +374,7 @@ you pass it a float that's greater than two decimal places.
 
 Now let's see what happens if we pass it bad data:
 
-``` {.sourceCode .python}
+```python
 >>> int_float_err = "%i + %f" % ("1", "2.00")
 Traceback (most recent call last):
   File "<string>", line 1, in <fragment>
@@ -386,7 +386,7 @@ float. This raises a TypeError and tells us that Python was expecting a
 number. This refers to not passing an integer, so let's fix that and see
 if that fixes the issue:
 
-``` {.sourceCode .python}
+```python
 >>> int_float_err = "%i + %f" % (1, "2.00")
 Traceback (most recent call last):
   File "<string>", line 1, in <fragment>
@@ -408,7 +408,7 @@ templates, but was added as a regular string method via the **format**
 method in Python 2.6. So it's not really a new method, just newer.
 Anyway, let's start with templates!
 
-``` {.sourceCode .python}
+```python
 >>> print("%(lang)s is fun!" % {"lang":"Python"})
 Python is fun!
 ```
@@ -421,7 +421,7 @@ pair, so when Python sees the key "lang" in the string AND in the key of
 the dictionary that is passed in, it replaces that key with its value.
 Let's look at some more samples:
 
-``` {.sourceCode .python}
+```python
 >>> print("%(value)s %(value)s %(value)s !" % {"value":"SPAM"})
 SPAM SPAM SPAM !
 >>> print("%(x)i + %(y)i = %(z)i" % {"x":1, "y":2})
@@ -439,7 +439,7 @@ a key, namely the "z" key. The third example rectifies this issue and
 shows the result. Now let's look at how we can do something similar with
 the string's format method!
 
-``` {.sourceCode .python}
+```python
 >>> "Python is as simple as {0}, {1}, {2}".format("a", "b", "c")
 'Python is as simple as a, b, c'
 >>> "Python is as simple as {1}, {0}, {2}".format("a", "b", "c")

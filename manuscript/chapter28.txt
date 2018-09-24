@@ -31,7 +31,7 @@ whatever is given to it. We will include a couple of tests inside the
 function's **docstring**. Here's the code (be sure and save it as
 "dtest1.py"):
 
-``` {.sourceCode .python}
+```python
 # dtest1.py
 
 def double(a):
@@ -52,7 +52,7 @@ script. Here's a screenshot of what I did:
 
 You will notice that in the first example, I executed the following:
 
-``` {.sourceCode .python}
+```python
 python -m doctest dtest1.py
 ```
 
@@ -60,7 +60,7 @@ That ran the test and nothing printed out to the screen. When you don't
 see anything printed, that means that all the tests passed successfully.
 The second example shows the following command:
 
-``` {.sourceCode .python}
+```python
 python -m doctest -v dtest1.py
 ```
 
@@ -83,7 +83,7 @@ Running doctest Inside a Module
 Let's modify the example slightly so that we import the **doctest**
 module and use its **testmod** function.
 
-``` {.sourceCode .python}
+```python
 def double(a):
     """
     >>> double(4)
@@ -106,7 +106,7 @@ that the tests ran successfully.
 If you do not want to hard-code the verbose option, you can also do it
 on the command line:
 
-``` {.sourceCode .python}
+```python
 python dtest2.py -v
 ```
 
@@ -120,7 +120,7 @@ file. This allows us to separate the tests from the code. Let's strip
 the tests from the previous example and put them into a text file named
 **tests.txt**:
 
-``` {.sourceCode .python}
+```python
 The following are tests for dtest2.py
 
 >>> from dtest2 import double
@@ -170,7 +170,7 @@ Our first test will be to test our game object and see if it can
 calculate the correct total if we roll eleven times and only knock over
 one pin each time. This should give us a total of eleven.
 
-``` {.sourceCode .python}
+```python
 import unittest
 
 class TestBowling(unittest.TestCase):
@@ -190,7 +190,7 @@ game object's score is correct (i.e. eleven). The next step is to write
 the simplest code you can think of to make the test pass. Here's one
 example:
 
-``` {.sourceCode .python}
+```python
 class Game:
     """"""
 
@@ -214,7 +214,7 @@ Let's run the test and see if it passes! The easiest way to run the
 tests is to add the following two lines of code to the bottom of the
 file:
 
-``` {.sourceCode .python}
+```python
 if __name__ == '__main__':
     unittest.main()
 ```
@@ -222,7 +222,7 @@ if __name__ == '__main__':
 Then just run the Python file via the command line, If you do, you
 should get something like the following:
 
-``` {.sourceCode .python}
+```python
 E
 ----------------------------------------------------------------------
 ERROR: test_all_ones (__main__.TestBowling)
@@ -248,7 +248,7 @@ passing an Integer and then trying to iterate over it. That doesn't
 work! We need to change our Game object's roll method to the following
 to make it work:
 
-``` {.sourceCode .python}
+```python
 def roll(self, numOfRolls, pins):
     """"""
     for roll in range(numOfRolls):
@@ -257,7 +257,7 @@ def roll(self, numOfRolls, pins):
 
 If you run the test now, you should get the following:
 
-``` {.sourceCode .python}
+```python
 .
 ----------------------------------------------------------------------
 Ran 1 test in 0.000s
@@ -283,7 +283,7 @@ coding and you will get better later on such that you shouldn't need to
 do this. Since this is my first time doing this, I wasn't thinking far
 enough ahead. Anyway, let's take a look at the code:
 
-``` {.sourceCode .python}
+```python
 from game import Game
 import unittest
 
@@ -327,7 +327,7 @@ Finally, note that we're now importing the **Game** class rather than
 keeping it with the tests. Now we need to implement the code necessary
 to pass these two tests. Let's take a look at one possible solution:
 
-``` {.sourceCode .python}
+```python
 class Game:
     """"""
 
@@ -370,7 +370,7 @@ someone roll a spare. The test is easy, the solution is slightly more
 difficult. While we're at it, we're going to refactor the test code a
 bit. As usual, we will look at the test first.
 
-``` {.sourceCode .python}
+```python
 from game_v2 import Game
 import unittest
 
@@ -424,7 +424,7 @@ except that they are using "self.game" now. The only the new test is
 just two lines. Yes, you can figure this out. Let's look at the code
 we'll need to pass these tests:
 
-``` {.sourceCode .python}
+```python
 # game_v2.py
 
 class Game:

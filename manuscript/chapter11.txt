@@ -6,7 +6,7 @@ that every *thing* in Python has methods and values. The reason is that
 everything is based on a class. A class is the blueprint of an object.
 Let's take a look at what I mean:
 
-``` {.sourceCode .python}
+```python
 >>> x = "Mike"
 >>> dir(x)
 ['__add__', '__class__', '__contains__', '__delattr__', '__doc__', '__eq__', 
@@ -38,7 +38,7 @@ Creating a Class
 
 Creating a class in Python is very easy. Here is a very simple example:
 
-``` {.sourceCode .python}
+```python
 # Python 2.x syntax
 class Vehicle(object):
     """docstring"""
@@ -70,7 +70,7 @@ argument (i.e. self), which is not true with a regular function.
 In Python 3, we don't need to explicitly say we're inheriting from
 **object**. Instead, we could have written the above like this:
 
-``` {.sourceCode .python}
+```python
 # Python 3.x syntax
 class Vehicle:
     """docstring"""
@@ -84,7 +84,7 @@ You will notice that the only difference is that we no longer need the
 parentheses if we're basing our class on **object**. Let's expand our
 class definition a bit and give it some attributes and methods.
 
-``` {.sourceCode .python}
+```python
 class Vehicle(object):
     """docstring"""
 
@@ -110,7 +110,7 @@ class Vehicle(object):
 The code above added three attributes and two methods. The three
 attributes are:
 
-``` {.sourceCode .python}
+```python
 self.color = color
 self.doors = doors
 self.tires = tires
@@ -135,7 +135,7 @@ find that helpful when I'm learning something new and strange:
 Add the following code to the end of that class you wrote above and save
 it:
 
-``` {.sourceCode .python}
+```python
 if __name__ == "__main__":
     car = Vehicle("blue", 5, 4)
     print(car.color)
@@ -155,7 +155,7 @@ instance, they are different. The reason is that the class is using that
 **self** argument to tell itself which is which. Let's change the class
 a bit to make the methods more unique:
 
-``` {.sourceCode .python}
+```python
 class Vehicle(object):
     """docstring"""
 
@@ -192,7 +192,7 @@ In this example, we pass in another parameter to tell the class which
 vehicle type we're creating. Then we call each method for each instance.
 If you run this code, you should see the following output:
 
-``` {.sourceCode .python}
+```python
 car braking
 I'm driving a blue car!
 I'm driving a red truck!
@@ -216,7 +216,7 @@ we created a class based on **object**. In other words, we subclassed
 examples don't really demonstrate the power of subclassing. So let's
 subclass our Vehicle class and find out how all this works.
 
-``` {.sourceCode .python}
+```python
 class Car(Vehicle):
     """
     The Car class

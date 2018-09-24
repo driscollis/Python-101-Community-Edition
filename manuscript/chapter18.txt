@@ -28,7 +28,7 @@ Creating a database in SQLite is really easy, but the process requires
 that you know a little SQL to do it. Here's some code that will create a
 database to hold music albums:
 
-``` {.sourceCode .python}
+```python
 import sqlite3
 
 conn = sqlite3.connect("mydatabase.db") # or use :memory: to put it in RAM
@@ -56,7 +56,7 @@ some data into our new table!
 **Note: If you run the CREATE TABLE command and the database already
 exists, you will receive an error message.**
 
-``` {.sourceCode .python}
+```python
 # insert some data
 cursor.execute("""INSERT INTO albums 
                   VALUES ('Glow', 'Andy Hunter', '7/24/2012', 
@@ -98,7 +98,7 @@ and pretty useless very quickly. Sometimes you will need to delete rows
 from your data too. We'll be covering both of those topics in this
 section. First, let's do an update!
 
-``` {.sourceCode .python}
+```python
 import sqlite3
 
 conn = sqlite3.connect("mydatabase.db")
@@ -120,7 +120,7 @@ to *Andy Hunter*. Wasn't that easy? Note that if you don't commit the
 changes, then your changes won't be written out to the database. The
 **DELETE** command is almost as easy. Let's check that out!
 
-``` {.sourceCode .python}
+```python
 import sqlite3
 
 conn = sqlite3.connect("mydatabase.db")
@@ -148,7 +148,7 @@ databases, such as MySQL or Postgres. You just use normal SQL syntax to
 run the queries and then have the cursor object execute the SQL. Here
 are a few examples:
 
-``` {.sourceCode .python}
+```python
 import sqlite3
 
 conn = sqlite3.connect("mydatabase.db")

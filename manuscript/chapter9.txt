@@ -15,14 +15,14 @@ import this
 Python provides the **import** keyword for importing modules. Let's give
 it a try:
 
-``` {.sourceCode .python}
+```python
 import this
 ```
 
 If you run this code in your interpreter, you should see something like
 the following as your output:
 
-``` {.sourceCode .python}
+```python
 The Zen of Python, by Tim Peters
 
 Beautiful is better than ugly.
@@ -52,7 +52,7 @@ It's actually a sort of an unofficial best practices for Python. The
 little way to show how to import something. Let's actually import
 something we can use, like the **math** module:
 
-``` {.sourceCode .python}
+```python
 >>> import math
 >>> math.sqrt(4)
 2.0
@@ -76,7 +76,7 @@ module name. Python has a solution for that! You can actually import
 just the functions you want from a module. Let's pretend that we want to
 just import the **sqrt** function:
 
-``` {.sourceCode .python}
+```python
 >>> from math import sqrt
 >>> sqrt(16)
 4.0
@@ -88,7 +88,7 @@ Python's **from** keyword to import the **sqrt** function **from** the
 **math** module. You can also use this method to import multiple
 functions from the math function:
 
-``` {.sourceCode .python}
+```python
 >>> from math import pi, sqrt
 ```
 
@@ -108,7 +108,7 @@ your **namespace**. A namespace is where all your variables live during
 the life of the program. So let's say you have your own variable named
 **sqrt**, like this:
 
-``` {.sourceCode .python}
+```python
 >>> from math import sqrt
 >>> sqrt = 5
 ```
@@ -118,7 +118,7 @@ holds the value of 5. This is known as **shadowing**. This becomes
 especially tricky when you import everything from a module. Let's take a
 look:
 
-``` {.sourceCode .python}
+```python
 >>> from math import *
 >>> sqrt = 5
 >>> sqrt(16)

@@ -20,7 +20,7 @@ list comprehensions and learn how they can be used. A list comprehension
 is basically a one line **for** loop that produces a Python **list**
 data structure. Here's a simple example:
 
-``` {.sourceCode .python}
+```python
 >>> x = [i for i in range(5)]
 ```
 
@@ -32,7 +32,7 @@ if you need to create a list very quickly. For example, say you're
 parsing a file and looking for something in particular. You could use a
 list comprehension as a kind of filter:
 
-``` {.sourceCode .python}
+```python
 if [i for i in line if "SOME TERM" in i]:
     # do something
 ```
@@ -43,7 +43,7 @@ into the mix, you can start doing some really cool stuff. Say you want
 to apply a function to every element in a list, such as when you need to
 cast a bunch of strings into integers:
 
-``` {.sourceCode .python}
+```python
 >>> x = ['1', '2', '3', '4', '5']
 >>> y = [int(i) for i in x]
 >>> y
@@ -54,7 +54,7 @@ This sort of thing comes up more often than you'd think. I have also had
 to loop over a list of strings and call a string method, such as strip
 on them because they had all kinds of leading or ending white space:
 
-``` {.sourceCode .python}
+```python
 >>> myStrings = [s.strip() for s in myStringList]
 ```
 
@@ -62,7 +62,7 @@ There are also occasions where one needs to create a nested list
 comprehension. One reason to do that is to flatten multiple lists into
 one. This example comes from the Python documentation:
 
-``` {.sourceCode .python}
+```python
 >>> vec = [[1,2,3], [4,5,6], [7,8,9]]
 >>> [num for elem in vec for num in elem]
 [1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -88,7 +88,7 @@ organized.
 
 The best way to understand is to just do one!
 
-``` {.sourceCode .python}
+```python
 >>> print( {i: str(i) for i in range(5)} )
 {0: '0', 1: '1', 2: '2', 3: '3', 4: '4'}
 ```
@@ -100,7 +100,7 @@ be wondering how you could use a dictionary comprehension in real life.
 mentioned that you could use a dictionary comprehension for swapping the
 dictionary's keys and values. Here's how you would do that:
 
-``` {.sourceCode .python}
+```python
 >>> my_dict = {1:"dog", 2:"cat", 3:"hamster"}
 >>> print( {value:key for key, value in my_dict.items()} )
 {'hamster': 3, 'dog': 1, 'cat': 2}
@@ -122,7 +122,7 @@ comprehensions. Now a Python set is much like a mathematical set in that
 it doesn't have any repeated elements. You can create a normal set like
 this:
 
-``` {.sourceCode .python}
+```python
 >>> my_list = [1, 2, 2, 3, 4, 5, 5, 7, 8]
 >>> my_set = set(my_list)
 >>> my_set
@@ -133,7 +133,7 @@ As you can see from the example above, the call to set has removed the
 duplicates from the list. Now let's rewrite this code to use a set
 comprehension:
 
-``` {.sourceCode .python}
+```python
 >>> my_list = [1, 2, 2, 3, 4, 5, 5, 7, 8]
 >>> my_set = {x for x in my_list}
 >>> my_set

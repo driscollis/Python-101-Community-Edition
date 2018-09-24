@@ -29,7 +29,7 @@ higher.
 
 Let's write some code!
 
-``` {.sourceCode .python}
+```python
 import wx
 
 class DemoPanel(wx.Panel):
@@ -122,7 +122,7 @@ controls what gets included or excluded, how much we compress and
 bundle, and much more! Here is the simplest setup that we can use with
 the wx script above:
 
-``` {.sourceCode .python}
+```python
 from distutils.core import setup
 import py2exe
 
@@ -163,7 +163,7 @@ Creating an Advanced setup.py File
 Let's see what other options py2exe gives us for creating binaries by
 creating a more complex **setup.py** file.
 
-``` {.sourceCode .python}
+```python
 from distutils.core import setup
 import py2exe
 

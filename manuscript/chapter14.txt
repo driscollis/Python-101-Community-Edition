@@ -13,7 +13,7 @@ Creating a Config File
 Creating a config file with configparser is extremely simple. Let's
 create some code to demonstrate:
 
-``` {.sourceCode .python}
+```python
 import configparser
 
 def createConfig(path):
@@ -51,7 +51,7 @@ and even how to delete options. In this case, it's easier to learn by
 actually writing some code! Just add the following function to the code
 that you wrote above.
 
-``` {.sourceCode .python}
+```python
 import configparser
 import os
 
@@ -103,7 +103,7 @@ This isn’t really a good example though as you should never have a
 function that does everything like this one does. So let’s split it up
 into a series of functions instead:
 
-``` {.sourceCode .python}
+```python
 import configparser
 import os
 
@@ -197,7 +197,7 @@ the font\_info option in that its value is based on the font and
 font\_size options. We can change an interpolated value using a Python
 dictionary. Let's take a moment to demonstrate both of these facts.
 
-``` {.sourceCode .python}
+```python
 import configparser
 import os
 

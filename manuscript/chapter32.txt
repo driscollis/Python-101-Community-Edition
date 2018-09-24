@@ -19,7 +19,7 @@ The pylint package isn't included with Python, so you will need to go to
 the Python Package Index (PyPI) or the package's website to download it.
 You can use the following command to do all the work for you:
 
-``` {.sourceCode .python}
+```python
 pip install pylint
 ```
 
@@ -33,14 +33,14 @@ Once pylint is installed, you can run it on the command line without any
 arguments to see what options it accepts. If that doesn't work, you can
 type out the full path like this:
 
-``` {.sourceCode .python}
+```python
 c:\Python34\Scripts\pylint
 ```
 
 Now we need some code to analyze. Here's a piece of code that has four
 errors in it. Save this to a file named *crummy\_code.py*:
 
-``` {.sourceCode .python}
+```python
 import sys
 
 class CarClass:
@@ -66,14 +66,14 @@ class CarClass:
 Can you spot the errors without running the code? Let's see if pylint
 can find the issues!
 
-``` {.sourceCode .python}
+```python
 pylint crummy_code.py
 ```
 
 When you run this command, you will see a lot of output sent to your
 screen. Here's a partial example:
 
-``` {.sourceCode .python}
+```python
 c:\py101>c:\Python34\Scripts\pylint crummy_code.py
 No config file found, using default configuration
 ************* Module crummy_code
@@ -106,7 +106,7 @@ isn't allowed for method names. We also need to fix the call to
 get\_weight so it passes the right number of arguments and fix it so it
 has "self" as the first argument. Here's the new code:
 
-``` {.sourceCode .python}
+```python
 # crummy_code_fixed.py
 import platform
 
@@ -133,7 +133,7 @@ class CarClass:
 Let's run this new code against pylint and see how much we've improved
 the results. For brevity, we'll just show the first section again:
 
-``` {.sourceCode .python}
+```python
 c:\py101>c:\Python34\Scripts\pylint crummy_code_fixed.py
 No config file found, using default configuration
 ************* Module crummy_code_fixed
@@ -159,7 +159,7 @@ using pip, easy\_install or from source.
 We will start by running pyflakes against the original version of the
 same piece of code that we used with pylint. Here it is again:
 
-``` {.sourceCode .python}
+```python
 import sys
 
 class CarClass:
@@ -187,7 +187,7 @@ issues, 3 of which would stop the program from running. Let's see what
 pyflakes can find! Try running the following command and you'll see the
 following output:
 
-``` {.sourceCode .python}
+```python
 c:\py101>c:\Python34\Scripts\pyflakes.exe crummy_code.py
 crummy_code.py:1: 'sys' imported but unused
 crummy_code.py:13: undefined name 'platform'

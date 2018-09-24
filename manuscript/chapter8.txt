@@ -11,7 +11,7 @@ Python has a builtin function called **open** that we can use to open a
 file for reading. Create a text file name "test.txt" with the following
 contents:
 
-``` {.sourceCode .python}
+```python
 This is a test file
 line 2
 line 3
@@ -20,7 +20,7 @@ this line intentionally left blank
 
 Here are a couple of examples that show how to use **open** for reading:
 
-``` {.sourceCode .python}
+```python
 handle = open("test.txt")
 handle = open(r"C:\Users\mike\py101book\data\test.txt", "r")
 ```
@@ -37,7 +37,7 @@ you'll notice that it begins with an "r". This means that we want Python
 to treat the string as a raw string. Let's take a moment to see the
 difference between specifying a raw string versus a regular string:
 
-``` {.sourceCode .python}
+```python
 >>> print("C:\Users\mike\py101book\data\test.txt")
 C:\Users\mike\py101book\data    est.txt
 >>> print(r"C:\Users\mike\py101book\data\test.txt")
@@ -59,7 +59,7 @@ explicit. Now let's actually read the file!
 Put the following lines into a Python script and save it in the same
 location as your test.txt file:
 
-``` {.sourceCode .python}
+```python
 handle = open("test.txt", "r")
 data = handle.read()
 print(data)
@@ -78,7 +78,7 @@ the whole thing in, which might fill up the PC's memory.
 
 Let's spend some time looking at different ways to read files.
 
-``` {.sourceCode .python}
+```python
 handle = open("test.txt", "r")
 data = handle.readline() # read just one line
 print(data)
@@ -89,7 +89,7 @@ If you run this example, it will only read the first line of your text
 file and print it out. That's not too useful, so let's try the file
 handle's readlines() method:
 
-``` {.sourceCode .python}
+```python
 handle = open("test.txt", "r")
 data = handle.readlines() # read ALL the lines!
 print(data)
@@ -108,7 +108,7 @@ learn how to read a file line by line and then we will learn how to read
 it a kilobyte at a time. We will use a **for** loop for our first
 example:
 
-``` {.sourceCode .python}
+```python
 handle = open("test.txt", "r")
 
 for line in handle:
@@ -122,7 +122,7 @@ to iterate over it. You will find that you can iterate over all kinds of
 objects in Python (strings, lists, tuples, keys in a dictionary, etc).
 That was pretty simple, right? Now let's do it in chunks!
 
-``` {.sourceCode .python}
+```python
 handle = open("test.txt", "r")
 
 while True:
@@ -143,7 +143,7 @@ How to Read a Binary File
 Reading a binary file is very easy. All you need to do is change the
 file mode:
 
-``` {.sourceCode .python}
+```python
 handle = open("test.pdf", "rb")
 ```
 
@@ -164,7 +164,7 @@ it will be overwritten with no warning! You can check if a file exists
 before you open it by using Python's **os** module. See the
 **os.path.exists** section in **Chapter 16**.
 
-``` {.sourceCode .python}
+```python
 handle = open("test.txt", "w")
 handle.write("This is a test!")
 handle.close()
@@ -184,7 +184,7 @@ is known as a **context manager** in Python that will automatically
 close the file for you when you are done processing it. Let's see how
 this works:
 
-``` {.sourceCode .python}
+```python
 with open("test.txt") as file_handler:
     for line in file_handler:
         print(line)
@@ -193,13 +193,13 @@ with open("test.txt") as file_handler:
 The syntax for the **with** operator is a little strange, but you'll
 pick it up pretty quickly. Basically what we're doing is replacing:
 
-``` {.sourceCode .python}
+```python
 handle = open("test.txt")
 ```
 
 with this:
 
-``` {.sourceCode .python}
+```python
 with open("test.txt") as file_handler:
 ```
 
@@ -221,7 +221,7 @@ occur. In this section, we will look at how to catch errors the normal
 way and how to catch them using the **with** operator. Hint: the idea is
 basically the same in both!
 
-``` {.sourceCode .python}
+```python
 try:
     file_handler = open("test.txt")
     for line in file_handler:
@@ -238,7 +238,7 @@ Note that we also make sure we close the file using the **finally**
 statement. Now we're ready to look at how we would do this same thing
 using **with**:
 
-``` {.sourceCode .python}
+```python
 try:
     with open("test.txt") as file_handler:
         for line in file_handler:

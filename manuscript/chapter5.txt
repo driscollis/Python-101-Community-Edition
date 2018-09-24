@@ -28,7 +28,7 @@ actually another function called **xrange** that is a number generator
 and isn't as resource intensive as range. They basically changed
 **xrange** into **range** in Python 3. Here is an example:
 
-``` {.sourceCode .python}
+```python
 >>> range(5)
 range(0, 5)
 ```
@@ -37,7 +37,7 @@ As you can see, the range function above took an integer and returned a
 **range** object. The range function also accepts a beginning value, an
 end value and a step value. Here are two more examples:
 
-``` {.sourceCode .python}
+```python
 >>> range(5,10)
 range(5, 10)
 >>> list(range(1, 10, 2))
@@ -53,7 +53,7 @@ cause the range function to return every second element between 1 and
 what this has to do with loops. Well one easy way to show how a loop
 works is if we use the range function! Take a look:
 
-``` {.sourceCode .python}
+```python
 >>> for number in range(5):
        print(number)
 
@@ -70,7 +70,7 @@ call range with a value of 5, it will return a list of 5 elements. So
 each time through the loop, it prints out each of the elements. The for
 loop above would be the equivalent of the following:
 
-``` {.sourceCode .python}
+```python
 >>> for number in [0, 1, 2, 3, 4]:
        print(number)
 ```
@@ -79,7 +79,7 @@ The range function just makes it a little bit smaller. The for loop can
 loop over any kind of Python iterator. We've already seen how it can
 iterate over a list. Let's see if it can also iterate over a dictionary.
 
-``` {.sourceCode .python}
+```python
 >>> a_dict = {"one":1, "two":2, "three":3}
 >>> for key in a_dict:
        print(key)
@@ -101,7 +101,7 @@ Now if you know that the keys can be sorted, then you can do that before
 you iterate over them. Let's change the dictionary slightly to see how
 that works.
 
-``` {.sourceCode .python}
+```python
 >>> a_dict = {1:"one", 2:"two", 3:"three"}
 >>> keys = a_dict.keys()
 >>> keys = sorted(keys)
@@ -127,7 +127,7 @@ going to loop over a range, but we want to print out only the even
 numbers. To do this, we want to use a conditional statement instead of
 using the range's step parameter. Here's one way you could do this:
 
-``` {.sourceCode .python}
+```python
 >>> for number in range(10):
         if number % 2 == 0:
             print(number)
@@ -155,7 +155,7 @@ The while loop is also used to repeat sections of code, but instead of
 looping n number of times, it will only loop until a specific condition
 is met. Let's look at a very simple example:
 
-``` {.sourceCode .python}
+```python
 >>> i = 0
 >>> while i < 10:
         print(i)
@@ -173,7 +173,7 @@ avoided and are known as logic errors.
 There is another way to break out of a loop. It is by using the
 **break** builtin. Let's see how that works:
 
-``` {.sourceCode .python}
+```python
 >>> while i < 10:
         print(i)
         if i == 5:
@@ -200,7 +200,7 @@ The break builtin is known as a **flow control tool**. There is another
 one called **continue** that is used to basically skip an iteration or
 continue with the next iteration. Here's one way to use it:
 
-``` {.sourceCode .python}
+```python
 i = 0
 
 while i < 10:
@@ -231,7 +231,7 @@ The **else** statement in loops only executes if the loop completes
 successfully. The primary use of the else statement is for searching for
 items:
 
-``` {.sourceCode .python}
+```python
 my_list = [1, 2, 3, 4, 5]
 
 for i in my_list:

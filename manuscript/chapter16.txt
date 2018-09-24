@@ -26,7 +26,7 @@ give you a little taste of what's available. To use any of the methods
 mentioned in this section, you will need to import the **os** module,
 like this:
 
-``` {.sourceCode .python}
+```python
 import os
 ```
 
@@ -41,7 +41,7 @@ get information about what platform you are running on. You will receive
 one of the following values: 'posix', 'nt', 'os2', 'ce', 'java',
 'riscos'. Let's see what we get when we run it on Windows 7:
 
-``` {.sourceCode .python}
+```python
 >>> import os
 >>> os.name
 'nt'
@@ -62,7 +62,7 @@ set. These can give you valuable information, such as number of
 processors, type of CPU, the computer name, etc. Let's see what we can
 find out about our machine:
 
-``` {.sourceCode .python}
+```python
 >>> import os
 >>> os.environ
 {'ALLUSERSPROFILE': 'C:\\ProgramData',
@@ -112,7 +112,7 @@ noticed, this returned a dictionary. That means you can access the
 environmental variables using your normal dictionary methods. Here's an
 example:
 
-``` {.sourceCode .python}
+```python
 >>> print(os.environ["TMP"])
 'C:\\Users\\mike\\AppData\\Local\\Temp'
 ```
@@ -120,7 +120,7 @@ example:
 You could also use the **os.getenv** function to access this
 environmental variable:
 
-``` {.sourceCode .python}
+```python
 >>> os.getenv("TMP")
 'C:\\Users\\mike\\AppData\\Local\\Temp'
 ```
@@ -131,7 +131,7 @@ doesn't exist, the getenv function will just return None. If you did the
 same thing with os.environ, you would receive an error. Let's give it a
 try so you can see what happens:
 
-``` {.sourceCode .python}
+```python
 >>> os.environ["TMP2"]
 Traceback (most recent call last):
   File "<pyshell#1>", line 1, in <module>
@@ -152,7 +152,7 @@ currently running our Python session in. If you want to actually know
 what path you are currently in, then you would call **os.getcwd()**.
 Let's try them both out:
 
-``` {.sourceCode .python}
+```python
 >>> os.getcwd()
 'C:\\Python27'
 >>> os.chdir(r"c:\Users\mike\Documents")
@@ -173,7 +173,7 @@ section are used for creating directories. The first one is
 **os.mkdir()**, which allows us to create a single folder. Let's try it
 out:
 
-``` {.sourceCode .python}
+```python
 >>> os.mkdir("test")
 >>> path = r'C:\Users\mike\Documents\pytest'
 >>> os.mkdir(path)
@@ -192,7 +192,7 @@ created a path that has nested folders in it. I find myself doing this a
 lot when I create a log file that is in a dated folder structure, like
 Year/Month/Day. Let's look at an example:
 
-``` {.sourceCode .python}
+```python
 >>> path = r'C:\Users\mike\Documents\pytest\2014\02\19'
 >>> os.makedirs(path)
 ```
@@ -209,7 +209,7 @@ The **os.remove()** and **os.rmdir()** functions are used for deleting
 files and directories respectively. Let's look at an example of
 **os.remove()**:
 
-``` {.sourceCode .python}
+```python
 >>> os.remove("test.txt")
 ```
 
@@ -223,7 +223,7 @@ procedure.
 
 Now let's look at an example of **os.rmdir()**:
 
-``` {.sourceCode .python}
+```python
 >>> os.rmdir("pytest")
 ```
 
@@ -241,7 +241,7 @@ os.rename(src, dst)
 The **os.rename()** function will rename a file or folder. Let's take a
 look at an example where we rename a file:
 
-``` {.sourceCode .python}
+```python
 >>> os.rename("test.txt", "pytest.txt")
 ```
 
@@ -262,7 +262,7 @@ associated program. In other words, we can open a file with it's
 associated program, just like when you double-click a PDF and it opens
 in Adobe Reader. Let's give it a try!
 
-``` {.sourceCode .python}
+```python
 >>> os.startfile(r'C:\Users\mike\Documents\labels.pdf')
 ```
 
@@ -280,7 +280,7 @@ get access to all its sub-directories and files. Let's use one of the
 Python folders that we have handy to test this function with. We'll use:
 C:\\Python27\\Tools
 
-``` {.sourceCode .python}
+```python
 >>> path = r'C:\Python27\Tools'
 >>> for root, dirs, files in os.walk(path):
         print(root)
@@ -297,7 +297,7 @@ C:\Python27\Tools\webchecker
 If you want, you can also loop over **dirs** and **files** too. Here's
 one way to do it:
 
-``` {.sourceCode .python}
+```python
 >>> for root, dirs, files in os.walk(path):
         print(root)
         for _dir in dirs:
@@ -333,7 +333,7 @@ os.path.basename
 The **basename** function will return just the filename of a path. Here
 is an example:
 
-``` {.sourceCode .python}
+```python
 >>> os.path.basename(r'C:\Python27\Tools\pynche\ChipViewer.py')
 'ChipViewer.py'
 ```
@@ -348,7 +348,7 @@ os.path.dirname
 The **dirname** function will return just the directory portion of the
 path. It's easier to understand if we take a look at some code:
 
-``` {.sourceCode .python}
+```python
 >>> os.path.dirname(r'C:\Python27\Tools\pynche\ChipViewer.py')
 'C:\\Python27\\Tools\\pynche'
 ```
@@ -363,7 +363,7 @@ os.path.exists
 The **exists** function will tell you if a path exists or not. All you
 have to do is pass it a path. Let's take a look:
 
-``` {.sourceCode .python}
+```python
 >>> os.path.exists(r'C:\Python27\Tools\pynche\ChipViewer.py')
 True
 >>> os.path.exists(r'C:\Python27\Tools\pynche\fake.py')
@@ -385,7 +385,7 @@ checks if the path is a file. If you want to check if a path exists
 regardless of whether it is a file or a directory, then you'll want to
 use the **exists** method. Anyway, let's study some examples:
 
-``` {.sourceCode .python}
+```python
 >>> os.path.isfile(r'C:\Python27\Tools\pynche\ChipViewer.py')
 True
 >>> os.path.isdir(r'C:\Python27\Tools\pynche\ChipViewer.py')
@@ -411,7 +411,7 @@ components together using the appropriate separator. For example, on
 Windows, the separator is the backslash, but on Linux, the separator is
 the forward slash. Here's how it works:
 
-``` {.sourceCode .python}
+```python
 >>> os.path.join(r'C:\Python27\Tools\pynche', 'ChipViewer.py')
 'C:\\Python27\\Tools\\pynche\\ChipViewer.py'
 ```
@@ -426,7 +426,7 @@ os.path.split
 The **split** method will split a path into a tuple that contains the
 directory and the file. Let's take a look:
 
-``` {.sourceCode .python}
+```python
 >>> os.path.split(r'C:\Python27\Tools\pynche\ChipViewer.py')
 ('C:\\Python27\\Tools\\pynche', 'ChipViewer.py')    
 ```
@@ -434,7 +434,7 @@ directory and the file. Let's take a look:
 This example shows what happens when we path in a path with a file.
 Let's see what happens if the path doesn't have a filename on the end:
 
-``` {.sourceCode .python}
+```python
 >>> os.path.split(r'C:\Python27\Tools\pynche')
 ```
 
@@ -447,7 +447,7 @@ the path in the first element.
 For our final example, I thought you might like to see a commmon use
 case of the **split**:
 
-``` {.sourceCode .python}
+```python
 >>> dirname, fname = os.path.split(r'C:\Python27\Tools\pynche\ChipViewer.py')
 >>> dirname
 'C:\\Python27\\Tools\\pynche'

@@ -25,7 +25,7 @@ tell you what type of variable you have or what type is returned from a
 function. It's a very handy little tool. Let's look at a few examples to
 make it all clear:
 
-``` {.sourceCode .python}
+```python
 >>> x = "test"
 >>> y = 7
 >>> z = None
@@ -54,7 +54,7 @@ the passed in object. If you forget to pass in an object, dir will
 return a list of names in the current scope. As usual, this is easier to
 understand with a few examples.
 
-``` {.sourceCode .python}
+```python
 >>> dir("test")
 ['__add__', '__class__', '__contains__', '__delattr__',
  '__doc__', '__eq__', '__ge__', '__getattribute__',
@@ -75,7 +75,7 @@ Since everything in Python is an object, we can pass a string to dir and
 find out what methods it has. Pretty neat, huh? Now let's try it with an
 imported module:
 
-``` {.sourceCode .python}
+```python
 >>> import sys
 >>> dir(sys)
 ['__displayhook__', '__doc__', '__egginsert', '__excepthook__',
@@ -108,7 +108,7 @@ Python comes with a handy help utility. Just type "help()" (minus the
 quotes) into a Python shell and you'll see the following directions
 (Python version may vary)
 
-``` {.sourceCode .python}
+```python
 >>> help()
 
 Welcome to Python 2.6!  This is the online help utility.

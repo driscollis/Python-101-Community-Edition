@@ -18,7 +18,7 @@ Profiling code with cProfile is really quite easy. All you need to do is
 import the module and call its **run** function. Let's look at a simple
 example:
 
-``` {.sourceCode .python}
+```python
 >>> import hashlib
 >>> import cProfile
 >>> cProfile.run("hashlib.md5(b'abcdefghijkl').digest()")
@@ -57,7 +57,7 @@ This isn't a very interesting example as there are no obvious
 bottlenecks. Let's create a piece of code with some built in bottlenecks
 and see if the profiler detects them.
 
-``` {.sourceCode .python}
+```python
 import time
 
 def fast():
@@ -91,7 +91,7 @@ different rates. The **fast** function will run at normal speed; the
 function calls the other three. Now let's run cProfile against this
 silly little program:
 
-``` {.sourceCode .python}
+```python
 >>> import cProfile
 >>> import ptest
 >>> cProfile.run('ptest.main()')
@@ -124,7 +124,7 @@ we know that the best way to speed up the function is to remove the
 You can also call cProfile on the command line rather than using it in
 the interpreter. Here's one way to do it:
 
-``` {.sourceCode .python}
+```python
 python -m cProfile ptest.py
 ```
 
@@ -134,7 +134,7 @@ that's easy with cProfile! All you need to do is pass it the **-o**
 command followed by the name (or path) of the output file. Here's an
 example:
 
-``` {.sourceCode .python}
+```python
 python -m cProfile -o output.txt ptest.py
 ```
 
@@ -144,7 +144,7 @@ module. You can use pstats to format the output in various ways. Here's
 some code that shows how to get some output that's similar to what we've
 seen so far:
 
-``` {.sourceCode .python}
+```python
 >>> import pstats
 >>> p = pstats.Stats("output.txt")
 >>> p.strip_dirs().sort_stats(-1).print_stats()

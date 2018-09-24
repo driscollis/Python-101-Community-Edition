@@ -5,7 +5,7 @@ chapter, we will learn how to share it on the Python Packaging Index
 (PyPI). To do that, we will first need to learn how to create a
 **setup.py** file. Just to review, here is our current folder hierarchy:
 
-``` {.sourceCode .python}
+```python
 mymath/
     __init__.py
     adv/
@@ -29,7 +29,7 @@ Creating a setup.py File
 We will start out by creating a super simple **setup.py** script. Here's
 a bare-bones one:
 
-``` {.sourceCode .python}
+```python
 from distutils.core import setup
 
 setup(name='mymath',
@@ -41,7 +41,7 @@ setup(name='mymath',
 This is something you might write for a package internally. To upload to
 PyPI, you will need to include a little more information:
 
-``` {.sourceCode .python}
+```python
 from distutils.core import setup    
 
 setup(name='mymath',
@@ -59,7 +59,7 @@ a virtual environment using the directions from chapter 35 or you can
 just install your code to your Python installation by calling the
 following command:
 
-``` {.sourceCode .python}
+```python
 python setup.py install
 ```
 
@@ -81,7 +81,7 @@ one. You may need to create a **.pypirc** file and enter the Test PyPI
 server address. See the next section for more information. Once you have
 done that, you just need to run the following command:
 
-``` {.sourceCode .python}
+```python
 python setup.py register
 ```
 
@@ -104,7 +104,7 @@ variable. This path is where you would save that file. Following is a
 sample of what could go in your pypirc file from
 <https://wiki.python.org/moin/TestPyPI>:
 
-``` {.sourceCode .python}
+```python
 [distutils]
 index-servers=
     pypi
@@ -127,7 +127,7 @@ understand all the options you can add to this configuration file.
 To upload some files to PyPI, you will need to create some
 distributions.
 
-``` {.sourceCode .python}
+```python
 python setup.py sdist bdist_wininst upload
 ```
 
@@ -145,7 +145,7 @@ can skip adding the description and accept PyPI's default formatting.
 If you would like a full listing of the commands you can use with
 **setup.py**, try running the following command:
 
-``` {.sourceCode .python}
+```python
 python setup.py --help-commands
 ```
 

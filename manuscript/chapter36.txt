@@ -16,7 +16,7 @@ We will begin by creating a super simple module. This module will
 provide us with basic arithmetic and no error handling. Here's our first
 example:
 
-``` {.sourceCode .python}
+```python
 def add(x, y):    
     return x + y
 
@@ -44,7 +44,7 @@ polish. Let's do both!
 First we'll write a little script that imports our module and runs the
 functions in it. Save the following as **math\_test.py**:
 
-``` {.sourceCode .python}
+```python
 import arithmetic
 
 print(arithmetic.add(5, 8))
@@ -56,7 +56,7 @@ print(arithmetic.multiply(12, 6))
 Now let's modify the original script so that we can run it from the
 command line. Here's one of the simplest ways to do it:
 
-``` {.sourceCode .python}
+```python
 def add(x, y):
     return x + y
 
@@ -102,7 +102,7 @@ Depending on the complexity of the package, it may have more than one
 make this more obvious, then we'll create some simple code to follow the
 structure we define.
 
-``` {.sourceCode .python}
+```python
 mymath/
     __init__.py
     adv/
@@ -120,7 +120,7 @@ above example. For the add, subtract, multiply and divide files, you can
 use the functions we created in the earlier example. For the **sqrt.py**
 module, we'll use the following code.
 
-``` {.sourceCode .python}
+```python
 # sqrt.py
 import math
 
@@ -133,7 +133,7 @@ to write code like **mymath.add.add(x,y)** which is pretty ugly, so
 we'll add the following code to the outer **\_\_init\_\_.py** to make
 using our package easier to understand and use.
 
-``` {.sourceCode .python}
+```python
 # outer __init__.py
 from . add import add
 from . divide import division
@@ -148,7 +148,7 @@ folder to do this. On Windows it's in the following general location:
 **C:\\Python34\\Lib\\site-packages**. Alternatively, you can edit the
 path on the fly in your test code. Let's see how that's done:
 
-``` {.sourceCode .python}
+```python
 import sys
 
 # modify this path to match your environment 
@@ -169,7 +169,7 @@ folder itself. If you do this, then the code above should work.
 You can also create a **setup.py** script and install your package in
 **develop** mode. Here's an example setup.py script:
 
-``` {.sourceCode .python}
+```python
 #!/usr/bin/env python
 
 from setuptools import setup
@@ -190,7 +190,7 @@ setup(name='mymath',
 You would save this script one level above the **mymath** folder. To
 install the package in develop mode, you would do the following:
 
-``` {.sourceCode .python}
+```python
 python setup.py develop
 ```
 

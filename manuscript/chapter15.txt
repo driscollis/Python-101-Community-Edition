@@ -22,7 +22,7 @@ Creating a log with the logging module is easy and straight-forward.
 It's easiest to just look at a piece of code and then explain it, so
 here's some code for you to read:
 
-``` {.sourceCode .python}
+```python
 import logging
 
 # add filemode="w" to overwrite
@@ -46,7 +46,7 @@ pass in a **filemode="w"** as mentioned in the comment in the code.
 Speaking of running the code, this is what you should get if you ran it
 once:
 
-``` {.sourceCode .python}
+```python
 INFO:root:Informational message
 ERROR:root:An error has happened!
 ```
@@ -62,7 +62,7 @@ the console / stdout.
 The logging module can also log some exceptions to file or wherever you
 have it configured to log to. Here's an example:
 
-``` {.sourceCode .python}
+```python
 import logging
 
 logging.basicConfig(filename="sample.log", level=logging.INFO)
@@ -91,7 +91,7 @@ place, then you've come to the right place. We'll look at the simple way
 and then show a more complex method that's also more customizable.
 Here's one easy way to do it:
 
-``` {.sourceCode .python}
+```python
 import logging
 import otherMod
 
@@ -111,7 +111,7 @@ if __name__ == "__main__":
 Here we import logging and a module of our own creation ("otherMod").
 Then we create our log file as before. The other module looks like this:
 
-``` {.sourceCode .python}
+```python
 # otherMod.py
 import logging
 
@@ -124,7 +124,7 @@ def add(x, y):
 If you run the main code, you should end up with a log that has the
 following contents:
 
-``` {.sourceCode .python}
+```python
 INFO:root:Program started
 INFO:root:added 7 and 8 to get 15
 INFO:root:Done!
@@ -136,7 +136,7 @@ more confusing the more modules there are that write to this log. So we
 need to fix that. That brings us to the complex way of creating a
 logger. Let's take a look at a different implementation:
 
-``` {.sourceCode .python}
+```python
 import logging
 import otherMod2
 
@@ -172,7 +172,7 @@ instance. The rest of the code in main is mostly the same. Just note
 that instead of "logging.info", it's "logger.info" or whatever you call
 your logger variable. Here's the updated **otherMod2** code:
 
-``` {.sourceCode .python}
+```python
 # otherMod2.py
 import logging
 
@@ -189,7 +189,7 @@ Note that here we have two loggers defined. We don't do anything with
 the module\_logger in this case, but we do use the other one. If you run
 the main script, you should see the following output in your file:
 
-``` {.sourceCode .python}
+```python
 2012-08-02 15:37:40,592 - exampleApp - INFO - Program started
 2012-08-02 15:37:40,592 - exampleApp.otherMod2.add - INFO - added 7 and 8 to get 15
 2012-08-02 15:37:40,592 - exampleApp - INFO - Done!
@@ -214,7 +214,7 @@ information and pass it to the dictConfig() function. Let's create a
 configuration file first and then we'll look at how to execute it with
 Python. Here's an example config file:
 
-``` {.sourceCode .python}
+```python
 [loggers]
 keys=root,exampleApp
 
@@ -258,7 +258,7 @@ so to keep that from happening, we send it to the console instead. Study
 this example closely. You'll need a section for every key in the first
 three sections. Now let's see how we load it in the code:
 
-``` {.sourceCode .python}
+```python
 # log_with_config.py
 import logging
 import logging.config
@@ -285,7 +285,7 @@ that setup code any more as that's all in the config file. Also we can
 just import the **otherMod2** module with no changes. Anyway, if you run
 the above, you should end up with the following in your log file:
 
-``` {.sourceCode .python}
+```python
 2012-08-02 18:23:33,338 - exampleApp - INFO - Program started
 2012-08-02 18:23:33,338 - exampleApp.otherMod2.add - INFO - added 7 and 8 to get 15
 2012-08-02 18:23:33,338 - exampleApp - INFO - Done!
@@ -299,7 +299,7 @@ It's not well documented how this works. In fact, the examples in the
 documentation show **YAML** for some reason. Anyway, here's some working
 code for you to look over:
 
-``` {.sourceCode .python}
+```python
 # log_with_config.py
 import logging
 import logging.config

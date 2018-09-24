@@ -12,7 +12,7 @@ frames and more. We will look at the following aspects of the module:
 Let's start by creating a quick piece of code to attempt debugging with.
 Here's a silly example:
 
-``` {.sourceCode .python}
+```python
 # debug_test.py
 
 def doubler(a):
@@ -44,7 +44,7 @@ interpreter (IDLE). Open up a terminal (command line window) and
 navigate to where you save the above code example. Then start Python.
 Now do the following:
 
-``` {.sourceCode .python}
+```python
 >>> import debug_test
 >>> import pdb
 >>> pdb.run('debug_test.main()')
@@ -72,13 +72,13 @@ until it reaches a breakpoint or the script ends.
 The other way to start the debugger is to execute the following command
 via your terminal session:
 
-``` {.sourceCode .python}
+```python
 python -m pdb debug_test.py
 ```
 
 If you run it this way, you will see a slightly different result:
 
-``` {.sourceCode .python}
+```python
 -> def doubler(a):
 (Pdb) c
 2
@@ -108,7 +108,7 @@ If you want to step through your code one line at a time, then you can
 use the **step** (or simply "s") command. Here's a session for your
 viewing pleasure:
 
-``` {.sourceCode .python}
+```python
 C:\Users\mike>cd c:\py101
 
 c:\py101>python -m pdb debug_test.py
@@ -168,7 +168,7 @@ removed when it gets hit.
 
 Here's an example:
 
-``` {.sourceCode .python}
+```python
 c:\py101>python -m pdb debug_test.py
 > c:\py101\debug_test.py(4)<module>()
 -> def doubler(a):

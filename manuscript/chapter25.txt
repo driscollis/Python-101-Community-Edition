@@ -20,7 +20,7 @@ two. A function always returns something. If you do not specify what a
 function should return, it will return **None**. Here is a very simple
 function that just returns a string:
 
-``` {.sourceCode .python}
+```python
 def a_function():
     """A pretty useless function"""
     return "1+1"
@@ -33,7 +33,7 @@ if __name__ == "__main__":
 All we do in the code above is call the function and print the return
 value. Let's create another function:
 
-``` {.sourceCode .python}
+```python
 def another_function(func):
     """
     A function that accepts another function
@@ -54,7 +54,7 @@ will take the result of the function passed to it, evaluate it and
 create a string that tells us about what it did, which it then returns.
 Let's look at the full version of the code:
 
-``` {.sourceCode .python}
+```python
 def another_function(func):
     """
     A function that accepts another function
@@ -84,7 +84,7 @@ function. The decorator will modify or enhance the function that was
 passed to it and return the modification. If you run this code, you
 should see the following as output to stdout:
 
-``` {.sourceCode .python}
+```python
 1+1
 The result of 1+1 is 2
 ```
@@ -92,7 +92,7 @@ The result of 1+1 is 2
 Let's change the code slightly to turn **another\_function** into a
 decorator:
 
-``` {.sourceCode .python}
+```python
 def another_function(func):
     """
     A function that accepts another function
@@ -122,7 +122,7 @@ the line before the function definition. Now when we call
 **a\_function**, it will get decorated and we'll get the following
 result:
 
-``` {.sourceCode .python}
+```python
 The result of 1+1 is 2
 ```
 
@@ -138,7 +138,7 @@ level to get an idea of the flow of the program or perhaps to fulfill
 some business rules, like auditing. Here's a little decorator that we
 can use to record any function's name and what it returns:
 
-``` {.sourceCode .python}
+```python
 import logging
 
 def log(func):
@@ -213,7 +213,7 @@ connection with a class. It's a stylistic choice for the most part.
 
 It might help to see a code example of how these two decorators work:
 
-``` {.sourceCode .python}
+```python
 class DecoratorTest(object):
     """
     Test regular method vs @classmethod vs @staticmethod
@@ -278,7 +278,7 @@ of values. Others have found it useful for writing conversion methods
 that they want to have access to as methods. Let's take a look at a
 simple example:
 
-``` {.sourceCode .python}
+```python
 class Person(object):
     """"""
 
@@ -300,7 +300,7 @@ In the code above, we create two class attributes or properties:
 **full\_name** method that has a <**@property*>\* decorator attached to
 it. This allows us to do the following in an interpreter session:
 
-``` {.sourceCode .python}
+```python
 >>> person = Person("Mike", "Driscoll")
 >>> person.full_name
 'Mike Driscoll'
@@ -318,7 +318,7 @@ property to something different, we will cause an **AttributeError** to
 be raised. The only way to change the **full\_name** property is to do
 so indirectly:
 
-``` {.sourceCode .python}
+```python
 >>> person.first_name = "Dan"
 >>> person.full_name
 'Dan Driscoll'
@@ -334,7 +334,7 @@ Let's pretend that we have some legacy code that someone wrote who
 didn't understand Python very well. If you're like me, you've already
 seen this kind of code before:
 
-``` {.sourceCode .python}
+```python
 from decimal import Decimal
 
 class Fees(object):
@@ -363,7 +363,7 @@ class Fees(object):
 To use this class, we have to use the setters and getters that are
 defined:
 
-``` {.sourceCode .python}
+```python
 >>> f = Fees()
 >>> f.set_fee("1")
 >>> f.get_fee()
@@ -374,7 +374,7 @@ If you want to add the normal dot notation access of attributes to this
 code without breaking all the applications that depend on this piece of
 code, you can change it very simply by adding a property:
 
-``` {.sourceCode .python}
+```python
 from decimal import Decimal
 
 class Fees(object):
@@ -405,7 +405,7 @@ class Fees(object):
 We added one line to the end of this code. Now we can do stuff like
 this:
 
-``` {.sourceCode .python}
+```python
 >>> f = Fees()
 >>> f.set_fee("1")
 >>> f.fee
@@ -420,7 +420,7 @@ fee property to set and get the value itself without breaking the legacy
 code. Let's rewrite this code using the property decorator and see if we
 can get it to allow setting.
 
-``` {.sourceCode .python}
+```python
 from decimal import Decimal
 
 class Fees(object):
@@ -456,7 +456,7 @@ property. You can do this by decorating a second method that is also
 called **fee** with a decorator called <**@fee.setter**>. The setter is
 invoked when you do something like this:
 
-``` {.sourceCode .python}
+```python
 >>> f = Fees()
 >>> f.fee = "1"
 ```

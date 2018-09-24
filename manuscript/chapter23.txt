@@ -40,7 +40,7 @@ Let's spend some time getting acquainted with how to parse this file
 using Python's **minidom** module. This is a fairly long piece of code,
 so prepare yourself.
 
-``` {.sourceCode .python}
+```python
 import xml.dom.minidom
 import urllib.request
 
@@ -133,7 +133,7 @@ object.
 Technically, the node is XML and we pass it on to the **handleXml**
 method. To grab all the appointment instances in the XML, we do this:
 
-``` {.sourceCode .python}
+```python
 xml.getElementsByTagName("appointment"). 
 ```
 
@@ -199,7 +199,7 @@ Save the following XML as *example.xml*
 For this example, we'll just parse the XML, extract the book titles and
 print them to stdout. Here's the code:
 
-``` {.sourceCode .python}
+```python
 import xml.dom.minidom as minidom
 
 def getTitles(xml):
@@ -271,7 +271,7 @@ How to Create XML with ElementTree
 Creating XML with ElementTree is very simple. In this section, we will
 attempt to create the XML above with Python. Here's the code:
 
-``` {.sourceCode .python}
+```python
 import xml.etree.ElementTree as xml
 
 def createXML(filename):
@@ -372,7 +372,7 @@ Now let's write some code to change each of the begin tag's values from
 seconds since the epoch to something a little more readable. We'll use
 Python's **time** module to facilitate this:
 
-``` {.sourceCode .python}
+```python
 import time
 import xml.etree.cElementTree as ET
 
@@ -439,7 +439,7 @@ we'll read through the code and then we'll go through bit by bit so we
 can understand it. Note that this code is based around the original
 example, but it should work on the second one as well.
 
-``` {.sourceCode .python}
+```python
 import xml.etree.cElementTree as ET
 
 def parseXML(xml_file):

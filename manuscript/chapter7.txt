@@ -68,7 +68,7 @@ Handling exceptions in Python is really easy. Let's spend some time
 writing some examples that will cause exceptions. We will start with one
 of the most common computer science problems: division by zero.
 
-``` {.sourceCode .python}
+```python
 >>> 1 / 0
 Traceback (most recent call last):
     File "<string>", line 1, in <fragment>
@@ -93,7 +93,7 @@ wrap the operation with a **try/except** statement.
 
 Here's another way to catch the error:
 
-``` {.sourceCode .python}
+```python
 >>> try:
         1 / 0
     except:
@@ -111,7 +111,7 @@ above, you cannot tell what you are trying to catch.
 
 Let's take a look at a couple of other examples.
 
-``` {.sourceCode .python}
+```python
 >>> my_dict = {"a":1, "b":2, "c":3}
 >>> try:
         value = my_dict["d"]
@@ -139,7 +139,7 @@ only 5 items, it raises an **IndexError**, which we also catch.
 You can also catch multiple exceptions with a single statement. There
 are a couple of different ways to do this. Let's take a look:
 
-``` {.sourceCode .python}
+```python
 my_dict = {"a":1, "b":2, "c":3}
 try:
     value = my_dict["d"]
@@ -162,7 +162,7 @@ most of the time, you won't need to wrap a block of code in multiple
 
 Here's another way to catch multiple exceptions:
 
-``` {.sourceCode .python}
+```python
 try:
     value = my_dict["d"]
 except (IndexError, KeyError):
@@ -191,7 +191,7 @@ The finally Statement
 The **finally** statement is really easy to use. Let's take a look at a
 silly example:
 
-``` {.sourceCode .python}
+```python
 my_dict = {"a":1, "b":2, "c":3}
 
 try:
@@ -214,7 +214,7 @@ The **try/except** statement also has an **else** clause. The **else**
 will only run if there are no errors raised. We will spend a few moments
 looking at a couple examples:
 
-``` {.sourceCode .python}
+```python
 my_dict = {"a":1, "b":2, "c":3}
 
 try:
@@ -231,7 +231,7 @@ raised. Because there is no error, the **else** executes and "No error
 occurred!" is printed to the screen. Now let's add in the **finally**
 statement:
 
-``` {.sourceCode .python}
+```python
 my_dict = {"a":1, "b":2, "c":3}
 
 try:

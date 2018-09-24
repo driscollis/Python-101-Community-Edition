@@ -12,7 +12,7 @@ Let's take a look at a few examples of how to use the requests package.
 We will use a series of small code snippets to help explain how to use
 this library.
 
-``` {.sourceCode .python}
+```python
 >>> r = requests.get("http://www.google.com")
 ```
 
@@ -21,7 +21,7 @@ object's methods to learn a lot about how you can use requests. Let's
 use Python's **dir** function to find out what methods we have
 available:
 
-``` {.sourceCode .python}
+```python
 >>> dir(r)
 ['__attrs__', '__bool__', '__class__', '__delattr__', '__dict__', 
 '__dir__', '__doc__', '__eq__', '__format__', '__ge__', '__getattribute__', 
@@ -36,7 +36,7 @@ available:
 
 If you run the following method, you can see the web page's source code:
 
-``` {.sourceCode .python}
+```python
 >>> r.content()
 ```
 
@@ -44,7 +44,7 @@ The output from this command is way too long to include in the book, so
 be sure to try it out yourself. If you'd like to take a look at the web
 pages headers, you can run the following:
 
-``` {.sourceCode .python}
+```python
 >>> r.headers
 ```
 
@@ -69,7 +69,7 @@ be doing a web search with **duckduckgo.com** searching on the term
 *python* and saving the result as an HTML file. We'll start with an
 example that uses urllib:
 
-``` {.sourceCode .python}
+```python
 import urllib.request
 import urllib.parse
 import webbrowser
@@ -96,7 +96,7 @@ find out how this process differs when using the requests package.
 The requests package does form submissions a little bit more elegantly.
 Let's take a look:
 
-``` {.sourceCode .python}
+```python
 import requests
 
 url = 'https://duckduckgo.com/html/'
