@@ -78,7 +78,7 @@ Once that is installed, we can install our wheel with the following
 command:
 
 ```python
-pip install --use-wheel --no-index --find-links=path/to/my_wheels Unidecode
+pip install --no-index --find-links=path/to/my_wheels Unidecode
 ```
 
 To test that this worked, run Python from the Scripts folder in your
