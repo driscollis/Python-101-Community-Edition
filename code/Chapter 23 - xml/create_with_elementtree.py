@@ -28,7 +28,7 @@ def createXML(filename):
     subject = xml.SubElement(appt, "subject")
 
     tree = xml.ElementTree(root)    
-    tree.write(fh)
+    tree.write(filename)
         
 if __name__ == "__main__":
     createXML("appt.xml")
