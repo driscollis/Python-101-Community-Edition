@@ -14,11 +14,10 @@ def getTitles(xml):
         titles.append(titleObj)
         
     for title in titles:
-        nodes = title.childNodes
-        
-    for node in nodes:
-        if node.nodeType == node.TEXT_NODE:
-            print(node.data)
+        nodes = title.childNodes        
+        for node in nodes:
+            if node.nodeType == node.TEXT_NODE:
+                print(node.data)
 
 if __name__ == "__main__":
     document = 'example.xml'
