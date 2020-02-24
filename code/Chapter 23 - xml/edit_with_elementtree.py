@@ -12,8 +12,7 @@ def editXML(filename):
         begin_time.text = time.ctime(int(begin_time.text))
 
     tree = ET.ElementTree(root)
-    with open("updated.xml", "w") as f:
-        tree.write(f)
+    tree.write('updated.xml')
 
 if __name__ == "__main__":
     editXML("original_appt.xml")
