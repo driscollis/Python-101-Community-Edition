@@ -21,4 +21,5 @@ class Fees(object):
             self._fee = Decimal(value)
         elif isinstance(value, Decimal):
             self._fee = value
-        fee = property(get_fee, set_fee)
+    
+    fee = property(get_fee, set_fee)
